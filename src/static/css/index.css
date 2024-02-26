@@ -1,0 +1,92 @@
+body {
+    position: relative;
+    font-size: 27px; /* Tamaño de letra base */
+}
+.app {
+    display: flex;
+    height: 00vh; /* Ajusta la altura de la aplicación */
+}
+.sidebar {
+    position: relative;
+    width: 16%;
+    background-color: #90482c; /* Cambia el color de fondo de la barra lateral según sea necesario */
+    height: 100vh; /* Ajusta la altura de la barra lateral */
+}
+.navbar-brand{
+    margin-left: 10%; /* Ajusta el margen izquierdo del logotipo */
+}
+.navbar-brand:hover{
+    color: #0f0e0e;
+    cursor: pointer; /* Cambia el cursor al pasar por encima */
+    transform: scale(1.1)  translateX(2%);
+}
+.navbar-logo {
+    margin-top: 12%; /* Puedes ajustar este valor según tus necesidades */
+}
+.logo-svg {
+    width: 45%; /* Ancho del SVG */
+    height: auto; /* Para mantener la proporción del aspecto */
+}
+.nav-item:hover{
+    cursor: pointer; /* Cambia el cursor al pasar por encima */
+    transform: scale(1.1);
+}
+.ml-2 {
+    margin-top: 12%;
+    margin-left: -9%;
+    font-size: 35px;
+}
+.sidebar .nav-link {
+    padding: .5rem 1rem; /* Ajusta el relleno de los elementos de enlace en la barra lateral */
+}
+.col-md-9 {
+    padding-left: 0; /* Ajusta el espaciado a la izquierda del contenido principal */
+}
+.line {
+    position: absolute;
+    bottom: 8%;
+    border-bottom: 1px solid #ccc; /* Línea sólida de color gris */ 
+    padding: 10px;
+    left: 50%; /* Posiciona la línea en el centro horizontal */
+    transform: translateX(-50%); /* Centra horizontalmente la línea */
+    width: 68%;
+}
+.github-container {
+    position: absolute;
+    top: 93%; /* Centra verticalmente */
+    transform: translateY(50%); /* Ajusta la posición vertical */
+    left: 50%; /* Centra horizontalmente */
+    transform: translateX(-50%); /* Ajusta la posición horizontal */
+}
+.github-svg {
+    width: 45px; /* Ajusta el tamaño del logo según sea necesario */
+    height: auto; /* Para mantener la proporción */
+}
+.github-svg:hover{
+    cursor: pointer; /* Cambia el cursor al pasar por encima */
+    transform: scale(1.2) translateX(0px);
+}
+
+.pt-serif-regular {
+    font-family: "PT Serif", serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.pt-serif-bold {
+    font-family: "PT Serif", serif;
+    font-weight: 700;
+    font-style: normal;
+}
+
+.pt-serif-regular-italic {
+    font-family: "PT Serif", serif;
+    font-weight: 400;
+    font-style: italic;
+}
+
+.pt-serif-bold-italic {
+    font-family: "PT Serif", serif;
+    font-weight: 700;
+    font-style: italic;
+}
