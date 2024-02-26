@@ -21,22 +21,27 @@ const App = () => {
                             <span className="ml-2">STATUS</span>
                         </Link>
                     <nav className="navbar navbar-dark flex-column">
-                        <ul className="navbar-nav">
+                        <ul className="navbar-nav align-items-center">
                             <li className="nav-item">
                                 <Link to="/catalogs" className="nav-link pt-serif-regular">Catálogos</Link>
                             </li>
                             <li className="nav-item">
                                 <Link to="/mashups" className="nav-link pt-serif-regular">Mashups</Link>
                             </li>
+                            <li className="nav-item">
+                                <Link to="/" className="nav-link pt-serif-regular">Logout</Link>
+                            </li>
                         </ul>
                     </nav>
+                    <div className="btn-container">
+                        <button className="btn btn-light pt-serif-regular">Logout</button>
+                    </div>
                     <div className="line"></div>
                     <div className="github-container">
                         <a href="https://github.com/statuscompliance/node-red-status" target="_blank" rel="noopener noreferrer">
                             <img src={githubLogo} alt="github" className="github-svg" />
                         </a>
                     </div>
-
                 </div>
                 {/* Main content */}
                 <div className="col-md-9">
