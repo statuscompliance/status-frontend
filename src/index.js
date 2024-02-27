@@ -4,6 +4,7 @@ import Catalog from './pages/catalog/Catalog';
 import Mashup from './pages/mashup/Mashup';
 import NewCatalog from './pages/catalog/NewCatalog';
 import NewMashup from './pages/mashup/NewMashup';
+import Profile from './pages/profile/Profile';
 import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -26,6 +27,9 @@ const App = () => {
                             <li className="nav-item"> 
                                 <Link to="/mashups" className="nav-link">Mashups</Link>
                             </li>
+                            <li className='nav-item'>
+                                <Link to="/profile" className="nav-link">Profile</Link>
+                            </li>
                         </ul>
                         <div className="navbar-auth"> 
                             <button className="navbar-button btn btn-primary me-2">Iniciar Sesión</button>
@@ -41,6 +45,7 @@ const App = () => {
                     <Route path="/mashups" element={<Mashup />} />
                     <Route path="/new_catalog" element={<NewCatalog />} />
                     <Route path="/new_mashup" element={<NewMashup />} />
+                    <Route path="/profile" element={<Profile />} />
                 </Routes>      
             </div>
         </BrowserRouter>
