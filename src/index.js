@@ -1,4 +1,4 @@
-import React from 'react';
+import {React, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import Catalog from './pages/catalog/Catalog';
 import Mashup from './pages/mashup/Mashup';
@@ -9,6 +9,33 @@ import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
+
+    const [rerender, setRerender] = useState(false);
+    useEffect(() => {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const codeParam = urlParams.get("code");
+        console.log(codeParam);
+
+        if(codeParam && (localStorage.getItem("accessToken") === null)){
+            async function getAccessToken(){
+                await fetch("http://localhost:3001/api/ghAccessToken?code=" + codeParam, {
+                    method: "GET"
+                }).then((response) => {
+                    console.log(response);
+                    return response.json();
+                }).then((data) => {
+                    if(data.access_token){
+                        localStorage.setItem("accessToken", data.access_token);
+                        setRerender(!rerender);
+                        window.location.href = '/profile';
+                    }
+                });
+            }
+            getAccessToken();
+        }
+    }, []);
+
     return (
         <BrowserRouter>
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark"> 

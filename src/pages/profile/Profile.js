@@ -1,4 +1,4 @@
-import {React, useEffect} from 'react';
+import {React, useEffect, useState} from 'react';
 import {
   MDBCol,
   MDBContainer,
@@ -15,18 +15,35 @@ import githubLogo from '../../static/images/githubLogo.svg';
 import trelloLogo from '../../static/images/trelloLogo.svg';
 import '../../static/css/profile.css';
 
-const clientId = "72548f03fe112aedfd33";
+const clientId ="72548f03fe112aedfd33";
 
 export default function Profile() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false); // Estado para verificar si el usuario está autenticado
+    const [username, setUsername] = useState(''); // Estado para almacenar el nombre de usuario
+    const accessToken = localStorage.getItem('accessToken'); // Obtiene el accessToken almacenado en localStorage
+
     useEffect(() => {
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
-        const code = urlParams.get('code');
+        if (accessToken) {
+          // Si hay un accessToken disponible, llama a la función para obtener el nombre de usuario
+          getGhUsername();
+        }
     }, []);
+
+    function getGhUsername() {
+        fetch('https://api.github.com/user', {
+          headers: {
+            Authorization: `token ${accessToken}`
+          }
+        })
+        .then(response => response.json())
+        .then(data => setUsername(data.login))
+        .catch(error => console.error('Error fetching GitHub username:', error));
+    }
 
     function loginWithGithub() {
         window.location.assign(`https://github.com/login/oauth/authorize?client_id=${clientId}&scope=user`);
     }
+
 
   return (
     <section style={{ backgroundColor: '#ffffff' }}>
@@ -116,7 +133,7 @@ export default function Profile() {
               <MDBCol md="6">
                 <MDBCard className="mb-4 mb-md-0">
                   <MDBCardBody>
-                    <MDBCardText className="mb-4 text-center">Connect your GitHub account</MDBCardText>
+                    {/* <MDBCardText className="mb-4 text-center">Connect your GitHub account</MDBCardText>
                     <MDBCol>
                         <MDBCard className="mb-4 mb-md-0">
                             <MDBCardBody>
@@ -125,7 +142,23 @@ export default function Profile() {
                                 </button>
                             </MDBCardBody>
                         </MDBCard>
-                    </MDBCol>
+                    </MDBCol> */}
+                    {!isLoggedIn ? (
+                      <MDBCardText className="mb-4 text-center">Welcome {username}!!</MDBCardText>
+                    ) : (
+                      <MDBCardText className="mb-4 text-center">Connect your GitHub account</MDBCardText>
+                    )}
+                    {isLoggedIn && (
+                      <MDBCol>
+                          <MDBCard className="mb-4 mb-md-0">
+                              <MDBCardBody>
+                                  <button onClick={loginWithGithub}>
+                                      <img src={githubLogo} alt="Logo" className="logo-svg" />
+                                  </button>
+                              </MDBCardBody>
+                          </MDBCard>
+                      </MDBCol>
+                    )}
                   </MDBCardBody>
                 </MDBCard>
               </MDBCol>
