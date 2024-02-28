@@ -133,16 +133,6 @@ export default function Profile() {
               <MDBCol md="6">
                 <MDBCard className="mb-4 mb-md-0">
                   <MDBCardBody>
-                    {/* <MDBCardText className="mb-4 text-center">Connect your GitHub account</MDBCardText>
-                    <MDBCol>
-                        <MDBCard className="mb-4 mb-md-0">
-                            <MDBCardBody>
-                                <button onClick={loginWithGithub}>
-                                    <img src={githubLogo} alt="Logo" className="logo-svg" />
-                                </button>
-                            </MDBCardBody>
-                        </MDBCard>
-                    </MDBCol> */}
                     {!isLoggedIn ? (
                       <MDBCardText className="mb-4 text-center">Welcome {username}!!</MDBCardText>
                     ) : (
