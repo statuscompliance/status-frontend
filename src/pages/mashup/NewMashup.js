@@ -4,17 +4,11 @@ import { useNavigate } from 'react-router-dom';
 
 function NewMashup() {
     const [mashupName, setMashupName] = useState('');
-    const [mashupDescription, setMashupDescription] = useState('');
     const navigate = useNavigate(); // Hook for navigation
 
     // Handler function for updating mashup name
     const handleNameChange = (e) => {
         setMashupName(e.target.value);
-    };
-
-    // Handler function for updating mashup description
-    const handleDescriptionChange = (e) => {
-        setMashupDescription(e.target.value);
     };
 
     // Handler function for form submission
@@ -23,7 +17,6 @@ function NewMashup() {
         
         const requestBody = {
             name: mashupName,
-            description: mashupDescription, // Include description in the request body
         };
 
         try {
@@ -61,15 +54,6 @@ function NewMashup() {
                                 value={mashupName}
                                 onChange={handleNameChange}
                                 required
-                            />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="mashupDescription">
-                            <Form.Label>Descripción del Mashup:</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={3}
-                                value={mashupDescription}
-                                onChange={handleDescriptionChange}
                             />
                         </Form.Group>
                         <div className="actions text-center">
