@@ -4,7 +4,7 @@ import { useStatus } from '../../hooks/useStatus'
 import { useNavigate } from 'react-router-dom';
 import "../../static/css/catalogList.css";
 import addSvg from '../../static/images/add.svg';
-        
+
 
 function CatalogList({ onCatalogSelect }) {
   const navigate = useNavigate(); // Hook for navigation
@@ -24,10 +24,10 @@ function CatalogList({ onCatalogSelect }) {
 
   // JSX representing the component's UI
   return (
-    <div className="container d-flex flex-column align-items-center pt-serif-regular">
+    <div className="d-flex flex-column align-items-center">
       <Card className="w-100 mb-3">
         <Card.Body className="text-center">
-          <Button variant="danger" className="calculate-button mb-3">Calcular</Button>
+          <Button className="calculate-button mb-3">Calcular</Button>
           <ul className="list-group">
             {/* Render each catalog item */}
             {catalogs.map((catalog) => (
@@ -40,12 +40,7 @@ function CatalogList({ onCatalogSelect }) {
               </li>
             ))}
           </ul>
-          <Button className="btn-add btn-success" onClick={handleNewCatalogClick}>
-            <div className="d-flex align-items-center">
-              <img src={addSvg} alt="Add" className="add-svg ml-5 mb-1" />
-              <p className="ml-3 mb-1">Nuevo catálogo</p>
-            </div>
-          </Button>
+          <Button variant="success" className="mt-3" onClick={handleNewCatalogClick}>Nuevo catálogo</Button>
         </Card.Body>
       </Card>
     </div>
