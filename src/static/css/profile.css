@@ -1,6 +1,23 @@
-.logo-svg{
-    width: 15%;
+.gh-logo-black-svg{
+    width: 20%;
     height: 10%;
     margin: 0 auto;
     display: block;
+}
+.github-login{
+    cursor: pointer;
+    align-items: center;
+}
+.welcome{
+    align-items: center;
+}
+.trello-logo-svg{
+    width: 20%;
+    height: 10%;
+    margin: 0 auto;
+    display: block;
+}
+.trello-login{
+    cursor: pointer;
+    align-items: center;
 }

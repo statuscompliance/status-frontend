@@ -11,21 +11,33 @@ import {
   MDBBreadcrumb,
   MDBBreadcrumbItem
 } from 'mdb-react-ui-kit';
-import githubLogo from '../../static/images/githubLogo.svg';
-import trelloLogo from '../../static/images/trelloLogo.svg';
+import githubLogoBlack from '../../static/images/github-logo.svg';
+import trelloLogo from '../../static/images/trello-logo.svg';
 import '../../static/css/profile.css';
 
 const clientId ="72548f03fe112aedfd33";
 
 export default function Profile() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false); // Estado para verificar si el usuario está autenticado
-    const [username, setUsername] = useState(''); // Estado para almacenar el nombre de usuario
-    const accessToken = localStorage.getItem('accessToken'); // Obtiene el accessToken almacenado en localStorage
+    const [isLoggedInGH, setIsLoggedInGH] = useState(false); 
+    const [isLoggedInTrello, setIsLoggedInTrello] = useState(false);
+    const [username, setUsername] = useState('');
+    const accessToken = localStorage.getItem('accessToken');
+    const [showTrelloModal, setShowTrelloModal] = useState(false);
+    const trelloToken = localStorage.getItem('trelloToken');
+    const [trelloUsername, setTrelloUsername] = useState('');
 
     useEffect(() => {
-        if (accessToken) {
-          // Si hay un accessToken disponible, llama a la función para obtener el nombre de usuario
+        if (accessToken && trelloToken) {
           getGhUsername();
+          getTrelloUsername();
+          setIsLoggedInGH(true);
+          setIsLoggedInTrello(true);
+        }else if (accessToken) {
+          getGhUsername();
+          setIsLoggedInGH(true);
+        } else if (trelloToken) {
+          getTrelloUsername();
+          setIsLoggedInTrello(true);
         }
     }, []);
 
@@ -40,10 +52,34 @@ export default function Profile() {
         .catch(error => console.error('Error fetching GitHub username:', error));
     }
 
+    function getTrelloUsername() {
+        const token = localStorage.getItem('trelloToken');
+        if (token) {
+            fetch(`https://api.trello.com/1/members/me?key=7ec49a17fcf64731824ed5914f182f81&token=${token}`, {
+                method: 'GET'
+            })
+            .then(response => response.json())
+            .then(data => setTrelloUsername(data.username))
+            .catch(error => console.error('Error fetching Trello username:', error));
+        }
+    }
+
     function loginWithGithub() {
         window.location.assign(`https://github.com/login/oauth/authorize?client_id=${clientId}&scope=user`);
     }
-
+    
+    function handleTrelloTokenSubmit(token) {
+        if (token) {
+            localStorage.setItem('trelloToken', token);
+            setIsLoggedInTrello(true);
+            setShowTrelloModal(false);
+            getTrelloUsername();
+        }
+    }
+    function openTrelloAuthorization() {
+        window.open(`https://trello.com/1/authorize?expiration=1day&name=Status&scope=read,write&response_type=token&key=7ec49a17fcf64731824ed5914f182f81`, '_blank');
+        setShowTrelloModal(true);
+    }
 
   return (
     <section style={{ backgroundColor: '#ffffff' }}>
@@ -133,21 +169,17 @@ export default function Profile() {
               <MDBCol md="6">
                 <MDBCard className="mb-4 mb-md-0">
                   <MDBCardBody>
-                    {!isLoggedIn ? (
-                      <MDBCardText className="mb-4 text-center">Welcome {username}!!</MDBCardText>
+                    {isLoggedInGH ? (
+                      <MDBCardText className="mb-4 text-center welcome">Logged in Github as {username}!!</MDBCardText>
                     ) : (
-                      <MDBCardText className="mb-4 text-center">Connect your GitHub account</MDBCardText>
-                    )}
-                    {isLoggedIn && (
-                      <MDBCol>
-                          <MDBCard className="mb-4 mb-md-0">
-                              <MDBCardBody>
-                                  <button onClick={loginWithGithub}>
-                                      <img src={githubLogo} alt="Logo" className="logo-svg" />
-                                  </button>
-                              </MDBCardBody>
-                          </MDBCard>
-                      </MDBCol>
+                        <div>
+                            <MDBCardText className="mb-4 text-center github-login" onClick={loginWithGithub}>
+                                <p>Connect your GitHub account </p>
+                                <span>
+                                    <img src={githubLogoBlack} alt="Logo" className="gh-logo-black-svg" />
+                                </span>
+                            </MDBCardText>
+                        </div>
                     )}
                   </MDBCardBody>
                 </MDBCard>
@@ -156,16 +188,18 @@ export default function Profile() {
               <MDBCol md="6">
                 <MDBCard className="mb-4 mb-md-0">
                   <MDBCardBody>
-                    <MDBCardText className="mb-4 text-center">Connect your Trello account</MDBCardText>
-                    <MDBCol>
-                        <MDBCard className="mb-4 mb-md-0">
-                            <MDBCardBody>
-                                <a href="/">
-                                    <img src={trelloLogo} alt="trelloLogo" className="logo-svg" />
-                                </a>
-                            </MDBCardBody>
-                        </MDBCard>
-                    </MDBCol>
+                  {isLoggedInTrello ? (
+                      <MDBCardText className="mb-4 text-center welcome">Logged in Trello as {trelloUsername}!!</MDBCardText>
+                    ) : (
+                        <div>
+                            <MDBCardText className="mb-4 text-center trello-login" onClick={openTrelloAuthorization}>
+                                <p>Connect your Trello account</p>
+                                <span>
+                                    <img src={trelloLogo} alt="trelloLogo" className="trello-logo-svg" />
+                                </span>
+                            </MDBCardText>
+                        </div>
+                    )}
                   </MDBCardBody>
                 </MDBCard>
               </MDBCol>
@@ -173,6 +207,24 @@ export default function Profile() {
           </MDBCol>
         </MDBRow>
       </MDBContainer>
+      {showTrelloModal && (
+          <div className="modal" style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.5)', position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1000}}>
+              <div className="modal-dialog" style={{margin: '150px auto', maxWidth: '500px'}}>
+                  <div className="modal-content">
+                      <div className="modal-header">
+                          <h5 className="modal-title">Enter Trello Token</h5>
+                          <button type="button" className="btn-close" aria-label="Close" onClick={() => setShowTrelloModal(false)}></button>
+                      </div>
+                      <div className="modal-body">
+                          <input type="text" className="form-control" placeholder="Enter your Trello token" value={trelloToken} onChange={(e) => localStorage.setItem("trelloToken",e.target.value)} />
+                      </div>
+                      <div className="modal-footer">
+                          <button type="button" className="btn btn-primary" onClick={() => handleTrelloTokenSubmit(trelloToken)}>Submit</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      )}
     </section>
   );
 }
