@@ -14,6 +14,7 @@ import {
 import githubLogo from '../../static/images/githubLogo.svg';
 import trelloLogo from '../../static/images/trelloLogo.svg';
 import '../../static/css/profile.css';
+import { Link } from 'react-router-dom';
 
 const clientId ="72548f03fe112aedfd33";
 
@@ -152,7 +153,7 @@ export default function Profile() {
                   </MDBCardBody>
                 </MDBCard>
               </MDBCol>
-
+              
               <MDBCol md="6">
                 <MDBCard className="mb-4 mb-md-0">
                   <MDBCardBody>
@@ -160,9 +161,9 @@ export default function Profile() {
                     <MDBCol>
                         <MDBCard className="mb-4 mb-md-0">
                             <MDBCardBody>
-                                <a href="/">
+                                <Link to="/">
                                     <img src={trelloLogo} alt="trelloLogo" className="logo-svg" />
-                                </a>
+                                </Link>
                             </MDBCardBody>
                         </MDBCard>
                     </MDBCol>

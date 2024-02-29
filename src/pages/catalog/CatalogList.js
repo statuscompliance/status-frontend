@@ -2,8 +2,6 @@ import React from 'react';
 import { Button, Card } from 'react-bootstrap';
 import { useStatus } from '../../hooks/useStatus'
 import { useNavigate } from 'react-router-dom';
-import "../../static/css/catalogList.css";
-import addSvg from '../../static/images/add.svg';
 
 function CatalogList({ onCatalogSelect }) {
   const navigate = useNavigate(); // Hook for navigation
