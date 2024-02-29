@@ -7,6 +7,9 @@ import NewMashup from './pages/mashup/NewMashup';
 import Profile from './pages/profile/Profile';
 import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './static/css/index.css';
+import logoSvg from './static/images/logo.svg';
+import githubLogo from './static/images/githubLogo.svg';
 
 const App = () => {
 
@@ -38,42 +41,51 @@ const App = () => {
 
     return (
         <BrowserRouter>
-            <nav className="navbar navbar-expand-lg navbar-dark bg-dark"> 
-                <div className="container-fluid"> 
-                    <div className="navbar-logo">
-                        <a className="navbar-brand" href="/">STATUS</a>
-                    </div>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span> 
-                    </button>
-                    <div className="collapse navbar-collapse" id="navbarNav">
-                        <ul className="navbar-nav me-auto"> 
-                            <li className="nav-item"> 
-                                <Link to="/catalogs" className="nav-link">Catálogos</Link>
+            <div className="app">
+                {/* Sidebar */}
+                <div className="sidebar">
+                        <Link to="/" className="navbar-brand navbar-dark pt-serif-bold d-flex align-items-center">
+                            <img src={logoSvg} alt="Logo" className="logo-svg" />
+                            <span className="ml-2">STATUS</span>
+                        </Link>
+                    <nav className="navbar navbar-dark flex-column">
+                        <ul className="navbar-nav align-items-center">
+                            <li className="nav-item">
+                                <Link to="/catalogs" className="nav-link pt-serif-regular">Catálogos</Link>
                             </li>
-                            <li className="nav-item"> 
-                                <Link to="/mashups" className="nav-link">Mashups</Link>
+                            <li className="nav-item">
+                                <Link to="/mashups" className="nav-link pt-serif-regular">Mashups</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/" className="nav-link pt-serif-regular">Logout</Link>
                             </li>
                             <li className='nav-item'>
                                 <Link to="/profile" className="nav-link">Profile</Link>
                             </li>
                         </ul>
-                        <div className="navbar-auth"> 
-                            <button className="navbar-button btn btn-primary me-2">Iniciar Sesión</button>
-                            <button className="navbar-button btn btn-secondary">Registrarse</button>
-                        </div>
+                    </nav>
+                    <div className="btn-container">
+                        <button className="btn btn-light pt-serif-regular">Logout</button>
+                    </div>
+                    <div className="line"></div>
+                    <div className="github-container">
+                        <a href="https://github.com/statuscompliance/node-red-status" target="_blank" rel="noopener noreferrer">
+                            <img src={githubLogo} alt="github" className="github-svg" />
+                        </a>
                     </div>
                 </div>
-            </nav>
-
-            <div className="container-fluid mt-4">
-                <Routes>
-                    <Route path="/catalogs" element={<Catalog />} />
-                    <Route path="/mashups" element={<Mashup />} />
-                    <Route path="/new_catalog" element={<NewCatalog />} />
-                    <Route path="/new_mashup" element={<NewMashup />} />
-                    <Route path="/profile" element={<Profile />} />
-                </Routes>      
+                {/* Main content */}
+                <div className="col-md-9">
+                    <div className="container-fluid mt-4">
+                        <Routes>
+                            <Route path="/catalogs" element={<Catalog />} />
+                            <Route path="/mashups" element={<Mashup />} />
+                            <Route path="/new_catalog" element={<NewCatalog />} />
+                            <Route path="/new_mashup" element={<NewMashup />} />
+                            <Route path="/profile" element={<Profile />} />
+                        </Routes>
+                    </div>
+                </div>
             </div>
         </BrowserRouter>
     );
