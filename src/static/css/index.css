@@ -58,30 +58,30 @@ body {
 }
 .github-container {
     position: absolute;
-    top: 93%; /* Centra verticalmente */
-    transform: translateY(50%); /* Ajusta la posición vertical */
-    left: 50%; /* Centra horizontalmente */
-    transform: translateX(-50%); /* Ajusta la posición horizontal */
+    top: 93%;
+    transform: translateY(50%);
+    left: 50%;
+    transform: translateX(-50%);
 }
 .github-svg {
     filter: invert(100%);
-    width: 35px; /* Ajusta el tamaño del logo según sea necesario */
-    height: auto; /* Para mantener la proporción */
+    width: 35px;
+    height: auto; 
 }
 .github-svg:hover{
-    cursor: pointer; /* Cambia el cursor al pasar por encima */
+    cursor: pointer; 
     transform: scale(1.2) translateX(0px);
 }
 .btn-container{
     text-align: center; 
     position: absolute;
-    top: 85%; /* Centra verticalmente */
-    transform: translateY(50%); /* Ajusta la posición vertical */
-    left: 50%; /* Centra horizontalmente */
+    top: 85%; 
+    transform: translateY(50%);
+    left: 50%; 
     transform: translateX(-50%);
 }
 .btn {
-    padding: 3px 7px;/* Ajusta el margen entre los botones */
+    padding: 3px 7px;
 }
 .pt-serif-regular {
     font-family: "PT Serif", serif;
