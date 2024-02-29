@@ -4,7 +4,6 @@ import { useStatus } from '../../hooks/useStatus'
 import { useNavigate } from 'react-router-dom';
 import "../../static/css/catalogList.css";
 import addSvg from '../../static/images/add.svg';
-import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
         
 
 function CatalogList({ onCatalogSelect }) {
