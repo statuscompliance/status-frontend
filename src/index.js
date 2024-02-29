@@ -13,6 +13,11 @@ import githubLogo from './static/images/githubLogo.svg';
 
 const App = () => {
 
+    function clean(){
+        localStorage.clear();
+        window.location.href = '/';
+    }
+
     const [rerender, setRerender] = useState(false);
     useEffect(() => {
         const queryString = window.location.search;
@@ -60,12 +65,12 @@ const App = () => {
                                 <Link to="/" className="nav-link pt-serif-regular">Logout</Link>
                             </li>
                             <li className='nav-item'>
-                                <Link to="/profile" className="nav-link">Profile</Link>
+                                <Link to="/profile" className="nav-link pt-serif-regular">Profile</Link>
                             </li>
                         </ul>
                     </nav>
                     <div className="btn-container">
-                        <button className="btn btn-light pt-serif-regular">Logout</button>
+                        <button className="btn btn-light pt-serif-regular" onClick={clean}>Disconnect</button>
                     </div>
                     <div className="line"></div>
                     <div className="github-container">
@@ -82,7 +87,7 @@ const App = () => {
                             <Route path="/mashups" element={<Mashup />} />
                             <Route path="/new_catalog" element={<NewCatalog />} />
                             <Route path="/new_mashup" element={<NewMashup />} />
-                            <Route path="/profile" element={<Profile />} />
+                            <Route path="/profile" element={<Profile/>} />
                         </Routes>
                     </div>
                 </div>
