@@ -21,18 +21,18 @@ export default function Profile() {
     const [isLoggedInGH, setIsLoggedInGH] = useState(false); 
     const [isLoggedInTrello, setIsLoggedInTrello] = useState(false);
     const [username, setUsername] = useState('');
-    const accessToken = localStorage.getItem('accessToken');
+    const ghToken = localStorage.getItem('ghToken');
     const [showTrelloModal, setShowTrelloModal] = useState(false);
     const trelloToken = localStorage.getItem('trelloToken');
     const [trelloUsername, setTrelloUsername] = useState('');
 
     useEffect(() => {
-        if (accessToken && trelloToken) {
+        if (ghToken && trelloToken) {
           getGhUsername();
           getTrelloUsername();
           setIsLoggedInGH(true);
           setIsLoggedInTrello(true);
-        }else if (accessToken) {
+        }else if (ghToken) {
           getGhUsername();
           setIsLoggedInGH(true);
         } else if (trelloToken) {
@@ -44,7 +44,7 @@ export default function Profile() {
     function getGhUsername() {
         fetch('https://api.github.com/user', {
           headers: {
-            Authorization: `token ${accessToken}`
+            Authorization: `token ${ghToken}`
           }
         })
         .then(response => response.json())
