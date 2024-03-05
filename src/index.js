@@ -1,18 +1,34 @@
 import {React, useEffect, useState} from 'react';
-import ReactDOM from 'react-dom';
+import {createRoot } from 'react-dom/client'; 
 import Catalog from './pages/catalog/Catalog';
 import Mashup from './pages/mashup/Mashup';
 import NewCatalog from './pages/catalog/NewCatalog';
 import NewMashup from './pages/mashup/NewMashup';
 import Profile from './pages/profile/Profile';
 import Login from './pages/auth/Login';
+import Logout from './pages/auth/Logout';
+import Editor from './pages/node-red/Editor';
 import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './static/css/index.css';
 import logoSvg from './static/images/logo.svg';
 import githubLogo from './static/images/githubLogo.svg';
+import { Button } from 'react-bootstrap';
 
 const App = () => {
+
+    const existsCookie = (name) => {
+        const cookieString = document.cookie;
+        const cookies = cookieString.split(';');
+        
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith(name + '=')) {
+                return true;
+            }
+        }
+        return false;
+    };
 
     function clean(){
         localStorage.clear();
@@ -24,7 +40,6 @@ const App = () => {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         const codeParam = urlParams.get("code");
-        console.log(codeParam);
 
         if(codeParam && (localStorage.getItem("ghToken") === null)){
             async function getGhToken(){
@@ -63,10 +78,13 @@ const App = () => {
                                 <Link to="/mashups" className="nav-link pt-serif-regular">Mashups</Link>
                             </li>
                             <li className="nav-item">
-                                {localStorage.getItem("trelloToken") ? (
-                                    <Link to="/" className="nav-link pt-serif-regular">Logout</Link>
+                                <Link to="/editor" className="nav-link pt-serif-regular">Node-RED</Link>
+                            </li>
+                            <li className="nav-item">
+                                { existsCookie('accessToken')? (
+                                    <Link to="/logout" className="nav-link pt-serif-regular">Cerrar sesión</Link>
                                 ) : (
-                                    <Link to="/login" className="nav-link pt-serif-regular">Login</Link>
+                                    <Link to="/login" className="nav-link pt-serif-regular">Iniciar sesión</Link>
                                 )}
                             </li>
                             <li className='nav-item'>
@@ -92,8 +110,10 @@ const App = () => {
                             <Route path="/mashups" element={<Mashup />} />
                             <Route path="/new_catalog" element={<NewCatalog />} />
                             <Route path="/new_mashup" element={<NewMashup />} />
+                            <Route path="/editor" element={<Editor />} />
                             <Route path="/profile" element={<Profile/>} />
                             <Route path="/login" element={<Login/>} />
+                            <Route path="/logout" element={<Logout/>} />
                         </Routes>
                     </div>
                 </div>
@@ -102,4 +122,6 @@ const App = () => {
     );
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const container = document.getElementById('root');
+const root = createRoot(container);
+root.render(<App />);

@@ -26,22 +26,27 @@ export default function Login() {
             }
         })
         .then((response) => {
-            document.cookie = `accessToken=${response.data.accessToken}`;
-            document.cookie = `refreshToken=${response.data.refreshToken}`; // Expiración¿?
-            window.location.href = '';
+            const now = new Date();
+            const oneHourLater = new Date(now.getTime()+ 60 * 60 * 1000);
+            const oneDayLater = new Date(now.getTime()+ 24 * 60 * 60 * 1000);
+            const accessExpires = oneHourLater.toUTCString();
+            const refreshExpires = oneDayLater.toUTCString();
+
+            document.cookie = `accessToken=${response.data.accessToken}; expires=${accessExpires}`;
+            document.cookie = `refreshToken=${response.data.refreshToken}; expires=${refreshExpires}`;
+            window.location.href = '/';
         })
         .catch((error) => {
-            // Maneja cualquier error
             console.error(error.message);
         });
     };
     
     return (
         <div>
-            <h1>Login</h1>
+            <h1>Iniciar sesión</h1>
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label htmlFor="username">Username:</label>
+                    <label htmlFor="username">Usuario:</label>
                     <input
                         type="text"
                         id="username"
@@ -50,7 +55,7 @@ export default function Login() {
                     />
                 </div>
                 <div>
-                    <label htmlFor="password">Password:</label>
+                    <label htmlFor="password">Contraseña:</label>
                     <input
                         type="password"
                         id="password"
@@ -58,7 +63,7 @@ export default function Login() {
                         onChange={handlePasswordChange}
                     />
                 </div>
-                <button type="submit">Login</button>
+                <button type="submit">Enviar</button>
             </form>
         </div>
     );
