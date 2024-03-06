@@ -1,27 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useNode } from '../../hooks/useNode';
 import '../../static/css/iframe.css';
 
+
 export default function Editor() {
-    const [isNodeRedDeployed, setIsNodeRedDeployed] = useState(false);
-
-    useEffect(() => {
-        checkNodeRedDeployment();
-    }, []);
-
-    const checkNodeRedDeployment = () => {
-        fetch('http://localhost:1880')
-            .then(response => {
-                if (response.ok) {
-                    setIsNodeRedDeployed(true);
-                }
-            })
-            .catch(error => {
-                if (error) {
-                    setIsNodeRedDeployed(false);
-                }
-            });
-    };
-
+    const { isNodeRedDeployed } = useNode();
+    
     return (
         <div className='container'>
             {isNodeRedDeployed ? (

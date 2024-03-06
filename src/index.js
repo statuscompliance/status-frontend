@@ -9,6 +9,7 @@ import Login from './pages/auth/Login';
 import Logout from './pages/auth/Logout';
 import Editor from './pages/node-red/Editor';
 import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
+import { statusApi } from './api/statusApi';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './static/css/index.css';
 import logoSvg from './static/images/logo.svg';
@@ -35,17 +36,16 @@ const App = () => {
     }
 
     async function getGhToken(codeParam) {
-        await fetch("http://localhost:3001/api/ghAccessToken?code=" + codeParam, {
-            method: "GET"
-        }).then((response) => {
-            console.log(response);
-            return response.json();
-        }).then((data) => {
-            if(data.access_token){
+        try {
+            const response = await statusApi.get(`http://localhost:3001/api/ghAccessToken?code=${codeParam}`);
+            const data = response.data;
+            if (data.access_token) {
                 localStorage.setItem("ghToken", data.access_token);
                 window.location.href = '/profile';
             }
-        });
+        } catch (error) {
+            console.error('Error fetching GitHub access token:', error);
+        }
     }
     useEffect(() => {
         const queryString = window.location.search;
