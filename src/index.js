@@ -34,7 +34,7 @@ const App = () => {
         window.location.href = '/';
     }
 
-    async function getGhToken(codeParam, setRerender) {
+    async function getGhToken(codeParam) {
         await fetch("http://localhost:3001/api/ghAccessToken?code=" + codeParam, {
             method: "GET"
         }).then((response) => {
