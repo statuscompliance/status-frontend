@@ -63,30 +63,30 @@ const App = () => {
             <div className="app">
                 {/* Sidebar */}
                 <div className="sidebar">
-                        <Link to="/" className="navbar-brand navbar-dark pt-serif-bold d-flex align-items-center">
-                            <img src={logoSvg} alt="Logo" className="logo-svg" />
+                        <Link className="navbar-brand navbar-dark pt-serif-bold d-flex align-items-center"to="/">
+                            <img alt="Logo" className="logo-svg" src={logoSvg}/>
                             <span className="ml-2">STATUS</span>
                         </Link>
                     <nav className="navbar navbar-dark flex-column">
                         <ul className="navbar-nav align-items-center">
                             <li className="nav-item">
-                                <Link to="/catalogs" className="nav-link pt-serif-regular">Catálogos</Link>
+                                <Link className="nav-link pt-serif-regular" to="/catalogs">Catálogos</Link>
                             </li>
                             <li className="nav-item">
-                                <Link to="/mashups" className="nav-link pt-serif-regular">Mashups</Link>
+                                <Link className="nav-link pt-serif-regular" to="/mashups">Mashups</Link>
                             </li>
                             <li className="nav-item">
-                                <Link to="/editor" className="nav-link pt-serif-regular">Node-RED</Link>
+                                <Link className="nav-link pt-serif-regular" to="/editor">Node-RED</Link>
                             </li>
                             <li className="nav-item">
                                 { existsCookie('accessToken')? (
-                                    <Link to="/logout" className="nav-link pt-serif-regular">Cerrar sesión</Link>
+                                    <Link className="nav-link pt-serif-regular" to="/logout">Cerrar sesión</Link>
                                 ) : (
-                                    <Link to="/login" className="nav-link pt-serif-regular">Iniciar sesión</Link>
+                                    <Link className="nav-link pt-serif-regular" to="/login">Iniciar sesión</Link>
                                 )}
                             </li>
                             <li className='nav-item'>
-                                <Link to="/profile" className="nav-link pt-serif-regular">Profile</Link>
+                                <Link className="nav-link pt-serif-regular" to="/profile">Profile</Link>
                             </li>
                         </ul>
                     </nav>
@@ -95,8 +95,8 @@ const App = () => {
                     </div>
                     <div className="line"></div>
                     <div className="github-container">
-                        <a href="https://github.com/statuscompliance/node-red-status" target="_blank" rel="noopener noreferrer">
-                            <img src={githubLogo} alt="github" className="github-svg" />
+                        <a href="https://github.com/statuscompliance/node-red-status" rel="noopener noreferrer" target="_blank">
+                            <img alt="github" className="github-svg" src={githubLogo}/>
                         </a>
                     </div>
                 </div>
@@ -104,14 +104,14 @@ const App = () => {
                 <div className="col-md-9">
                     <div className="container-fluid mt-4">
                         <Routes>
-                            <Route path="/catalogs" element={<Catalog />} />
-                            <Route path="/editor" element={<Editor />} />
-                            <Route path="/login" element={<Login/>} />
-                            <Route path="/logout" element={<Logout/>} />
-                            <Route path="/mashups" element={<Mashup />} />
-                            <Route path="/new_catalog" element={<NewCatalog />} />
-                            <Route path="/new_mashup" element={<NewMashup />} />
-                            <Route path="/profile" element={<Profile/>} />
+                            <Route element={<Catalog />} path="/catalogs"/>
+                            <Route element={<Mashup />} path="/mashups"/>
+                            <Route element={<NewCatalog />} path="/new_catalog"/>
+                            <Route element={<NewMashup />} path="/new_mashup"/>
+                            <Route element={<Profile />} path="/profile"/>
+                            <Route element={<Login />} path="/login"/>
+                            <Route element={<Logout />} path="/logout"/>
+                            <Route element={<Editor />} path="/editor"/>
                         </Routes>
                     </div>
                 </div>
