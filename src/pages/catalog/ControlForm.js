@@ -16,23 +16,23 @@ const ControlForm = ({
         <Form.Group className="mb-3" controlId={`controlName_${index}`}>
           <Form.Label>Nombre del Control:</Form.Label>
           <Form.Control
-            type="text"
-            value={control.name}
+            maxLength={100}
             onChange={(e) => handleControlChange(index, "name", e.target.value)}
             required
-            maxLength={100}
+            type="text"
+            value={control.name}
           />
         </Form.Group>
         <Form.Group className="mb-3" controlId={`controlDescription_${index}`}>
           <Form.Label>Descripción:</Form.Label>
           <Form.Control
             as="textarea"
-            value={control.description}
+            maxLength={300}
             onChange={(e) =>
               handleControlChange(index, "description", e.target.value)
             }
             required
-            maxLength={300}
+            value={control.description}
           />
         </Form.Group>
         <Row>
@@ -105,8 +105,8 @@ const ControlForm = ({
           </Col>
         </Row>
         {/* Render the mashup inputs */}
-        {control.inputs.map((input, inputIndex) => (
-          <Form.Group key={input.id} className="mb-3">
+        {control.inputs.map((input) => (
+          <Form.Group className="mb-3" key={input.id}>
             <Form.Label>{input.name}:</Form.Label>
             {input.type === "STRING" ? (
               <Form.Control
@@ -129,7 +129,7 @@ const ControlForm = ({
             )}
           </Form.Group>
         ))}
-        <Button variant="danger" onClick={() => handleRemoveControl(index)}>
+        <Button onClick={() => handleRemoveControl(index)} variant="danger">
           Eliminar Control
         </Button>
       </Card.Body>

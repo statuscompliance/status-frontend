@@ -108,34 +108,34 @@ function NewCatalog() {
               <Form.Group className="mb-3" controlId="catalogName">
                 <Form.Label>Nombre del Catálogo:</Form.Label>
                 <Form.Control
-                  type="text"
-                  value={catalogName}
+                  maxLength={100}
                   onChange={handleNameChange}
                   required
-                  maxLength={100}
+                  type="text"
+                  value={catalogName}
                 />
               </Form.Group>
               {/* Rendering controls */}
               {controls.length > 0 && (
                 <Carousel
-                  key={`carousel-${controls.length}-${lastItemRemoved}`}
                   controls={false}
+                  interval={null}
+                  key={`carousel-${controls.length}-${lastItemRemoved}`}
                   pause="hover"
                   wrap={false}
-                  interval={null}
                 >
                   {controls.map((control, index) => (
                     <Carousel.Item key={index}>
                       <div className="col-12" key={index}>
                         <ControlForm
-                          key={index}
                           control={control}
-                          index={index}
                           handleControlChange={handleControlChange}
-                          handleRemoveControl={handleRemoveControl}
                           handleInputChange={handleInputChange}
-                          period={Period}
+                          handleRemoveControl={handleRemoveControl}
+                          index={index}
+                          key={index}
                           mashups={mashups}
+                          period={Period}
                         />
                       </div>
                     </Carousel.Item>
@@ -145,7 +145,7 @@ function NewCatalog() {
               <Row className="mt-3">
                 <Col>
                   <div className="actions text-center">
-                    <Button variant="secondary" onClick={addEmptyControl}>
+                    <Button onClick={addEmptyControl} variant="secondary">
                       Agregar Control
                     </Button>
                   </div>
@@ -153,9 +153,9 @@ function NewCatalog() {
                 <Col>
                   <div className="actions text-center">
                     <Button
-                      variant="success"
-                      type="submit"
                       className="text-center"
+                      type="submit"
+                      variant="success"
                     >
                       Crear Catálogo
                     </Button>

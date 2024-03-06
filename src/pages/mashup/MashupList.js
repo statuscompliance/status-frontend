@@ -39,9 +39,9 @@ function MashupList({ onMashupSelect }) {
             ))}
           </ul>
           <Button
-            variant="success"
             className="mt-3"
             onClick={handleNewMashupClick}
+            variant="success"
           >
             Nuevo mashup
           </Button>
