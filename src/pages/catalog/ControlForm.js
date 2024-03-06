@@ -86,7 +86,7 @@ const ControlForm = ({
           </Col>
           <Col>
             <Form.Group className="mb-3" controlId={`controlMashup_${index}`}>
-              <Form.Label>Mashup:</Form.Label>
+              <Form.Label>Verificación:</Form.Label>
               <Form.Select
                 value={control.mashup}
                 onChange={(e) =>
