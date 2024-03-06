@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { Button, Card } from 'react-bootstrap';
-import { useStatus } from '../../hooks/useStatus'
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Button, Card } from "react-bootstrap";
+import { useMashups } from "../../hooks/useMashups";
+import { useNavigate } from "react-router-dom";
 
 function MashupList({ onMashupSelect }) {
   const [selectedMashup, setSelectedMashup] = useState(null);
   const navigate = useNavigate(); // Hook for navigation
 
   // Custom hook to retrieve mashups data
-  const { mashups } = useStatus();
+  const { mashups } = useMashups();
 
   // Handler function for mashup item click
   const handleMashupClick = (mashup) => {
@@ -18,7 +18,7 @@ function MashupList({ onMashupSelect }) {
 
   // Handler function for new mashup button click
   const handleNewMashupClick = () => {
-    navigate('/new_mashup');
+    navigate("/new_mashup");
   };
 
   // JSX representing the component's UI
@@ -38,7 +38,13 @@ function MashupList({ onMashupSelect }) {
               </li>
             ))}
           </ul>
-          <Button variant="success" className="mt-3" onClick={handleNewMashupClick}>Nuevo mashup</Button>
+          <Button
+            variant="success"
+            className="mt-3"
+            onClick={handleNewMashupClick}
+          >
+            Nuevo mashup
+          </Button>
         </Card.Body>
       </Card>
     </div>
