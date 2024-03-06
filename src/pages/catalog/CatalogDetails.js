@@ -111,13 +111,6 @@ const CatalogDetails = ({ selectedCatalog, catalogControls }) => {
               onChange={handleCatalogChange}
             />
           </h3>
-          <h3> 
-            Url: <input 
-              type="text"
-              value={specificCatalog.url}
-              className="form-control"
-              onChange={handleCatalogChange} /> 
-          </h3>
           {/* Rendering controls */}
           <h3 className="mt-3">Controles:</h3>
           <div>
