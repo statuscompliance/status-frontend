@@ -15,14 +15,10 @@ export const useMashups = () => {
 
   const getInputsForMashupFromTheDB = async (mashupId) => {
     try {
-      const response = await fetch(
+      const response = await statusApi.get(
         `http://localhost:3001/api/${mashupId}/inputs`
       );
-      if (!response.ok) {
-        throw new Error("No se pudieron obtener las entradas del mashup");
-      }
-      const inputs = await response.json();
-      return inputs;
+      return response.data;
     } catch (error) {
       console.error("Error al obtener las entradas del mashup:", error);
       return [];

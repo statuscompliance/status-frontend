@@ -15,13 +15,10 @@ export const useCatalogs = () => {
   };
 
   const createCatalogInDB = async (catalogName) => {
-    return await fetch("http://localhost:3001/api/catalog", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name: catalogName }),
+    const resp = await statusApi.post("http://localhost:3001/api/catalog", {
+      name: catalogName,
     });
+    return resp.data;
   };
 
   const updateCatalog = (index, id, value) => {

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { statusApi } from "../api/statusApi";
 
 export const useControls = () => {
   const [controls, setControls] = useState([]);
@@ -30,21 +31,16 @@ export const useControls = () => {
     mashupId,
     catalogId
   ) => {
-    return await fetch("http://localhost:3001/api/control", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: name,
-        description: description,
-        startDate: startDate,
-        endDate: endDate,
-        period: period,
-        mashup_id: mashupId,
-        catalog_id: catalogId,
-      }),
+    const resp = await statusApi.post("http://localhost:3001/api/control", {
+      name: name,
+      description: description,
+      startDate: startDate,
+      endDate: endDate,
+      period: period,
+      mashup_id: mashupId,
+      catalog_id: catalogId,
     });
+    return resp.data;
   };
 
   const updateControl = (index, field, value) => {
@@ -63,17 +59,15 @@ export const useControls = () => {
   };
 
   const createControlInputInDB = async (control_id, input_id, value) => {
-    return await fetch("http://localhost:3001/api/input_control", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const resp = await statusApi.post(
+      "http://localhost:3001/api/input_control",
+      {
         control_id: control_id,
         input_id: input_id,
         value: value,
-      }),
-    });
+      }
+    );
+    return resp.data;
   };
 
   const updateControlInputs = (controlIndex, inputId, inputValue) => {

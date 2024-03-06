@@ -51,10 +51,7 @@ function NewCatalog() {
       inputId,
       value
     );
-    if (!inputControlResponse.ok) {
-      throw new Error("Error al crear InputControl.");
-    }
-    return inputControlResponse.json();
+    return inputControlResponse;
   };
 
   // Handler function for create a control
@@ -69,11 +66,7 @@ function NewCatalog() {
       catalogId
     );
 
-    if (!response.ok) {
-      throw new Error("Error al crear un control.");
-    }
-
-    const controlData = await response.json();
+    const controlData = await response;
     const inputControlPromises = Object.entries(control.inputValues).map(
       ([inputId, value]) =>
         handleCreateControlInput(controlData.id, inputId, value)
@@ -89,25 +82,15 @@ function NewCatalog() {
 
     try {
       const catalogResponse = await createCatalogInDB(catalogName);
-      if (!catalogResponse.ok) {
-        console.error("Error al crear el catálogo.");
-        return;
-      }
 
-      const catalogData = await catalogResponse.json();
+      const catalogData = await catalogResponse;
       const catalogId = catalogData.id;
 
       const controlPromises = controls.map((control) =>
         handleCreateControl(control, catalogId)
       );
-      const controlResponses = await Promise.all(controlPromises);
-
-      if (controlResponses.every((response) => response)) {
-        console.log("Catálogo y controles creados exitosamente.");
-        navigate("/catalogs");
-      } else {
-        console.error("Error al crear los controles.");
-      }
+      await Promise.all(controlPromises);
+      navigate("/catalogs");
     } catch (error) {
       console.error("Error al realizar la solicitud:", error);
     }
