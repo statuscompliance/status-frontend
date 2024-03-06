@@ -1,4 +1,4 @@
-import React, { useState, useEffect , Redirect} from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Modal } from 'react-bootstrap';
 
@@ -12,9 +12,9 @@ export default function Logout() {
         const cookieString = document.cookie;
         const cookies = cookieString.split(';');
         
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.startsWith(name + '=')) {
+        for (const cookie of cookies) {
+            const cookieTrimmed = cookie.trim();
+            if (cookieTrimmed.startsWith(name + '=')) {
                 return true;
             }
         }
@@ -52,7 +52,7 @@ export default function Logout() {
         <div>
             {isLoggedIn ? (
                 <div className="logout">
-                    <Modal show={showModal} onHide={closeModal}>
+                    <Modal onHide={closeModal} show={showModal}>
                         <Modal.Header closeButton>
                             <Modal.Title>Confirmación</Modal.Title>
                         </Modal.Header>

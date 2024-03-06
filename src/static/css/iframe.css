@@ -4,14 +4,15 @@
 }
 
 .node-red {
-    width: 110%; /* El ancho del 100% menos el margen total (12%) */
+    width: 110%;
     height: 85%;
     border: 5px solid #bf0a2e;
     border-radius: 10px;
-    margin-left: 13%; /* Centra horizontalmente dentro del contenedor */
+    margin-left: 13%; 
 }
+
 .node-red-off{
-    width: 110%; /* El ancho del 100% menos el margen total (12%) */
+    width: 110%;
     height: 85%;
     border: 5px solid #bf0a2e;
     border-radius: 10px;
@@ -19,21 +20,25 @@
     background-color: transparent;
     text-align: center;
 }
+
 .node-red-off p {
     font-size: 1.2em;
     text-align: center;
     margin-top: 30%;
 }
+
 .node-red-off a{
     font-size: 1.1em;
     text-align: center;
     color: white;
     background-color: #bf0a2e;
 }
+
 .node-red-off a:hover{
     color: white;
     background-color: #8a0923;
 }
+
 .pt-serif-regular {
     font-family: "PT Serif", serif;
     font-weight: 400;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
 
@@ -48,19 +48,19 @@ export default function Login() {
                 <div>
                     <label htmlFor="username">Usuario:</label>
                     <input
-                        type="text"
                         id="username"
-                        value={username}
                         onChange={handleUsernameChange}
+                        type="text"
+                        value={username}
                     />
                 </div>
-                <div>
+                <div> 
                     <label htmlFor="password">Contraseña:</label>
                     <input
-                        type="password"
                         id="password"
-                        value={password}
                         onChange={handlePasswordChange}
+                        type="password"
+                        value={password}
                     />
                 </div>
                 <button type="submit">Enviar</button>

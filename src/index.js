@@ -1,4 +1,4 @@
-import {React, useEffect, useState} from 'react';
+import {React, useEffect} from 'react';
 import {createRoot } from 'react-dom/client'; 
 import Catalog from './pages/catalog/Catalog';
 import Mashup from './pages/mashup/Mashup';
@@ -13,7 +13,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './static/css/index.css';
 import logoSvg from './static/images/logo.svg';
 import githubLogo from './static/images/githubLogo.svg';
-import { Button } from 'react-bootstrap';
 
 const App = () => {
 
@@ -21,9 +20,9 @@ const App = () => {
         const cookieString = document.cookie;
         const cookies = cookieString.split(';');
         
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.startsWith(name + '=')) {
+        for (const cookie of cookies) {
+            const cookieTrimmed = cookie.trim();
+            if (cookieTrimmed.startsWith(name + '=')) {
                 return true;
             }
         }
@@ -35,30 +34,29 @@ const App = () => {
         window.location.href = '/';
     }
 
-    const [rerender, setRerender] = useState(false);
+    async function getGhToken(codeParam, setRerender) {
+        await fetch("http://localhost:3001/api/ghAccessToken?code=" + codeParam, {
+            method: "GET"
+        }).then((response) => {
+            console.log(response);
+            return response.json();
+        }).then((data) => {
+            if(data.access_token){
+                localStorage.setItem("ghToken", data.access_token);
+                window.location.href = '/profile';
+            }
+        });
+    }
     useEffect(() => {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         const codeParam = urlParams.get("code");
 
         if(codeParam && (localStorage.getItem("ghToken") === null)){
-            async function getGhToken(){
-                await fetch("http://localhost:3001/api/ghAccessToken?code=" + codeParam, {
-                    method: "GET"
-                }).then((response) => {
-                    console.log(response);
-                    return response.json();
-                }).then((data) => {
-                    if(data.access_token){
-                        localStorage.setItem("ghToken", data.access_token);
-                        setRerender(!rerender);
-                        window.location.href = '/profile';
-                    }
-                });
-            }
-            getGhToken();
+            getGhToken(codeParam);
         }
     }, []);
+
 
     return (
         <BrowserRouter>
@@ -107,13 +105,13 @@ const App = () => {
                     <div className="container-fluid mt-4">
                         <Routes>
                             <Route path="/catalogs" element={<Catalog />} />
+                            <Route path="/editor" element={<Editor />} />
+                            <Route path="/login" element={<Login/>} />
+                            <Route path="/logout" element={<Logout/>} />
                             <Route path="/mashups" element={<Mashup />} />
                             <Route path="/new_catalog" element={<NewCatalog />} />
                             <Route path="/new_mashup" element={<NewMashup />} />
-                            <Route path="/editor" element={<Editor />} />
                             <Route path="/profile" element={<Profile/>} />
-                            <Route path="/login" element={<Login/>} />
-                            <Route path="/logout" element={<Logout/>} />
                         </Routes>
                     </div>
                 </div>

@@ -1,23 +1,22 @@
-/* Modal container */
 .modal {
-    display: none; /* Hide the modal by default */
-    position: fixed; /* Position the modal */
-    z-index: 1; /* Set the modal on top of other elements */
+    display: none; 
+    position: fixed; 
+    z-index: 1;
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scrolling if needed */
-    background-color: rgba(0, 0, 0, 0.4); /* Black background with transparency */
+    width: 100%;
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0 0 0 / 40%);
 }
 
 /* Modal content */
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto; /* Center the modal vertically and horizontally */
+    margin: 15% auto; 
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Set the width of the modal */
+    width: 80%;
 }
 
 /* Close button */
