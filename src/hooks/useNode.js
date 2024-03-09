@@ -11,7 +11,7 @@ export const useNode = () => {
     const checkNodeRedDeployment = async () => {
         try{
             const response = await statusApi.get('http://localhost:1880');
-            if (response.ok) {
+            if (response.status === 200) {
                 setIsNodeRedDeployed(true);
             }
         } catch(error) {
@@ -21,5 +21,5 @@ export const useNode = () => {
         }
     };
 
-    return { isNodeRedDeployed };
+    return { isNodeRedDeployed, checkNodeRedDeployment};
 };
