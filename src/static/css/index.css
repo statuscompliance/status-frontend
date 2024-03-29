@@ -1,16 +1,19 @@
 body {
-    position: relative;
+    position: absolute;
+    height: 100%; /* Ajusta la altura de la aplicación */
+    width: 100%; /* Ajusta el ancho de la aplicación */
     font-size: 21px; /* Tamaño de letra base */
 }
-.app {
-    display: flex;
-    height: 100vh; /* Ajusta la altura de la aplicación */
+#root {
+    height: 100%;
+    width: 100%;
+    position: absolute;
 }
 .sidebar {
-    position: relative;
+    position: absolute;
     width: 16%;
     background-color: #bf0a2e; /* Cambia el color de fondo de la barra lateral según sea necesario */
-    height: 100vh; /* Ajusta la altura de la barra lateral */
+    height: 100%; /* Ajusta la altura de la barra lateral */
 }
 .navbar-brand{
     margin-left: 10%; /* Ajusta el margen izquierdo del logotipo */
@@ -45,7 +48,8 @@ body {
     color: #d3cdcd; /* Cambia el color del texto según sea necesario */
 }
 .col-md-9 {
-    padding-left: 0; /* Ajusta el espaciado a la izquierda del contenido principal */
+    padding-left: 0;
+    height: 100%; /* Ajusta el espaciado a la izquierda del contenido principal */
 }
 .line {
     position: absolute;
@@ -82,27 +86,4 @@ body {
 }
 .btn {
     padding: 3px 7px;
-}
-.pt-serif-regular {
-    font-family: "PT Serif", serif;
-    font-weight: 400;
-    font-style: normal;
-}
-
-.pt-serif-bold {
-    font-family: "PT Serif", serif;
-    font-weight: 700;
-    font-style: normal;
-}
-
-.pt-serif-regular-italic {
-    font-family: "PT Serif", serif;
-    font-weight: 400;
-    font-style: italic;
-}
-
-.pt-serif-bold-italic {
-    font-family: "PT Serif", serif;
-    font-weight: 700;
-    font-style: italic;
 }

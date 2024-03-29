@@ -1,4 +1,4 @@
-import {React, useEffect} from 'react';
+import  {useEffect, useState} from 'react';
 import {createRoot } from 'react-dom/client'; 
 import Catalog from './pages/catalog/Catalog';
 import Mashup from './pages/mashup/Mashup';
@@ -8,32 +8,47 @@ import Profile from './pages/profile/Profile';
 import Login from './pages/auth/Login';
 import Logout from './pages/auth/Logout';
 import Editor from './pages/node-red/Editor';
+import Chat from './pages/chat/Chat';
+import Home from './pages/Home';
 import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
 import { statusApi } from './api/statusApi';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './static/css/index.css';
 import logoSvg from './static/images/logo.svg';
 import githubLogo from './static/images/githubLogo.svg';
+import { useCookie } from './hooks/useCookie';
+import { useAuth } from './hooks/useAuth';
+import { Modal } from 'react-bootstrap';
 
 const App = () => {
+    const [showModal, setShowModal] = useState(false);
+    const existsCookie = useCookie('accessToken');
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    const existsCookie = (name) => {
-        const cookieString = document.cookie;
-        const cookies = cookieString.split(';');
-        
-        for (const cookie of cookies) {
-            const cookieTrimmed = cookie.trim();
-            if (cookieTrimmed.startsWith(name + '=')) {
-                return true;
-            }
-        }
-        return false;
-    };
+    useEffect(() => {
+        setIsLoggedIn(existsCookie);
+    }, [existsCookie]);
 
     function clean(){
         localStorage.clear();
         window.location.href = '/';
     }
+
+    const handleRefreshToken = () => {
+        useAuth.handleRefresh();
+        setShowModal(false);
+    };
+
+    const handleLogout = () => {
+        statusApi.get('http://localhost:3001/api/user/signOut')
+            .then(() => {
+                document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+                document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+            })
+            .catch((error) => {
+                console.error(error.message);
+            });
+    };
 
     async function getGhToken(codeParam) {
         try {
@@ -57,10 +72,25 @@ const App = () => {
         }
     }, []);
 
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setShowModal(true);
+        }, 3420000); // 57 minutos en milisegundos
+
+        return () => clearInterval(timer);
+    }, []);
+
 
     return (
         <BrowserRouter>
-            <div className="app">
+                {showModal && isLoggedIn && (
+                        <Modal onClose={() => setShowModal(false)}>
+                            <h2>¿Sigues ahí?</h2>
+                            <p>Tu sesión está a punto de expirar.</p>
+                            <p>Cuenta atrás: <CountdownTimer onTimeout={handleLogout} /></p>
+                            <button onClick={handleRefreshToken}>Sí</button>
+                        </Modal>
+                )}
                 {/* Sidebar */}
                 <div className="sidebar">
                         <Link className="navbar-brand navbar-dark pt-serif-bold d-flex align-items-center"to="/">
@@ -68,7 +98,7 @@ const App = () => {
                             <span className="ml-2">STATUS</span>
                         </Link>
                     <nav className="navbar navbar-dark flex-column">
-                        <ul className="navbar-nav align-items-center">
+                        <ul className="navbar-nav align-items-start">
                             <li className="nav-item">
                                 <Link className="nav-link pt-serif-regular" to="/catalogs">Catálogos</Link>
                             </li>
@@ -79,7 +109,10 @@ const App = () => {
                                 <Link className="nav-link pt-serif-regular" to="/editor">Node-RED</Link>
                             </li>
                             <li className="nav-item">
-                                { existsCookie('accessToken')? (
+                                <Link className="nav-link pt-serif-regular" to="/chat">Chat</Link>
+                            </li>
+                            <li className="nav-item">
+                                { existsCookie? (
                                     <Link className="nav-link pt-serif-regular" to="/logout">Cerrar sesión</Link>
                                 ) : (
                                     <Link className="nav-link pt-serif-regular" to="/login">Iniciar sesión</Link>
@@ -100,24 +133,41 @@ const App = () => {
                         </a>
                     </div>
                 </div>
-                {/* Main content */}
-                <div className="col-md-9">
-                    <div className="container-fluid mt-4">
-                        <Routes>
-                            <Route element={<Catalog />} path="/catalogs"/>
-                            <Route element={<Mashup />} path="/mashups"/>
-                            <Route element={<NewCatalog />} path="/new_catalog"/>
-                            <Route element={<NewMashup />} path="/new_mashup"/>
-                            <Route element={<Profile />} path="/profile"/>
-                            <Route element={<Login />} path="/login"/>
-                            <Route element={<Logout />} path="/logout"/>
-                            <Route element={<Editor />} path="/editor"/>
-                        </Routes>
-                    </div>
-                </div>
-            </div>
+                {/* Routes */}
+                <Routes>
+                    <Route exact element={<Home/>}path="/" />
+                    <Route element={<Catalog />} path="/catalogs"/>
+                    <Route element={<Mashup />} path="/mashups"/>
+                    <Route element={<NewCatalog />} path="/new_catalog"/>
+                    <Route element={<NewMashup />} path="/new_mashup"/>
+                    <Route element={<Profile />} path="/profile"/>
+                    <Route element={<Login />} path="/login"/>
+                    <Route element={<Logout />} path="/logout"/>
+                    <Route element={<Editor />} path="/editor"/>
+                    <Route element={<Chat />} path="/chat"/>
+                </Routes>
         </BrowserRouter>
     );
+}
+
+const CountdownTimer = ({ onTimeout }) => {
+    const [seconds, setSeconds] = useState(60);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setSeconds(prevSeconds => prevSeconds - 1);
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, []);
+
+    useEffect(() => {
+        if (seconds === 0) {
+            onTimeout(); // Llamar a la función cuando se agote el tiempo
+        }
+    }, [seconds, onTimeout]);
+
+    return <span>{seconds}</span>;
 }
 
 const container = document.getElementById('root');

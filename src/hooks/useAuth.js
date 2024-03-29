@@ -33,12 +33,33 @@ export const useAuth = () => {
 
             document.cookie = `accessToken=${response.data.accessToken}; expires=${accessExpires}`;
             document.cookie = `refreshToken=${response.data.refreshToken}; expires=${refreshExpires}`;
-            window.location.href = '/';
+            window.location.href = window.location.origin;
         })
         .catch((error) => {
             console.error(error.message);
         });
     };
 
-    return { username, password, handleUsernameChange, handlePasswordChange, handleSubmit };
+    const handleRefresh = async (event) => {
+        event.preventDefault();
+        if(document.cookie.split('; ').find(row => row.startsWith(`accessToken=`))) {
+            const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1];
+            try {
+                const response = await statusApi.get('http://localhost:3001/api/refresh', {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`
+                }});
+                const now = new Date();
+                const oneHourLater = new Date(now.getTime()+ 60 * 60 * 1000);
+                const accessExpires = oneHourLater.toUTCString();
+                document.cookie = `accessToken=${response.data.accessToken}; expires=${accessExpires}`;
+            } catch (error) {
+                console.error('Error refreshing the token:', error);
+            };
+        }
+    }
+            
+
+    return { username, password, handleUsernameChange, handlePasswordChange, handleSubmit, handleRefresh };
 };

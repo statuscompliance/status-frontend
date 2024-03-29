@@ -12,13 +12,13 @@ export default function Editor() {
 
 
     return (
-        <div className='container'>
+        <div className='editor'>
             {isNodeRedDeployed ? (
-                <iframe className="node-red" src="http://localhost:1880" title="Node-RED"></iframe>
+                <iframe className="node-red-off" src="http://localhost:1880" title="Node-RED"></iframe>
             ) : (
                 <div className='node-red-off'>
-                    <p className='pt-serif-bold'>Despliega Node-RED de forma local para abrir el editor.</p>
-                    <button className='btn btn-success pt-serif-regular' onClick={() => window.location.reload()}>Listo</button>
+                    <p className='msg pt-serif-bold'>Despliega Node-RED de forma local para abrir el editor.</p>
+                    <button className='btnReload pt-serif-regular' onClick={() => window.location.reload()}>Listo</button>
                 </div>
             )}
         </div>

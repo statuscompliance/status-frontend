@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Modal } from 'react-bootstrap';
+import { statusApi } from '../../api/statusApi';
 
 export default function Logout() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -22,7 +22,7 @@ export default function Logout() {
     };
 
     const handleLogout = () => {
-        axios.get('http://localhost:3001/api/user/signOut')
+        statusApi.get('http://localhost:3001/api/user/signOut')
             .then(() => {
                 document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
                 document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
@@ -44,7 +44,7 @@ export default function Logout() {
     }, []);
 
     if (redirect) { 
-        window.location.href = '/';
+        window.location.href = window.location.origin;
     }
 
 

@@ -1,9 +1,11 @@
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-top: 20px;
+.row {
+    position: relative;
+    left: 16%;
+    width: 84%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 .btn-add{
     margin-top: 5%;
