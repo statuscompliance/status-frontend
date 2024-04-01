@@ -3,6 +3,7 @@ import { statusApi } from "../api/statusApi";
 
 export const useControls = () => {
   const [controls, setControls] = useState([]);
+  const [inputs, setInputs] = useState([]);
   const [lastItemRemoved, setLastItemRemoved] = useState(0);
 
   const addEmptyControl = () => {
@@ -20,6 +21,13 @@ export const useControls = () => {
         inputValues: {},
       },
     ]);
+  };
+
+  const getInputControlsByControlIdFromDB = async (id) => {
+    const resp = await statusApi.get(
+      `http://localhost:3001/api/control/${id}/input_controls`
+    );
+    return resp.data;
   };
 
   const createControlInDB = async (
@@ -70,6 +78,30 @@ export const useControls = () => {
     return resp.data;
   };
 
+  const updateControlInputInDb = async (id, value) => {
+    const resp = await statusApi.patch(
+      `http://localhost:3001/api/input_control/${id}`,
+      {
+        value: value,
+      }
+    );
+    return resp.data;
+  };
+
+  const deleteControlByIdInDb = async (id) => {
+    const resp = await statusApi.delete(
+      `http://localhost:3001/api/control/${id}`
+    );
+    return resp.data;
+  };
+
+  const deleteInputControlsByControlIdInDb = async (id) => {
+    const resp = await statusApi.delete(
+      `http://localhost:3001/api/control/${id}/input_controls`
+    );
+    return resp.data;
+  };
+
   const updateControlInputs = (controlIndex, inputId, inputValue) => {
     const updatedControls = [...controls];
     updatedControls[controlIndex].inputValues[inputId] = inputValue;
@@ -78,12 +110,19 @@ export const useControls = () => {
 
   return {
     controls,
+    setControls,
+    getInputControlsByControlIdFromDB,
     addEmptyControl,
     createControlInDB,
+    updateControlInputInDb,
     updateControl,
     removeControl,
+    deleteControlByIdInDb,
+    deleteInputControlsByControlIdInDb,
     lastItemRemoved,
     createControlInputInDB,
     updateControlInputs,
+    inputs,
+    setInputs,
   };
 };
