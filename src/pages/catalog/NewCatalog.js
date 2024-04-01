@@ -1,57 +1,29 @@
 import React from "react";
-import { Form, Button, Card, Row, Col, Carousel } from "react-bootstrap";
+import { Form, Card, Col, Row, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useCatalogs } from "../../hooks/useCatalogs";
-import { useMashups } from "../../hooks/useMashups";
 import { useControls } from "../../hooks/useControls";
-import { Period } from "./Period";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  addEmptyControl,
+  removeControl,
+} from "../../features/controls/controlSlice";
+import { removeInput } from "../../features/inputs/inputSlice";
 import ControlForm from "./ControlForm";
 
 function NewCatalog() {
   const { createCatalogInDB, catalogName, handleNameChange } = useCatalogs();
-  const { mashups, getInputsForMashupFromTheDB } = useMashups();
+  const inputs = useSelector((state) => state.inputs);
+  const dispatch = useDispatch();
+  const controls = useSelector((state) => state.controls.controls);
   const navigate = useNavigate();
 
-  const {
-    controls,
-    addEmptyControl,
-    createControlInDB,
-    updateControl,
-    removeControl,
-    lastItemRemoved,
-    createControlInputInDB,
-    updateControlInputs,
-  } = useControls();
-
-  // Handler function for change input values for a specific control.
-  const handleInputChange = (controlIndex, inputId, inputValue) => {
-    updateControlInputs(controlIndex, inputId, inputValue);
-  };
+  const { createControlInDB, createControlInputInDB } = useControls();
 
   // Handler function for remove a control
-  const handleRemoveControl = (index) => {
-    removeControl(index);
-  };
-
-  // Handler function for updating control
-  const handleControlChange = async (index, field, value) => {
-    if (field === "mashup") {
-      const inputs = await getInputsForMashupFromTheDB(value);
-      updateControl(index, field, value);
-      updateControl(index, "inputs", inputs);
-    } else {
-      updateControl(index, field, value);
-    }
-  };
-
-  // Handler function for create a control input
-  const handleCreateControlInput = async (controlDataId, inputId, value) => {
-    const inputControlResponse = await createControlInputInDB(
-      controlDataId,
-      inputId,
-      value
-    );
-    return inputControlResponse;
+  const handleRemoveControl = (controlId) => {
+    dispatch(removeControl({ id: controlId }));
+    dispatch(removeInput({ index: controlId }));
   };
 
   // Handler function for create a control
@@ -62,18 +34,28 @@ function NewCatalog() {
       control.startDate,
       control.endDate,
       control.period,
-      control.mashup,
+      control.mashup_id,
       catalogId
     );
 
     const controlData = await response;
-    const inputControlPromises = Object.entries(control.inputValues).map(
-      ([inputId, value]) =>
-        handleCreateControlInput(controlData.id, inputId, value)
+    const inputControlPromises = Object.entries(inputs.inputs[control.id]).map(
+      ([inputId, inputInfo]) =>
+        handleCreateControlInput(controlData.id, inputInfo.id, inputInfo.value)
     );
 
     await Promise.all(inputControlPromises);
     return response.ok;
+  };
+
+  // Handler function for create a control input
+  const handleCreateControlInput = async (controlDataId, inputId, value) => {
+    const inputControlResponse = await createControlInputInDB(
+      controlDataId,
+      inputId,
+      value
+    );
+    return inputControlResponse;
   };
 
   // Handler function for form submission
@@ -96,6 +78,10 @@ function NewCatalog() {
     }
   };
 
+  const addControl = () => {
+    dispatch(addEmptyControl());
+  };
+
   // JSX representing the component's UI
   return (
     <div className="container">
@@ -115,53 +101,26 @@ function NewCatalog() {
                   value={catalogName}
                 />
               </Form.Group>
-              {/* Rendering controls */}
-              {controls.length > 0 && (
-                <Carousel
-                  controls={false}
-                  interval={null}
-                  key={`carousel-${controls.length}-${lastItemRemoved}`}
-                  pause="hover"
-                  wrap={false}
+              <ControlForm handleRemoveControl={handleRemoveControl} />
+              {/* Action buttons */}
+              <div className="actions text-center">
+                {controls.length === 0 && (
+                  <Button
+                    className="mt-2"
+                    onClick={addControl}
+                    variant="primary"
+                  >
+                    Crear Control
+                  </Button>
+                )}
+                <Button
+                  className="text-center ms-2 mt-2"
+                  type="submit"
+                  variant="success"
                 >
-                  {controls.map((control, index) => (
-                    <Carousel.Item key={index}>
-                      <div className="col-12" key={index}>
-                        <ControlForm
-                          control={control}
-                          handleControlChange={handleControlChange}
-                          handleInputChange={handleInputChange}
-                          handleRemoveControl={handleRemoveControl}
-                          index={index}
-                          key={index}
-                          mashups={mashups}
-                          period={Period}
-                        />
-                      </div>
-                    </Carousel.Item>
-                  ))}
-                </Carousel>
-              )}
-              <Row className="mt-3">
-                <Col>
-                  <div className="actions text-center">
-                    <Button onClick={addEmptyControl} variant="secondary">
-                      Agregar Control
-                    </Button>
-                  </div>
-                </Col>
-                <Col>
-                  <div className="actions text-center">
-                    <Button
-                      className="text-center"
-                      type="submit"
-                      variant="success"
-                    >
-                      Crear Catálogo
-                    </Button>
-                  </div>
-                </Col>
-              </Row>
+                  Crear Catálogo
+                </Button>
+              </div>
             </Form>
           </Card.Body>
         </Card>

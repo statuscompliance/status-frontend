@@ -13,6 +13,13 @@ export const useMashups = () => {
     setMashups(resp.data);
   };
 
+  const getMashupByIdFromTheDB = async (mashupId) => {
+    const resp = await statusApi.get(
+      `http://localhost:3001/api/mashup/${mashupId}`
+    );
+    return resp.data;
+  };
+
   const getInputsForMashupFromTheDB = async (mashupId) => {
     try {
       const response = await statusApi.get(
@@ -27,6 +34,7 @@ export const useMashups = () => {
 
   return {
     mashups,
+    getMashupByIdFromTheDB,
     getInputsForMashupFromTheDB,
   };
 };
