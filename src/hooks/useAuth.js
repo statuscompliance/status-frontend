@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState} from "react";
 import { statusApi } from "../api/statusApi";
+import { useNode } from './useNode';
 
 export const useAuth = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const { isNodeRedDeployed, checkNodeRedDeployment } = useNode();
 
     const handleUsernameChange = (event) => {
         setUsername(event.target.value);
@@ -33,7 +35,28 @@ export const useAuth = () => {
 
             document.cookie = `accessToken=${response.data.accessToken}; expires=${accessExpires}`;
             document.cookie = `refreshToken=${response.data.refreshToken}; expires=${refreshExpires}`;
-            window.location.href = window.location.origin;
+            checkNodeRedDeployment();
+            if (isNodeRedDeployed) {
+                statusApi.post('http://localhost:1880/auth/token', {
+                    "client_id": "node-red-admin",
+                    "grant_type": "password",
+                    "scope": "*",
+                    "username": username,
+                    "password": password
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then((response) => {
+                    console.log(response.data);
+                    const accessExpires = response.data.expires_in;
+                    document.cookie = `nodeRedAccessToken=${response.data.access_token}; expires=${accessExpires}`;
+                    window.location.href = window.location.origin;
+                }).catch((error) => {
+                    console.error(error.message);
+                });
+            }  
         })
         .catch((error) => {
             console.error(error.message);
@@ -42,13 +65,12 @@ export const useAuth = () => {
 
     const handleRefresh = async (event) => {
         event.preventDefault();
-        if(document.cookie.split('; ').find(row => row.startsWith(`accessToken=`))) {
-            const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1];
+        if(document.cookie.split('; ').find(row => row.startsWith(`refreshToken=`))) {
+            const refreshToken = document.cookie.split('; ').find(row => row.startsWith('refreshToken=')).split('=')[1];
             try {
                 const response = await statusApi.get('http://localhost:3001/api/refresh', {
                 headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${accessToken}`
+                    Authorization: `Bearer ${refreshToken}`
                 }});
                 const now = new Date();
                 const oneHourLater = new Date(now.getTime()+ 60 * 60 * 1000);

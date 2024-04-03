@@ -96,7 +96,7 @@ export default function Chat() {
         if (response.message === "Run not completed yet") {
           if (retryInterval < maxRetryInterval) {
             retryInterval *= 2;
-            setThreadMessages([{ role: "assistant", content: `El proceso aún no ha completado. Reintentando en ${retryInterval / 1000} segundos...`, isError: false }]);
+            setThreadMessages([{ role: "assistant", content: `Generando respuesta, espere ${retryInterval / 1000} segundos...`, isError: false }]);
             setTimeout(retry, retryInterval);
           } else {
             setThreadMessages([{ role: "assistant", content: "Se alcanzó el tiempo máximo de espera. No se pudo completar el proceso.", isError: true }]);
@@ -183,7 +183,7 @@ export default function Chat() {
         </div>
         ) : (
           <div className="chat2">
-            <div className="signing-alert">
+            <div className="signin-alert">
               <p>Inicia sesión para hacer uso del chat</p>
             </div>
           </div>

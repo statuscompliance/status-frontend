@@ -20,34 +20,37 @@ import { useCookie } from './hooks/useCookie';
 import { useAuth } from './hooks/useAuth';
 import { Modal } from 'react-bootstrap';
 
-const App = () => {
+const App = ({ Component, pageProps }) => {
     const [showModal, setShowModal] = useState(false);
     const existsCookie = useCookie('accessToken');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+    const { handleRefresh } = useAuth();
+
     useEffect(() => {
         setIsLoggedIn(existsCookie);
     }, [existsCookie]);
-
-    function clean(){
-        localStorage.clear();
-        window.location.href = '/';
-    }
-
-    const handleRefreshToken = () => {
-        useAuth.handleRefresh();
-        setShowModal(false);
-    };
 
     const handleLogout = () => {
         statusApi.get('http://localhost:3001/api/user/signOut')
             .then(() => {
                 document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
                 document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+                window.location.reload();
             })
             .catch((error) => {
                 console.error(error.message);
             });
+    };
+
+    function clean(){
+        localStorage.clear();
+        window.location.href = '/';
+    }
+
+    const handleRefreshToken = (e) => {
+        handleRefresh(e);
+        setShowModal(false);
     };
 
     async function getGhToken(codeParam) {
@@ -72,24 +75,25 @@ const App = () => {
         }
     }, []);
 
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setShowModal(true);
-        }, 3420000); // 57 minutos en milisegundos
+    // useEffect(() => {
+    //     const timer = setInterval(() => {
+    //         setShowModal(true);
+    //     }, 3420000); // 57 minutos en milisegundos
 
-        return () => clearInterval(timer);
-    }, []);
-
+    //     return () => clearInterval(timer);
+    // }, []);
 
     return (
         <BrowserRouter>
                 {showModal && isLoggedIn && (
-                        <Modal onClose={() => setShowModal(false)}>
+                        // <Modal onClose={() => setShowModal(false)}>
+                        <div>
                             <h2>¿Sigues ahí?</h2>
                             <p>Tu sesión está a punto de expirar.</p>
-                            <p>Cuenta atrás: <CountdownTimer onTimeout={handleLogout} /></p>
+                            <p>Cuenta atrás: <CountdownTimer onTimeout={handleLogout}/></p>
                             <button onClick={handleRefreshToken}>Sí</button>
-                        </Modal>
+                        </div>
+                        // </Modal>
                 )}
                 {/* Sidebar */}
                 <div className="sidebar">
@@ -139,6 +143,7 @@ const App = () => {
                     <Route element={<Catalog />} path="/catalogs"/>
                     <Route element={<Mashup />} path="/mashups"/>
                     <Route element={<NewCatalog />} path="/new_catalog"/>
+                    
                     <Route element={<NewMashup />} path="/new_mashup"/>
                     <Route element={<Profile />} path="/profile"/>
                     <Route element={<Login />} path="/login"/>
@@ -153,6 +158,7 @@ const App = () => {
 const CountdownTimer = ({ onTimeout }) => {
     const [seconds, setSeconds] = useState(60);
 
+
     useEffect(() => {
         const timer = setInterval(() => {
             setSeconds(prevSeconds => prevSeconds - 1);
@@ -163,7 +169,7 @@ const CountdownTimer = ({ onTimeout }) => {
 
     useEffect(() => {
         if (seconds === 0) {
-            onTimeout(); // Llamar a la función cuando se agote el tiempo
+            onTimeout();
         }
     }, [seconds, onTimeout]);
 

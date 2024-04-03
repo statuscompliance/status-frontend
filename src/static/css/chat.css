@@ -183,7 +183,7 @@
 .messageContent{
   word-break: break-word;
 }
-.signing-alert{
+.signin-alert{
   position: relative;
   display: flex;
   justify-content: center;

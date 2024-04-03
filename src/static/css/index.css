@@ -1,13 +1,8 @@
-body {
-    position: absolute;
-    height: 100%; /* Ajusta la altura de la aplicación */
-    width: 100%; /* Ajusta el ancho de la aplicación */
-    font-size: 21px; /* Tamaño de letra base */
-}
 #root {
     height: 100%;
     width: 100%;
     position: absolute;
+    font-size: 18px;
 }
 .sidebar {
     position: absolute;

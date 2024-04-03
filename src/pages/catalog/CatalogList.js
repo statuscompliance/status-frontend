@@ -23,7 +23,7 @@ function CatalogList({ onCatalogSelect }) {
 
   // JSX representing the component's UI
   return (
-    <div className="container d-flex flex-row align-items-center pt-serif-regular">
+    <div className="container d-flex flex-row align-items-center">
       <Card className="w-100 mb-3">
         <Card.Body className="text-center">
           <Button className="calculate-button mb-3" variant="danger">
