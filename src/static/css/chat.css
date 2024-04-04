@@ -1,25 +1,34 @@
 .chatBody{
-  position: relative;
-  height: 100%;
-  left: 16%;
-  width: 84%;
+  position: absolute;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  width: 100%;
+  height: 100%;
 }
 .chat{
-  position: relative;
+  position: absolute;
   display: flex;
   justify-content: center;
   flex-direction: row;
   align-items: center;
-  margin: 5%;
+  margin-top: 5%;
+  margin-bottom: 5%;
+  margin-left: 15%;
+  margin-right: 15%;
   width: 65%;
   height: 85%;
   max-height: 100%;
   background: rgb(242, 242, 242); 
   border-radius: 6px;
-  box-shadow: 0px 2px 6px #171a1f, 0px 0px 2px #171a1f; 
+  box-shadow: 0px 2px 6px #171a1f, 0px 0px 2px #171a1f;
+}
+.chat.full-width {
+  width: 65%;
+}
+.chat.half-width {
+  left: 15%;
+  width: 10%;
+  transform: translateX(570%);
+  transition: transform 2.0s ease;
 }
 .chatContainer {
   position: relative; 
@@ -29,6 +38,15 @@
   height: 100%;
   max-height: 100%;
   background: rgb(242, 242, 242); 
+}
+.historyContainer{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+  height: 100%;
+  width: 30%;
+  background: rgb(242, 242, 242);
 }
 .chat2 {
   position: relative;
@@ -49,15 +67,7 @@
   height: 85%;
   background: #969696;
 }
-.historyContainer{
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-self: flex-start;
-  height: 100%;
-  width: 30%;
-  background: rgb(242, 242, 242);
-}
+
 .inputContainer{
   position: absolute;
   display: flex;
@@ -244,4 +254,26 @@
 }
 .threadName{
   margin-top: 20%;
+}
+.hidden {
+  display: none;
+}
+.editor{
+  position: absolute;
+  display: flex;
+  width: 85%;
+  height: 85%;
+  margin-top: 4%;
+}
+.editorIframe{
+  position: relative;
+  margin-top: 3%;
+  margin-left: 10%;
+  width: 100%;
+  display: flex;
+  height: 100%;
+  border: 5px solid #bf0a2e;
+  border-radius: 10px;
+  background-color: transparent;
+  text-align: center;
 }

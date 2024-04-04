@@ -3,10 +3,8 @@ import {createRoot } from 'react-dom/client';
 import Catalog from './pages/catalog/Catalog';
 import Mashup from './pages/mashup/Mashup';
 import NewCatalog from './pages/catalog/NewCatalog';
-import NewMashup from './pages/mashup/NewMashup';
 import Profile from './pages/profile/Profile';
 import Login from './pages/auth/Login';
-import Logout from './pages/auth/Logout';
 import Editor from './pages/node-red/Editor';
 import Chat from './pages/chat/Chat';
 import Home from './pages/Home';
@@ -24,6 +22,7 @@ const App = ({ Component, pageProps }) => {
     const [showModal, setShowModal] = useState(false);
     const existsCookie = useCookie('accessToken');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
 
     const { handleRefresh } = useAuth();
 
@@ -36,11 +35,20 @@ const App = ({ Component, pageProps }) => {
             .then(() => {
                 document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
                 document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+                document.cookie = `nodeRedAccessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
                 window.location.reload();
             })
             .catch((error) => {
                 console.error(error.message);
             });
+    };
+
+    const openLogoutModal = () => {
+        setShowLogoutModal(true);
+    };
+
+    const closeLogoutModal = () => {
+        setShowLogoutModal(false);
     };
 
     function clean(){
@@ -65,6 +73,8 @@ const App = ({ Component, pageProps }) => {
             console.error('Error fetching GitHub access token:', error);
         }
     }
+
+
     useEffect(() => {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
@@ -73,28 +83,48 @@ const App = ({ Component, pageProps }) => {
         if(codeParam && (localStorage.getItem("ghToken") === null)){
             getGhToken(codeParam);
         }
+
+        const timer = setInterval(() => {
+            setShowModal(true);
+        }, 3420000); // 57 minutos en milisegundos
+        return () => clearInterval(timer);
     }, []);
-
-    // useEffect(() => {
-    //     const timer = setInterval(() => {
-    //         setShowModal(true);
-    //     }, 3420000); // 57 minutos en milisegundos
-
-    //     return () => clearInterval(timer);
-    // }, []);
 
     return (
         <BrowserRouter>
                 {showModal && isLoggedIn && (
-                        // <Modal onClose={() => setShowModal(false)}>
-                        <div>
-                            <h2>¿Sigues ahí?</h2>
-                            <p>Tu sesión está a punto de expirar.</p>
-                            <p>Cuenta atrás: <CountdownTimer onTimeout={handleLogout}/></p>
-                            <button onClick={handleRefreshToken}>Sí</button>
-                        </div>
-                        // </Modal>
+                    <div className="timeout">
+                        <Modal onHide={() => setShowModal(false)} show={showModal}>
+                            <Modal.Header closeButton>
+                                <Modal.Title>¿Sigues ahí?</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                Tu sesión está a punto de expirar.
+                                Cuenta atrás: <CountdownTimer onTimeout={handleLogout}/>
+                            </Modal.Body>
+                            <Modal.Footer>
+                                <button onClick={closeLogoutModal}>Cancelar</button>
+                                <button onClick={handleRefreshToken}>Sí</button>
+                            </Modal.Footer>
+                        </Modal>
+                    </div>
                 )}
+                {isLoggedIn && showLogoutModal ? (
+                    <div className="logout">
+                        <Modal onHide={closeLogoutModal} show={showLogoutModal}>
+                            <Modal.Header closeButton>
+                                <Modal.Title>Confirmación</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                                ¿Estás seguro que deseas cerrar sesión?
+                            </Modal.Body>
+                            <Modal.Footer>
+                                <button onClick={closeLogoutModal}>Cancelar</button>
+                                <button onClick={handleLogout}>Cerrar sesión</button>
+                            </Modal.Footer>
+                        </Modal>
+                    </div>
+                ) : (<div></div>)}
                 {/* Sidebar */}
                 <div className="sidebar">
                         <Link className="navbar-brand navbar-dark pt-serif-bold d-flex align-items-center"to="/">
@@ -115,15 +145,15 @@ const App = ({ Component, pageProps }) => {
                             <li className="nav-item">
                                 <Link className="nav-link pt-serif-regular" to="/chat">Chat</Link>
                             </li>
+                            <li className='nav-item'>
+                                <Link className="nav-link pt-serif-regular" to="/profile">Profile</Link>
+                            </li>
                             <li className="nav-item">
                                 { existsCookie? (
-                                    <Link className="nav-link pt-serif-regular" to="/logout">Cerrar sesión</Link>
+                                    <p className="nav-link pt-serif-regular" onClick={openLogoutModal}>Cerrar sesión</p>
                                 ) : (
                                     <Link className="nav-link pt-serif-regular" to="/login">Iniciar sesión</Link>
                                 )}
-                            </li>
-                            <li className='nav-item'>
-                                <Link className="nav-link pt-serif-regular" to="/profile">Profile</Link>
                             </li>
                         </ul>
                     </nav>
@@ -138,19 +168,18 @@ const App = ({ Component, pageProps }) => {
                     </div>
                 </div>
                 {/* Routes */}
+                <div className="content">
                 <Routes>
                     <Route exact element={<Home/>}path="/" />
                     <Route element={<Catalog />} path="/catalogs"/>
                     <Route element={<Mashup />} path="/mashups"/>
                     <Route element={<NewCatalog />} path="/new_catalog"/>
-                    
-                    <Route element={<NewMashup />} path="/new_mashup"/>
                     <Route element={<Profile />} path="/profile"/>
                     <Route element={<Login />} path="/login"/>
-                    <Route element={<Logout />} path="/logout"/>
                     <Route element={<Editor />} path="/editor"/>
                     <Route element={<Chat />} path="/chat"/>
                 </Routes>
+                </div>
         </BrowserRouter>
     );
 }

@@ -49,14 +49,15 @@ export const useAuth = () => {
                     }
                 })
                 .then((response) => {
-                    console.log(response.data);
                     const accessExpires = response.data.expires_in;
                     document.cookie = `nodeRedAccessToken=${response.data.access_token}; expires=${accessExpires}`;
                     window.location.href = window.location.origin;
                 }).catch((error) => {
                     console.error(error.message);
                 });
-            }  
+            } else {
+                window.location.href = window.location.origin;
+            }
         })
         .catch((error) => {
             console.error(error.message);

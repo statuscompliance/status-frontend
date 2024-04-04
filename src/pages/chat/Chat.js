@@ -2,6 +2,7 @@ import {useState, useRef, useEffect} from "react";
 import "../../static/css/chat.css";
 import { useCookie } from '../../hooks/useCookie';
 import { useOpenAI } from '../../hooks/useOpenAI';
+import { useNode } from '../../hooks/useNode';
 import sendLogo from "../../static/images/send.svg";
 
 
@@ -10,10 +11,23 @@ export default function Chat() {
   const existsCookie = useCookie('accessToken');
   const [errorAdded, setErrorAdded] = useState(false);
   const { threads, getThreadById, createThread, sendNewMessage} = useOpenAI();
+  const { isNodeRedDeployed, temporalMashup } = useNode();
   const [currentThreadId, setCurrentThreadId] = useState(null);
   const messagesContainerRef = useRef(null);
   const [interval, setInterval] = useState(1000);
   const errorMessage = "El texto es demasiado corto, por favor, inténtalo de nuevo.";
+  const [animated, setAnimated] = useState(false);
+  const [endpoint, setEndpoint] = useState('');
+
+
+  const checkJSONResponse = (result) => {
+    for (let i = 0; i < result.length; i++) {
+      if (result[i].role=== "assistant" && result[i].content.startsWith("```json")) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   useEffect(() => {
     if (messagesContainerRef.current) {
@@ -109,7 +123,19 @@ export default function Chat() {
                 content: message.content[0].text.value,
               };
             }).reverse();
+            if(checkJSONResponse(result)){
+              const json = result[result.length-1].content;
+              const mashup = await temporalMashup(json);
+              if(mashup !== ''){
+                setEndpoint(`/#flow/${mashup}`);
+                // setThreadMessages([{ role: "assistant", content: JSON.stringify(response), isError: false }]);
+                setAnimated(true);
+              }else{
+                setThreadMessages([{ role: "assistant", content: "El mashup que has solicitado ya existe o existe uno similar", isError: false }]);
+              }
+            }else {
             setThreadMessages(result);
+            }
           } else {
             console.error("La respuesta no tiene el formato esperado:", response);
           }
@@ -120,64 +146,73 @@ export default function Chat() {
       }
     }, retryInterval);
   }
-  
 
   return (
     <div className="chatBody">
       {existsCookie?(
-        <div className="chat">
-          <div className="historyContainer">
-            {threads.length>0?(
-              <div className="history">
-                <p className="historyText">Historial</p>
-                <ul className="threadList">
-                {threads.map((thread, index) => (
-                    <li className="bullet" key={index}>
-                      <button className="threadButton" onClick={() => {
-                          setInterval(0);
-                          setErrorAdded(false);
-                          setCurrentThreadId(thread.gpt_id);
-                          getThreadMessages(thread.gpt_id);
-                          }}>
-                        <p className="threadName">{thread.name}</p>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ):(
-              <div> 
-                <p className="historyText">No tienes ningún hilo en curso</p>
-              </div>
-            )}
-          </div>
-          <div className="chatLine"></div>
-          <div className="chatContainer">
-            <div className="messagesContainer" ref={messagesContainerRef}>
-                {threadMessages.map((message, index) => (
-                  <div key={index} className={`message-${message.role} ${message.isError ? 'error-message' : ''}`}>
-                    <span className={`span-${message.role}`}>
-                      {message.role === "assistant" ? "Asistente" : "Tú"}
-                    </span>
-                    <p className="messageContent">{message.content}</p>
-                  </div>
-                ))
-              }
+        <div>
+          {animated && isNodeRedDeployed?(
+            <div className={`editor ${animated ? 'visible':''}`}>
+                <iframe src={`http://localhost:1880${endpoint}`} title="Editor" className="editorIframe"></iframe>
             </div>
-            <div className="inputContainer">
-              <textarea 
-                type="text" 
-                className="textbox" 
-                placeholder="Describa las acciones de su flujo"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleSend(e);
-                  }
-                }}
-                />
-              <button className="sendButton" onClick={sendMessage}>
-                <img src={sendLogo} alt="send" className="sendIcon"/>
-              </button>
+          ):(
+            <div></div>
+          )
+          }
+          <div className={`chat ${animated ? 'half-width':'full-width'}`}>
+            <div className={`historyContainer ${animated ? 'hidden' : ''}`}>
+              {threads.length>0?(
+                <div className="history">
+                  <p className="historyText">Historial</p>
+                  <ul className="threadList">
+                  {threads.map((thread, index) => (
+                      <li className="bullet" key={index}>
+                        <button className="threadButton" onClick={() => {
+                            setInterval(0);
+                            setErrorAdded(false);
+                            setCurrentThreadId(thread.gpt_id);
+                            getThreadMessages(thread.gpt_id);
+                            }}>
+                          <p className="threadName">{thread.name}</p>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ):(
+                <div> 
+                  <p className="historyText">No tienes ningún hilo en curso</p>
+                </div>
+              )}
+            </div>
+            <div className={`chatLine ${animated ? 'hidden' : ''}`}></div>
+            <div className="chatContainer">
+              <div className="messagesContainer" ref={messagesContainerRef}>
+                  {threadMessages.map((message, index) => (
+                    <div key={index} className={`message-${message.role} ${message.isError ? 'error-message' : ''}`}>
+                      <span className={`span-${message.role}`}>
+                        {message.role === "assistant" ? "Asistente" : "Tú"}
+                      </span>
+                      <p className="messageContent">{message.content}</p>
+                    </div>
+                  ))
+                }
+              </div>
+              <div className="inputContainer">
+                <textarea 
+                  type="text" 
+                  className="textbox" 
+                  placeholder="Describa las acciones de su flujo"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSend(e);
+                    }
+                  }}
+                  />
+                <button className="sendButton" onClick={sendMessage}>
+                  <img src={sendLogo} alt="send" className="sendIcon"/>
+                </button>
+              </div>
             </div>
           </div>
         </div>

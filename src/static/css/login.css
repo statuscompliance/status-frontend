@@ -1,7 +1,6 @@
 .loginContainer {
-    position: relative; 
+    position: absolute; 
     display: flex;
-    left: 16%;
     align-items: center;
     justify-content: center;
     flex-direction: column;

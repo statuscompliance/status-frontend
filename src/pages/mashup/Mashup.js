@@ -12,7 +12,7 @@ export default function Mashup() {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [mashupName, setMashupName] = useState('');
     const [mashupDescription, setMashupDescription] = useState('');
-    const { mashups, createInitialMashup, deleteMashup} = useNode();
+    const { isNodeRedDeployed, mashups, createInitialMashup, deleteMashup} = useNode();
     const existsCookie = useCookie('accessToken');
     const [rowData, setRowData] = useState('');
 
@@ -23,10 +23,9 @@ export default function Mashup() {
     };
 
     const handleCreateMashup = async () => {
-        const response = await createInitialMashup(mashupName, mashupDescription);
-        console.log(response);
+        await createInitialMashup(mashupName, mashupDescription);
         handleModalClose();
-        window.location.href = '/editor';
+        window.location.href = `/editor`;
     };
 
     const handleView = async (rowData) => {
@@ -105,7 +104,7 @@ export default function Mashup() {
         <div className="filter-header">
             <span className="p-input-icon-left">
                 <i className="pi pi-search" />
-                <InputText type="search" onInput={onGlobalFilterChange} placeholder="Search..." />
+                <InputText type="search" onInput={onGlobalFilterChange} placeholder="Buscar..." />
             </span>
             <button className="create-button" onClick={handleCreateButtonClick}>+</button>
         </div>
@@ -126,7 +125,7 @@ export default function Mashup() {
     
     return (
         <div className='body'>
-            {existsCookie ? (
+            {existsCookie && isNodeRedDeployed? (
             <div className='mashups'>
                 <div className="datatable-header">
                     {filterHeader}
@@ -150,7 +149,7 @@ export default function Mashup() {
             ) : (
                 <div className='alert'>
                     <div className="signin-alert">
-                        <p>Para acceder a esta sección debes iniciar sesión</p>
+                        <p>Para acceder a esta sección debes iniciar sesión y tener desplegado Node-Red</p>
                     </div>
                 </div>
             )}

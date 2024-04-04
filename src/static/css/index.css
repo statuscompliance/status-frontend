@@ -10,6 +10,15 @@
     background-color: #bf0a2e; /* Cambia el color de fondo de la barra lateral según sea necesario */
     height: 100%; /* Ajusta la altura de la barra lateral */
 }
+.content {
+    position: relative;
+    height: 100%;
+    left: 16%;
+    width: 84%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 .navbar-brand{
     margin-left: 10%; /* Ajusta el margen izquierdo del logotipo */
 }

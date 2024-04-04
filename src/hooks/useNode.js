@@ -17,15 +17,15 @@ export const useNode = () => {
                 setIsNodeRedDeployed(true);
             }
         } catch(error) {
-                if (error) {
-                    setIsNodeRedDeployed(false);
-                }
+            if (error) {
+                setIsNodeRedDeployed(false);
+            }
         }
     };
 
     const getMashups = async () => {
-        const nodeRed = await statusApi.get('http://localhost:1880');
-        const status = nodeRed.status;
+        const nodeRed =  await statusApi.get('http://localhost:1880').then(response => response).catch(error => null);
+        const status = nodeRed?.status;
         if(document.cookie.split('; ').find(row => row.startsWith(`nodeRedAccessToken=`)) && status === 200) {
             const accessToken = document.cookie.split('; ').find(row => row.startsWith('nodeRedAccessToken=')).split('nodeRedAccessToken=')[1].trim();
             try {
@@ -43,8 +43,8 @@ export const useNode = () => {
     };
 
     const createInitialMashup = async (name,description) => {
-        const nodeRed = await statusApi.get('http://localhost:1880');
-        const status = nodeRed.status;
+        const nodeRed =  await statusApi.get('http://localhost:1880').then(response => response).catch(error => null);
+        const status = nodeRed?.status;
         if(document.cookie.split('; ').find(row => row.startsWith(`nodeRedAccessToken=`)) && status === 200) {
             const accessToken = document.cookie.split('; ').find(row => row.startsWith('nodeRedAccessToken=')).split('nodeRedAccessToken=')[1].trim();
             try {
@@ -66,8 +66,8 @@ export const useNode = () => {
     };
 
     const deleteMashup = async (id) => {
-        const nodeRed = await statusApi.get('http://localhost:1880');
-        const status = nodeRed.status;
+        const nodeRed = await statusApi.get('http://localhost:1880').then(response => response).catch(error => null);
+        const status = nodeRed?.status;
         if(document.cookie.split('; ').find(row => row.startsWith(`nodeRedAccessToken=`)) && status === 200) {
             const accessToken = document.cookie.split('; ').find(row => row.startsWith('nodeRedAccessToken=')).split('nodeRedAccessToken=')[1].trim();
             try {
@@ -83,6 +83,62 @@ export const useNode = () => {
         }
     };
 
+    const checkIfExist = async (accessToken,jsonString) => {
+        try {
+            const response = await statusApi.get('http://localhost:1880/flows',{
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+            return response.data.includes(jsonString);
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
-    return { isNodeRedDeployed,mashups, checkNodeRedDeployment, createInitialMashup, deleteMashup};
+
+
+
+    const temporalMashup = async (content) => {
+        const nodeRed = await statusApi.get('http://localhost:1880').then(response => response).catch(error => null);
+        const status = nodeRed?.status;
+        if(document.cookie.split('; ').find(row => row.startsWith(`nodeRedAccessToken=`)) && status === 200) {
+            const accessToken = document.cookie.split('; ').find(row => row.startsWith('nodeRedAccessToken=')).split('nodeRedAccessToken=')[1].trim();
+            try {
+                const jsonString = content.replace(/^```json+|```$/g, '');
+                const parsedNodes = JSON.parse(jsonString);
+                const id = parsedNodes[0].id;
+                const label = parsedNodes[0].label;
+                const info = parsedNodes[0].info;
+                parsedNodes.shift();
+                const existsMashup = await checkIfExist(accessToken,jsonString);
+                if(existsMashup){
+                    return '';
+                }else {
+                    try{
+                        const response = await statusApi.post('http://localhost:1880/flow',{
+                            id: id,
+                            label: label,
+                            nodes: parsedNodes,
+                            configs: [],
+                            info: info
+                        }, {
+                            headers: {
+                                Authorization: `Bearer ${accessToken}`
+                            }
+                        });
+                        getMashups();
+                        const mashupId = response.data.id;
+                        return mashupId?mashupId:'';
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    }
+
+    return { isNodeRedDeployed,mashups, checkNodeRedDeployment, createInitialMashup, deleteMashup, temporalMashup};
 };

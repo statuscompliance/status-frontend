@@ -1,6 +1,5 @@
 .row {
-    position: relative;
-    left: 16%;
+    position: absolute;
     width: 84%;
     display: flex;
     flex-direction: column;
