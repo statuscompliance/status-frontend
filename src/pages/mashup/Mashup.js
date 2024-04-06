@@ -6,6 +6,7 @@ import { InputText } from 'primereact/inputtext';
 import { useCookie } from '../../hooks/useCookie';
 import { useNode } from '../../hooks/useNode';
 import { Modal } from 'react-bootstrap';
+import DeleteModal from '../../components/DeleteModal';
 
 export default function Mashup() {
     const [showModal, setShowModal] = useState(false);
@@ -32,7 +33,7 @@ export default function Mashup() {
         console.log(rowData);
     };
 
-    const handleEdit = (rowData) => {
+    const handleEdit = () => {
         window.location.href = `/editor`;
     };
 
@@ -77,24 +78,6 @@ export default function Mashup() {
             </Modal>
         </div>
     );
-
-    const deleteModal = (
-        <div className="modal-content">
-            <Modal onHide={handleDeleteModalClose} show={showDeleteModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Eliminar Mashup</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <p className='text-danger'>¿Estás seguro de que deseas eliminar este mashup? El cambio será irreversible</p>
-                </Modal.Body>
-                <Modal.Footer>
-                    <button onClick={handleDeleteModalClose}>Cancelar</button>
-                    <button onClick={handleDelete}>Confirmar</button>
-                </Modal.Footer>
-            </Modal>
-        </div>
-    );
-
 
     const handleCreateButtonClick = () => {
         setShowModal(true);
@@ -141,9 +124,13 @@ export default function Mashup() {
                 </div>
                 )}
                 {showDeleteModal && (
-                <div className="modal">
-                    {deleteModal}
-                </div>
+                    <div className="modal">
+                        <DeleteModal
+                            show={showDeleteModal}
+                            handleClose={handleDeleteModalClose}
+                            handleDelete={handleDelete}
+                        />
+                    </div>
                 )}
             </div>
             ) : (

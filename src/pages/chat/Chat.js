@@ -4,21 +4,56 @@ import { useCookie } from '../../hooks/useCookie';
 import { useOpenAI } from '../../hooks/useOpenAI';
 import { useNode } from '../../hooks/useNode';
 import sendLogo from "../../static/images/send.svg";
+import { Modal } from 'react-bootstrap';
+import edit from "../../static/images/edit.svg";
+import goBack from "../../static/images/return.svg";
+import deleteSvg from "../../static/images/delete.svg";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import DeleteModal from "../../components/DeleteModal";
 
 
 export default function Chat() {
   const [threadMessages, setThreadMessages] = useState([]);
   const existsCookie = useCookie('accessToken');
   const [errorAdded, setErrorAdded] = useState(false);
-  const { threads, getThreadById, createThread, sendNewMessage} = useOpenAI();
-  const { isNodeRedDeployed, temporalMashup } = useNode();
+  const { threads, getThreadById, createThread, sendNewMessage, changeThreadName} = useOpenAI();
+  const { isNodeRedDeployed, temporalMashup, deleteMashup } = useNode();
   const [currentThreadId, setCurrentThreadId] = useState(null);
   const messagesContainerRef = useRef(null);
   const [interval, setInterval] = useState(1000);
   const errorMessage = "El texto es demasiado corto, por favor, inténtalo de nuevo.";
   const [animated, setAnimated] = useState(false);
   const [endpoint, setEndpoint] = useState('');
+  const [hideChat, setHideChat] = useState(false);
+  const [nameModal, setNameModal] = useState(false);
+  const [currentMashup, setCurrentMashup] = useState('');
+  const [threadToModify, setThreadToModify] = useState(null);
+  const [threadName, setThreadName] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  const sendNewName = async () => {
+    if (threadName !== '') {
+      await changeThreadName(threadToModify, threadName);
+    } else {
+      console.error('Input element not found within the modal');
+    }
+    setNameModal(false);
+    window.location.reload();
+  };
+
+  const closeNameModal = () => {
+      setNameModal(false);
+  };
+
+  const handleDeleteModalClose = () => {
+    setShowDeleteModal(false);
+  }
+
+  const handleDelete = () => {
+    deleteMashup(currentMashup);
+    setShowDeleteModal(false);
+  };
 
   const checkJSONResponse = (result) => {
     for (let i = 0; i < result.length; i++) {
@@ -29,11 +64,18 @@ export default function Chat() {
     return false;
   };
 
+
   useEffect(() => {
-    if (messagesContainerRef.current) {
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    let timer = 0;
+    if(animated){
+      timer = setTimeout(() => {
+        setHideChat(true);
+      }, 2000);
     }
-  }, [threadMessages]);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [animated]);
 
   const handleSend = async (e) => {
     setInterval(2000);
@@ -92,7 +134,6 @@ export default function Chat() {
             setErrorAdded(true); 
           }
         } else {
-          setThreadMessages([{ role: "assistant", content: "Cargando...", isError: false }]);
           await getThreadMessages(currentThreadId);
         }
       }
@@ -101,7 +142,7 @@ export default function Chat() {
   };
   
   async function getThreadMessages(threadId) {
-    setThreadMessages([{ role: "assistant", content: 'Cargando...', isError: false }]);
+    setThreadMessages([{ role: "assistant", content: 'Cargando la respuesta...', isError: false }]);
     let retryInterval = interval;
     const maxRetryInterval = 30000;
     setTimeout(async function retry() {
@@ -126,9 +167,9 @@ export default function Chat() {
             if(checkJSONResponse(result)){
               const json = result[result.length-1].content;
               const mashup = await temporalMashup(json);
+              setCurrentMashup(mashup);
               if(mashup !== ''){
                 setEndpoint(`/#flow/${mashup}`);
-                // setThreadMessages([{ role: "assistant", content: JSON.stringify(response), isError: false }]);
                 setAnimated(true);
               }else{
                 setThreadMessages([{ role: "assistant", content: "El mashup que has solicitado ya existe o existe uno similar", isError: false }]);
@@ -149,18 +190,48 @@ export default function Chat() {
 
   return (
     <div className="chatBody">
+      {showDeleteModal && (
+                    <div className="modal">
+                        <DeleteModal
+                            show={showDeleteModal}
+                            handleClose={handleDeleteModalClose}
+                            handleDelete={handleDelete}
+                        />
+                    </div>
+                )}
+      {nameModal && (
+                    <div className="nameModal">
+                        <Modal onHide={() => setNameModal(false)} show={nameModal}>
+                            <Modal.Header closeButton>
+                                <Modal.Title>Cambiar el nombre del hilo</Modal.Title>
+                            </Modal.Header>
+                            <Modal.Body>
+                              <input type="text" id="threadName" value={threadName} onChange={(e) => setThreadName(e.target.value)} />
+                            </Modal.Body>
+                            <Modal.Footer>
+                                <button onClick={closeNameModal}>Cancelar</button>
+                                <button onClick={sendNewName}>Confirmar</button>
+                            </Modal.Footer>
+                        </Modal>
+                    </div>
+                )}
       {existsCookie?(
         <div>
           {animated && isNodeRedDeployed?(
             <div className={`editor ${animated ? 'visible':''}`}>
                 <iframe src={`http://localhost:1880${endpoint}`} title="Editor" className="editorIframe"></iframe>
+                <div className={`palette ${animated && hideChat ? 'show':''}`}>
+                  <img src={deleteSvg} alt="delete" className="paletteButton" onClick={() => setShowDeleteModal(true)}/>
+                  <img src={goBack} alt="goBack" className="paletteButton" onClick={() => window.location.href = '/chat'}/>
+                </div>
             </div>
           ):(
             <div></div>
           )
           }
-          <div className={`chat ${animated ? 'half-width':'full-width'}`}>
-            <div className={`historyContainer ${animated ? 'hidden' : ''}`}>
+          <div className={`loader ${animated && !hideChat? '': 'hide'}`}></div>
+          <div className={`chat ${animated && !hideChat? 'blur' : hideChat? 'hide' : '' }`}>
+            <div className='historyContainer'>
               {threads.length>0?(
                 <div className="history">
                   <p className="historyText">Historial</p>
@@ -173,8 +244,12 @@ export default function Chat() {
                             setCurrentThreadId(thread.gpt_id);
                             getThreadMessages(thread.gpt_id);
                             }}>
-                          <p className="threadName">{thread.name}</p>
+                          {thread.name}
                         </button>
+                        <img src={edit} alt="edit" className="editIcon" onClick={() => {
+                          setNameModal(true);
+                          setThreadToModify(thread.gpt_id);
+                        }}/>
                       </li>
                     ))}
                   </ul>
@@ -185,7 +260,7 @@ export default function Chat() {
                 </div>
               )}
             </div>
-            <div className={`chatLine ${animated ? 'hidden' : ''}`}></div>
+            <div className='chatLine'></div>
             <div className="chatContainer">
               <div className="messagesContainer" ref={messagesContainerRef}>
                   {threadMessages.map((message, index) => (
@@ -193,7 +268,11 @@ export default function Chat() {
                       <span className={`span-${message.role}`}>
                         {message.role === "assistant" ? "Asistente" : "Tú"}
                       </span>
-                      <p className="messageContent">{message.content}</p>
+                      {message.role === "assistant" ? (
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+                      ) : (
+                        <p className="messageContent">{message.content}</p>
+                      )}
                     </div>
                   ))
                 }
@@ -202,7 +281,7 @@ export default function Chat() {
                 <textarea 
                   type="text" 
                   className="textbox" 
-                  placeholder="Describa las acciones de su flujo"
+                  placeholder="Describa las acciones de su flujo o introduzca un JSON para describir un mashup"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
                       handleSend(e);
