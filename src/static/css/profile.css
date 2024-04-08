@@ -1,3 +1,66 @@
+.profile-container {
+    background-color: #ffffff;
+    padding: 20px;
+    font-family: "Satoshi", sans-serif;
+}
+
+.profile-info {
+    margin-bottom: 20px;
+}
+
+.profile-info h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.profile-info p {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.profile-buttons {
+    margin-top: 10px;
+}
+
+.personal-details {
+    margin-top: 20px;
+}
+
+.personal-details div {
+    margin-bottom: 10px;
+}
+
+.logo-img {
+    width: 24px;
+    margin-left: 5px;
+    vertical-align: middle;
+}
+
+.profile-connections {
+    margin-top: 20px;
+}
+
+.profile-connections button {
+    display: flex;
+    align-items: center;
+    background-color: #bf0a2e;
+    color: #ffffff;
+    border: none;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.profile-connections button:hover {
+    background-color: #c74c65;
+}
+
+.img{
+    width: 5%;
+    height: 5%;
+    vertical-align: middle;
+}
 .gh-logo-black-svg{
     width: 20%;
     height: 10%;

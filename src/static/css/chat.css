@@ -50,6 +50,7 @@
 .chat2 {
   position: relative;
   display: flex;
+  left: 13%;
   justify-content: center;
   margin: 5%;
   width: 65%;

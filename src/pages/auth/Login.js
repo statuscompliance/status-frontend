@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import "../../static/css/login.css";
 
-
 export default function Login() {
     const { username, password, handleUsernameChange, handlePasswordChange, handleSubmit } = useAuth();
-    
+    const [errorMessage, setErrorMessage] = useState('');
+
+
     return (
         <div className='loginContainer'>
             <div className='loginSquare'>
@@ -33,6 +34,7 @@ export default function Login() {
                     </div>
                     <button className='loginButton' type="submit">Enviar</button>
                 </form>
+                <p id="error-message">{errorMessage}</p>
             </div>
         </div>
     );

@@ -17,7 +17,7 @@ export const useAuth = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-    
+
         statusApi.post('http://localhost:3001/api/user/signIn', {
             username: username,
             password: password
@@ -56,11 +56,20 @@ export const useAuth = () => {
                     console.error(error.message);
                 });
             } else {
-                window.location.href = window.location.origin;
+                throw new Error('Node-RED is not deployed');
             }
         })
         .catch((error) => {
-            console.error(error.message);
+            if (error.response && error.response.status === 404) {
+                document.getElementById('error-message').innerText = 'El usuario introducido no está registrado en el sistema';
+            } else if (error && error.message === 'Node-RED is not deployed') {
+                document.getElementById('error-message').innerText = 'Inicialmente, Node-RED no está desplegado. Por favor, despliegue Node-RED y vuelva a intentarlo';
+            } else if (error.response && error.response.status === 401){
+                document.getElementById('error-message').innerText = 'La contraseña introducida no es correcta';
+            } else {
+                document.getElementById('error-message').innerText = 'Error al iniciar sesión. Por favor, inténtelo de nuevo o contacte con el administrador del sistema';
+            }
+            
         });
     };
 

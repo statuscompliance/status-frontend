@@ -42,13 +42,11 @@ function CatalogList({ onCatalogSelect }) {
             ))}
           </ul>
           <Button
-            className="btn-add btn-success"
+            className="btn-add btn-success align-items-center mt-3"
             onClick={handleNewCatalogClick}
           >
-            <div className="d-flex align-items-center">
-              <img src={addSvg} alt="Add" className="add-svg ml-5 mb-1" />
+              <img src={addSvg} alt="Add" className="add-svg" />
               <p className="ml-3 mb-1">Nuevo catálogo</p>
-            </div>
           </Button>
         </Card.Body>
       </Card>
