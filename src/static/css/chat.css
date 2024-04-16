@@ -20,7 +20,7 @@
   max-height: 100%;
   background: rgb(242, 242, 242); 
   border-radius: 6px;
-  box-shadow: 0px 2px 6px #171a1f, 0px 0px 2px #171a1f;
+  box-shadow: 0 2px 6px #171a1f, 0 0 2px #171a1f;
 }
 
 .chat.blur {
@@ -63,7 +63,7 @@
   max-height: 100%;
   background: rgb(242, 242, 242); 
   border-radius: 6px;
-  box-shadow: 0px 2px 6px #171a1f, 0px 0px 2px #171a1f; 
+  box-shadow: 0 2px 6px #171a1f, 0 0 2px #171a1f; 
 }
 
 .chatLine{
@@ -91,12 +91,12 @@
   flex: 1;
   height: 10%;
   border-radius: 18px; 
-  border-width: 0px;
+  border-width: 0;
   padding-left: 12px; 
   padding-right: calc(12px + 35px + 10px); 
   border: 2px solid #c2c0c0;
   font-size: 19px;
-  font-family: "Satoshi", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-weight: 300;
   font-style: normal;
   margin-right: 10px;
@@ -137,7 +137,7 @@
   display: flex;
   padding-bottom: 10px;
   font-size: 19px;
-  font-family: "Satoshi", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-weight: 700;
   font-style: normal;
 }
@@ -153,12 +153,12 @@
   margin-bottom: 10px;
   padding: 10px;
   font-size: 16px;
-  font-family: "Satoshi", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-weight: 300;
   font-style: normal;
   background: #fcfcfc;
   border-radius: 8px;
-  box-shadow: 0px 1px 1px #171a1f, 0px 0px 2px #171a1f;
+  box-shadow: 0 1px 1px #171a1f, 0 0 2px #171a1f;
 }
 
 .error-message{
@@ -172,13 +172,13 @@
   margin-bottom: 10px;
   padding: 10px;
   font-size: 18px;
-  font-family: "Satoshi", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-weight: 600;
   font-style: normal;
   background: #f8b6b6;
   border: 10px solid #bf0a2e;
   border-radius: 8px;
-  box-shadow: 0px 1px 1px #bf0a2e, 0px 0px 2px #bf0a2e;
+  box-shadow: 0 1px 1px #bf0a2e, 0 0 2px #bf0a2e;
 }
 
 .span-user{
@@ -186,7 +186,7 @@
   display: flex;
   font-size: 19px;
   padding-bottom: 10px;
-  font-family: "Satoshi", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-weight: 700;
   font-style: normal;
 }
@@ -202,12 +202,12 @@
   margin-bottom: 10px;
   padding: 10px;
   font-size: 16px;
-  font-family: "Satoshi", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-weight: 300;
   font-style: normal;
   background: #f2f2f2;
   border-radius: 8px;
-  box-shadow: 0px 1px 1px #171a1f, 0px 0px 2px #171a1f;
+  box-shadow: 0 1px 1px #171a1f, 0 0 2px #171a1f;
 }
 
 .signin-alert{
@@ -215,7 +215,7 @@
   display: flex;
   justify-content: center;
   font-size: 23px;
-  font-family: "Satoshi", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-weight: 700;
   font-style: normal;
   top: 45%;
@@ -229,7 +229,7 @@
   height: 100%;
   font-size: 19px;
   margin: 10%;
-  font-family: "Satoshi", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-weight: 300;
   font-style: normal;
 }
@@ -238,7 +238,7 @@
   position: relative;
   display: flex;
   word-wrap: break-word;
-  font-family: "Satoshi", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-weight: 700;
   font-style: normal;
   font-size: 22px;
@@ -269,7 +269,7 @@
   width: 100%;
   border: none;
   background: none;
-  font-family: "Satoshi", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-weight: 200;
   font-style: normal;
   padding-left: 3px;
@@ -315,7 +315,7 @@
   height: 8px;
   width: 40%;
   font-weight: bold;
-  font-family: "Satoshi", sans-serif;
+  font-family: 'Satoshi', sans-serif;
   font-size: 30px;
   padding-bottom: 8px;
   background: linear-gradient(currentColor 0 0) 0 100%/0% 3px no-repeat;
@@ -361,7 +361,7 @@
   height: 100%;
   background: rgb(242, 242, 242); 
   border-radius: 6px;
-  box-shadow: 0px 2px 6px #171a1f, 0px 0px 2px #171a1f;
+  box-shadow: 0 2px 6px #171a1f, 0 0 2px #171a1f;
   right: -30%;
   transition: right 0.01s ease;
 }
@@ -381,7 +381,7 @@
   height: 100%;
   background: rgb(242, 242, 242); 
   border-radius: 6px;
-  box-shadow: 0px 2px 6px #171a1f, 0px 0px 2px #171a1f;
+  box-shadow: 0 2px 6px #171a1f, 0 0 2px #171a1f;
 }
 
 .paletteButton {

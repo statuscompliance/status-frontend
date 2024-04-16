@@ -20,7 +20,7 @@
     top: 15%;
     width: 85%;
     border-collapse: collapse;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 10%);
     border-radius: 8px;
     height: 60%;
     margin-bottom: 5%;
@@ -81,9 +81,11 @@
 .column {
     text-align: left;
 }
+
 .column:last-child {
     text-align: center;
 }
+
 .datatable-header{
     position: relative;
     display: flex;
@@ -91,6 +93,7 @@
     justify-content: center;
     width: 100%;
 }
+
 .filter-header {
     display: flex;
     align-items: center;
@@ -132,6 +135,7 @@
 .actions button {
     margin: 0.5rem;
 }
+
 .alert {
     position: relative;
     display: flex;
@@ -142,16 +146,18 @@
     max-height: 100%;
     background: rgb(242, 242, 242); 
 }
+
 .signin-alert{
     position: relative;
     display: flex;
     justify-content: center;
     font-size: 23px;
-    font-family: "Satoshi", sans-serif;
+    font-family: 'Satoshi', sans-serif;
     font-weight: 700;
     font-style: normal;
     top: 45%;
 }
+
 .create-button{
     display: flex;
     justify-content: center;
@@ -168,6 +174,7 @@
     margin-left: 2%;
     font-size: 25px;
 }
+
 .modal {
     position: fixed;
     top: 0;
@@ -187,6 +194,7 @@
     border-radius: 8px;
     width: 50%;
 }
+
 .modal-content .form-group {
     margin-bottom: 1rem;
 }
@@ -224,13 +232,11 @@
 .create{
     background-color: #64b4f5;
 }
+
 .text-danger {
     font-weight: 700;
     color: red;
 }
-
-
-
 
 /* Estilo para los botones de paginación */
 .p-paginator-element {
@@ -275,6 +281,7 @@
 .p-dropdown[data-p-focus="true"] .p-dropdown-trigger-icon {
     transform: rotate(180deg);
 }
+
 .actionButton{
     position: relative;
     display: flex;
@@ -285,6 +292,7 @@
     border-radius: 40px;
     background-color: rgba(187, 123, 136, 0.633);
 }
+
 .actionImg {
     position: relative;
     width: 25px;

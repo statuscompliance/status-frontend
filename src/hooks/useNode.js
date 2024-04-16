@@ -169,7 +169,7 @@ export const useNode = () => {
         }
     }
 
-    const addFlowInfo = async (id, flow, info) => {
+    const addFlowInfo = async (id, flow, info) => {
         const accessToken = await getCookie();
         if(accessToken !== '') {
             const label = flow.label;

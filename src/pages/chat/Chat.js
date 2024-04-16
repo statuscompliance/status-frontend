@@ -188,7 +188,7 @@ export default function Chat() {
     }, retryInterval);
   }
 
-  const existThreads = (obj) => {
+  const existThreads = (obj) => {
     if (Array.isArray(obj)) {
         return obj.some(element => existThreads(element));
     } else {
