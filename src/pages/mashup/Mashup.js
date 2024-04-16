@@ -7,15 +7,22 @@ import { useCookie } from '../../hooks/useCookie';
 import { useNode } from '../../hooks/useNode';
 import { Modal } from 'react-bootstrap';
 import DeleteModal from '../../components/DeleteModal';
+import deleteSvg from "../../static/images/delete.svg";
+import edit from "../../static/images/edit.svg";
+import ai from "../../static/images/ai.svg";
+import info from "../../static/images/info.svg";
+import { useOpenAI } from '../../hooks/useOpenAI';
 
 export default function Mashup() {
     const [showModal, setShowModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [mashupName, setMashupName] = useState('');
     const [mashupDescription, setMashupDescription] = useState('');
-    const { isNodeRedDeployed, mashups, createInitialMashup, deleteMashup} = useNode();
+    const { isNodeRedDeployed, mashups, createInitialMashup, deleteMashup, getFlow, addFlowInfo} = useNode();
+    const { createThread, getThreadById} = useOpenAI();
     const existsCookie = useCookie('accessToken');
     const [rowData, setRowData] = useState('');
+    const interval = 1000;
 
     const [globalFilter, setGlobalFilter] = useState('');
 
@@ -37,6 +44,21 @@ export default function Mashup() {
         window.location.href = `/editor`;
     };
 
+    const handleAI = async (rowData) => {
+        const flow = await getFlow(rowData.id);
+        if(flow){
+            const  { newThreadId, msgError }  = await createThread(flow);
+            if (msgError) {
+                console.log("Something went wrong generating the mashup description")
+              }else {
+                const description = await getThreadMessages(newThreadId);
+                if(description){
+                    await addFlowInfo(rowData.id, flow, description);
+                }
+            }
+        }
+    }
+
     const handleDelete = () => {
         deleteMashup(rowData.id);
         setShowDeleteModal(false);
@@ -52,6 +74,39 @@ export default function Mashup() {
         setShowDeleteModal(false);
     }
 
+    async function getThreadMessages(id) {
+        let retryInterval = interval;
+        const maxRetryInterval = 30000;
+        setTimeout(async function retry() {
+          try {
+            let response = await getThreadById(id);
+            if (response.message === "Run not completed yet") {
+              if (retryInterval < maxRetryInterval) {
+                retryInterval *= 2;
+                console.log(`Generando respuesta, espere ${retryInterval / 1000} segundos...`);//BORRAR
+                setTimeout(retry, retryInterval);
+              } else {
+                console.log("Se alcanzó el tiempo máximo de espera. No se pudo completar el proceso."); //BORRAR
+              }
+            } else {
+              if (response && response.data && Array.isArray(response.data)) {
+                let result = response.data.map((message) => {
+                  return {
+                    role: message.role,
+                    content: message.content[0].text.value,
+                  };
+                });
+                const aiResponse = result[0];
+                return aiResponse.content;
+              } else {
+                console.error("La respuesta no tiene el formato esperado:", response);
+              }
+            }
+          } catch (error) {
+            console.error("Error al obtener la descripción", error);
+          }
+        }, retryInterval);
+      }
 
     const modalContent = (
         <div className="modal-content">
@@ -95,12 +150,24 @@ export default function Mashup() {
     const actionTemplate = (rowData) => {
         return (
             <div className='actions'>
-                <button onClick={() => handleView(rowData)} className="see-button">Ver</button>
-                <button onClick={() => handleEdit(rowData)} className="edit-button">Editar</button>
+                { rowData.info === "" || rowData.info === undefined? (
+                    <button onClick={() => handleAI(rowData)} className="actionButton">
+                        <img src={ai} alt="ai" className='actionImg'/>
+                    </button>
+                    ) : (null)
+                }
+                <button onClick={() => handleView(rowData)} className="actionButton">
+                    <img src={info} alt="info" className='actionImg'/>
+                </button>
+                <button onClick={() => handleEdit(rowData)} className="actionButton">
+                    <img src={edit} alt="edit" className='actionImg'/>
+                </button>
                 <button onClick={() => {
                     setRowData(rowData);
                     setShowDeleteModal(true);
-                }} className="delete-button">Eliminar</button>
+                }} className="actionButton">
+                    <img src={deleteSvg} alt="delete" className='actionImg'/>
+                </button>
             </div>
         );
     };
@@ -116,7 +183,7 @@ export default function Mashup() {
                 <DataTable className="dataTable" value={mashups} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]} globalFilter={globalFilter}>
                     <Column className="column" field="label" header="Nombre" style={{ width: '25%' }}></Column>
                     <Column className="column" field="info" header="Descripción" style={{ width: '35%' }}></Column>
-                    <Column body={actionTemplate} className="column" field="action" header="Acciones" style={{ width: '10%' }}></Column>
+                    <Column body={actionTemplate} className="column" field="action" header="Acciones" style={{ width: '15%' }}></Column>
                 </DataTable>
                 {showModal && (
                 <div className="modal">

@@ -21,10 +21,12 @@
     background-color: transparent;
     text-align: center;
 }
+
 .msg{
     position: relative;
     display: flex;
 }
+
 .btnReload{
     position: relative;
     justify-content: center;

@@ -4,7 +4,9 @@ import "../../static/css/login.css";
 
 export default function Login() {
     const { username, password, handleUsernameChange, handlePasswordChange, handleSubmit } = useAuth();
+    // eslint-disable-next-line no-unused-vars
     const [errorMessage, setErrorMessage] = useState('');
+
 
 
     return (

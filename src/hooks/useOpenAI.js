@@ -51,10 +51,16 @@ export const useOpenAI= () => {
                         Authorization: `Bearer ${accessToken}`
                     }
                 });
-                const responseAssistant = response.data[0];
+                let responseAssistant;
+                if(response.data.length > 1) {
+                    responseAssistant = response.data[0];
+                } else {
+                    responseAssistant = response.data;
+                }
                 // AQUÍ SE DEBE SELECCIONAR UN ASISTENTE LIBRE (POR AHORA SE COJE EL ÚNICO EXISTENTE)
                 setAssistant(responseAssistant.assistantId);
             } catch (error) {
+                console.error(error);
                 console.log(`Error getting assistant`);
             }
         }
@@ -80,6 +86,7 @@ export const useOpenAI= () => {
                 if (error.response && error.response.status === 400) {
                     return {newThreadId: "", msgError: true};
                 } else {
+                    console.error(error);
                     console.log(`Error creating the thread`);
                 }
             }

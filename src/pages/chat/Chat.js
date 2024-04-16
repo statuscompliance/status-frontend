@@ -56,8 +56,8 @@ export default function Chat() {
   };
 
   const checkJSONResponse = (result) => {
-    for (let i = 0; i < result.length; i++) {
-      if (result[i].role=== "assistant" && result[i].content.startsWith("```json")) {
+    for (const msg of result) {
+      if (msg.role=== "assistant" && msg.content.startsWith("```json")) {
         return true;
       }
     }
@@ -188,6 +188,14 @@ export default function Chat() {
     }, retryInterval);
   }
 
+  const existThreads = (obj) => {
+    if (Array.isArray(obj)) {
+        return obj.some(element => existThreads(element));
+    } else {
+        return obj !== null && typeof obj === 'object' ? Object.keys(obj).length > 0 : Boolean(obj);
+    };
+  };
+
   return (
     <div className="chatBody">
       {showDeleteModal && (
@@ -232,7 +240,7 @@ export default function Chat() {
           <div className={`loader ${animated && !hideChat? '': 'hide'}`}></div>
           <div className={`chat ${animated && !hideChat? 'blur' : hideChat? 'hide' : '' }`}>
             <div className='historyContainer'>
-              {threads.length>0?(
+              {existThreads(threads)?(
                 <div className="history">
                   <p className="historyText">Historial</p>
                   <ul className="threadList">

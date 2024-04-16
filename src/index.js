@@ -18,7 +18,7 @@ import { useCookie } from './hooks/useCookie';
 import { useAuth } from './hooks/useAuth';
 import { Modal } from 'react-bootstrap';
 
-const App = ({ Component, pageProps }) => {
+const App = () => {
     const [showModal, setShowModal] = useState(false);
     const existsCookie = useCookie('accessToken');
     const [isLoggedIn, setIsLoggedIn] = useState(false);
