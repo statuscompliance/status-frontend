@@ -8,6 +8,7 @@ import Login from './pages/auth/Login';
 import Editor from './pages/node-red/Editor';
 import Chat from './pages/chat/Chat';
 import Home from './pages/Home';
+import Admin from './pages/admin/Admin';
 import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
 import { statusApi } from './api/statusApi';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -24,11 +25,12 @@ const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-    const { handleRefresh } = useAuth();
+    const { handleRefresh, getAuthority, authority } = useAuth();
 
     useEffect(() => {
         setIsLoggedIn(existsCookie);
-    }, [existsCookie]);
+        getAuthority();
+    }, [existsCookie, getAuthority]);
 
     const handleLogout = () => {
         statusApi.get('http://localhost:3001/api/user/signOut')
@@ -133,6 +135,11 @@ const App = () => {
                         </Link>
                     <nav className="navbar navbar-dark flex-column">
                         <ul className="navbar-nav align-items-start">
+                        {authority === 'ADMIN'? (
+                            <li className="nav-item">
+                                <Link className="nav-link pt-serif-regular" to="/admin">Administración de servicios</Link>
+                            </li>
+                        ) : null}
                             <li className="nav-item">
                                 <Link className="nav-link pt-serif-regular" to="/catalogs">Catálogos</Link>
                             </li>
@@ -178,6 +185,7 @@ const App = () => {
                     <Route element={<Login />} path="/login"/>
                     <Route element={<Editor />} path="/editor"/>
                     <Route element={<Chat />} path="/chat"/>
+                    <Route element={<Admin />} path="/admin"/>
                 </Routes>
                 </div>
         </BrowserRouter>

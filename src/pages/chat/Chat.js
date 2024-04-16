@@ -64,7 +64,6 @@ export default function Chat() {
     return false;
   };
 
-
   useEffect(() => {
     let timer = 0;
     if(animated){
@@ -76,6 +75,29 @@ export default function Chat() {
       clearTimeout(timer);
     };
   }, [animated]);
+  
+  async function handleErrors(type,msgError,threadId){
+    if(type === 'new'){
+      if (msgError) {
+        if (!errorAdded) { 
+          setThreadMessages(threadMessages.concat([{ role: 'assistant', content: errorMessage, isError: true }]));
+          setErrorAdded(true); 
+        }
+      }else {
+        setCurrentThreadId(threadId);
+        await getThreadMessages(threadId);
+      }
+    } else if (type === 'add'){
+      if (msgError) {
+        if (!errorAdded) { 
+          setThreadMessages(threadMessages.concat([{ role: 'assistant', content: errorMessage, isError: true }]));
+          setErrorAdded(true); 
+        }
+      } else {
+        await getThreadMessages(threadId);
+      }
+    }
+  }
 
   const handleSend = async (e) => {
     setInterval(2000);
@@ -85,25 +107,10 @@ export default function Chat() {
       if (messageText !== '') {
         if(threadMessages.length === 0){
           const  { newThreadId, msgError }  = await createThread(messageText);
-          if (msgError) {
-            if (!errorAdded) { 
-              setThreadMessages(threadMessages.concat([{ role: 'assistant', content: errorMessage, isError: true }]));
-              setErrorAdded(true);
-            }
-          }else {
-            setCurrentThreadId(newThreadId);
-            await getThreadMessages(newThreadId);
-          }
+          handleErrors('new',msgError,newThreadId);
         } else {
           const reqStatus = await sendNewMessage(currentThreadId, messageText);
-          if (reqStatus) {
-            if (!errorAdded) {
-              setThreadMessages(threadMessages.concat([{ role: 'assistant', content: errorMessage, isError: true }]));
-              setErrorAdded(true);
-            }
-          } else {
-            await getThreadMessages(currentThreadId);
-          }
+          handleErrors('add',reqStatus,currentThreadId);
         }
         e.target.value = "";
       }
@@ -117,25 +124,10 @@ export default function Chat() {
     if (!messageText.trim() !== '') {
       if(threadMessages.length === 0){
         const { newThreadId, msgError } = await createThread(messageText);
-          if (msgError) {
-            if (!errorAdded) { 
-              setThreadMessages(threadMessages.concat([{ role: 'assistant', content: errorMessage, isError: true }]));
-              setErrorAdded(true); 
-            }
-          }else {
-            setCurrentThreadId(newThreadId);
-            await getThreadMessages(newThreadId);
-          }
+        handleErrors('new',msgError,newThreadId);
       } else {
         const reqStatus = await sendNewMessage(currentThreadId, messageText);
-        if (reqStatus) {
-          if (!errorAdded) { 
-            setThreadMessages(threadMessages.concat([{ role: 'assistant', content: errorMessage, isError: true }]));
-            setErrorAdded(true); 
-          }
-        } else {
-          await getThreadMessages(currentThreadId);
-        }
+        handleErrors('add',reqStatus,currentThreadId);
       }
       textarea.value = "";
     }

@@ -6,6 +6,7 @@ export const useAuth = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const { isNodeRedDeployed, checkNodeRedDeployment } = useNode();
+    const [authority, setAuthority] = useState('');
 
     const handleUsernameChange = (event) => {
         setUsername(event.target.value);
@@ -14,6 +15,14 @@ export const useAuth = () => {
     const handlePasswordChange = (event) => {
         setPassword(event.target.value);
     };
+
+    const getCookie = async () => {
+        if(document.cookie.split('; ').find(row => row.startsWith(`accessToken=`))) {
+            return document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1].trim();
+        } else {
+            return '';
+        }
+    }
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -91,7 +100,26 @@ export const useAuth = () => {
             };
         }
     }
-            
 
-    return { username, password, handleUsernameChange, handlePasswordChange, handleSubmit, handleRefresh };
+    const getAuthority = async () => {
+        const accessToken = await getCookie();
+        if(accessToken) {
+            try {
+                const response = await statusApi.get(`http://localhost:3001/api/user/auth/`, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
+                setAuthority(response.data.authority);
+            } catch (error) {
+                console.error('Error fetching user authority:', error);
+            }
+        } else {
+            console.error('No access token found');
+        }
+    }
+
+    
+
+    return { username, password, handleUsernameChange, handlePasswordChange, handleSubmit, handleRefresh,getAuthority, authority };
 };
