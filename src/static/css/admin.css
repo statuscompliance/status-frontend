@@ -1,0 +1,270 @@
+.adminContainer {
+    height: 100%;
+    width: 100%;
+}
+
+.cont {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    grid-template-columns: 50% 50%;
+}
+
+.assistantCard {
+    height: 65%;
+}
+
+.adminCard {
+    position: absolute;
+    width: 45%;
+    left: 50%;
+    margin-top: 5%;
+    margin-bottom:3%;
+    display: grid;
+    height: 80vh;
+    grid-template-rows: 13% 15% 72%;
+    row-gap: 18px;
+}
+
+.endpoints {
+    position: relative;
+    height: 100%;
+    word-break: break-word;
+    width: 100%;
+}
+
+.management {
+    position: relative;
+    height: 100%;
+}
+
+.cardItem1 {
+    position: absolute;
+    display: flex;
+    margin-left: 5%;
+    margin-top: 5%;
+    height: 85%;
+    width: 42%;
+    justify-content: center;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    background-color: #f7f7f7;
+}
+
+.editor {
+    position: relative;
+    width: 100%;
+    height: 95%;
+    flex-direction: column;
+    overflow-y: scroll;
+}
+
+.instructionsContainer{
+    width: 100%;
+    height: 90%;
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
+.heading {
+    margin-top: 5%;
+}
+
+.textArea {
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    background-color: white;
+    padding: 10px;
+}
+
+.updateButton {
+    margin-top: 3%;
+    margin-bottom: 3%;
+    width: 30%;
+    height: auto;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    background-color: #f7f7f7;
+} 
+
+.updateButton:hover {
+    background-color: #e0e0e0;
+} 
+
+.cardItem2 {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    background-color: #f7f7f7;
+    align-items: center;
+}
+
+.endpointList {
+    margin-top: 3%;
+    overflow-y: scroll;
+}
+
+.endpointList li {
+    list-style: none;
+}
+.endpoint {
+    columns: 2;
+    column-gap: 50px;
+    width: 100%;
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+  
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+  
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+  
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+  
+input:checked + .slider {
+    background-color: #bf0a2e;
+}
+  
+input:focus + .slider {
+    box-shadow: 0 0 1px #bf0a2e;
+}
+  
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+  
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.decline {
+    background-color: #da6363;
+}
+
+.accept {
+    background-color: #139d6a;
+}
+
+.heading2 {
+    margin-top: 5%;
+    margin-left: 5%;
+}
+
+.cardItem3 {
+    position: relative;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: start;
+    height: 100%;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    font-size: 15px;
+    background-color: #f7f7f7;
+    overflow: scroll;
+}
+
+.managementContainer{
+    width: 85%;
+    height: 100%;
+
+}
+.assistantTable {
+    margin: 5%;
+    width: 100%;
+    max-height: 100%;
+    overflow-y: scroll;
+    border-collapse: collapse;
+    background-color: #f7f7f7;
+    table-layout: fixed;
+}
+
+.assistantTable th, .assistantTable td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.assistantTable th, .assistantTable td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Establecer el ancho relativo de las columnas */
+.assistantTable th:nth-child(1),
+.assistantTable td:nth-child(1) {
+    width: 30%;
+}
+
+.assistantTable th:nth-child(2),
+.assistantTable td:nth-child(2) {
+    width: 25%;
+}
+
+.assistantTable .tableBody td:nth-child(2) {
+    color: green;
+}
+
+.assistantTable .tableBody td:nth-child(2)::before {
+    content: attr(data-state);
+}
+
+.assistantTable .tableBody td:nth-child(2)::before {
+    content: attr(data-state);
+    display: inline-block;
+    padding: 6px 8px;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+}
+
+.assistantTable .tableBody td[data-state="INACTIVE"]::before {
+    background-color: green;
+}
+
+.assistantTable .tableBody td[data-state="ACTIVE"]::before {
+    background-color: red;
+}

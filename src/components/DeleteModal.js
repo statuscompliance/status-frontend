@@ -13,7 +13,7 @@ const DeleteModal = ({ show, handleClose, handleDelete }) => {
                 </Modal.Body>
                 <Modal.Footer>
                     <button onClick={handleClose}>Cancelar</button>
-                    <button onClick={handleDelete}>Confirmar</button>
+                    <button className='accept' onClick={handleDelete}>Confirmar</button>
                 </Modal.Footer>
             </Modal>
         </div>

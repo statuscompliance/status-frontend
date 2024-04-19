@@ -8,6 +8,14 @@ export const useAuth = () => {
     const { isNodeRedDeployed, checkNodeRedDeployment } = useNode();
     const [authority, setAuthority] = useState('');
 
+    function getCookie(){
+        if(document.cookie.split('; ').find(row => row.startsWith(`accessToken=`))) {
+            return document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1].trim();
+        } else {
+            return '';
+        }
+    }
+
     const handleUsernameChange = (event) => {
         setUsername(event.target.value);
     };
@@ -15,14 +23,6 @@ export const useAuth = () => {
     const handlePasswordChange = (event) => {
         setPassword(event.target.value);
     };
-
-    const getCookie = async () => {
-        if(document.cookie.split('; ').find(row => row.startsWith(`accessToken=`))) {
-            return document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1].trim();
-        } else {
-            return '';
-        }
-    }
 
     const handleSubmit = (event) => {
         event.preventDefault();

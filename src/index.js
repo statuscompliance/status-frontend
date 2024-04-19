@@ -137,7 +137,7 @@ const App = () => {
                         <ul className="navbar-nav align-items-start">
                         {authority === 'ADMIN'? (
                             <li className="nav-item">
-                                <Link className="nav-link pt-serif-regular" to="/admin">Administración de servicios</Link>
+                                <Link className="nav-link pt-serif-regular" to="/admin">Administración de OpenAI</Link>
                             </li>
                         ) : null}
                             <li className="nav-item">

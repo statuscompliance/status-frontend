@@ -46,14 +46,14 @@ export const useOpenAI= () => {
         if(document.cookie.split('; ').find(row => row.startsWith(`accessToken=`))) {
             const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1];
             try {
-                const response = await statusApi.get('http://localhost:3001/api/assistant', {
+                const response = await statusApi.get('http://localhost:3001/api/assistant/', {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }
                 });
                 let responseAssistant;
                 if(response.data.length > 1) {
-                    responseAssistant = response.data[0];
+                    responseAssistant = response.data[-1];
                 } else {
                     responseAssistant = response.data;
                 }

@@ -226,7 +226,10 @@
 }
 
 .modal-content button:first-child {
-    background-color: #d49696;
+    background-color: #da6363;
+}
+.accept {
+    background-color: #139d6a;
 }
 
 .create{

@@ -23,3 +23,16 @@ export function useCookie(cookieName) {
 
   return cookieExists;
 }
+
+export function getCookie(name) {
+  const cookieString = document.cookie;
+  const cookies = cookieString.split(';');
+  
+  for (const cookie of cookies) {
+    const cookieTrimmed = cookie.trim();
+    if (cookieTrimmed.startsWith(name + '=')) {
+      return cookieTrimmed.split('=')[1];
+    }
+  }
+  return '';
+}
