@@ -4,6 +4,8 @@ import { useCookie } from '../../hooks/useCookie';
 import { useAdmin } from '../../hooks/useAdmin';
 import "../../static/css/admin.css";
 import { Modal } from 'react-bootstrap';
+import DeleteModal from "../../components/DeleteModal";
+import deleteSvg from "../../static/images/delete.svg";
 
 export default function Admin() {
     const existsCookie = useCookie('accessToken');
@@ -11,9 +13,11 @@ export default function Admin() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [updateModal, setUpdateModal] = useState(false);
     const [configStatus, setConfigStatus] = useState(false);
-    const { config= [], instructions, assistants, getGPTConfiguration, updateConfiguration, getAssistantInst, updateAssistantInst, getAssistants } = useAdmin();
+    const { config= [], instructions, assistants, getGPTConfiguration, updateConfiguration, getAssistantInst, updateAssistantInst, getAssistants, deleteAssistant, deleteAllAssistants } = useAdmin();
     const [newInstructions, setNewInstructions] = useState('');
     const [hideInstructions, setHideInstructions] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [assistantId, setAssistantId] = useState('');
 
     useEffect(() => {
         setIsLoggedIn(existsCookie);
@@ -59,6 +63,20 @@ export default function Admin() {
         setConfigStatus(state);
         setUpdateModal(true);
     }
+  
+    const handleDeleteModalClose = () => {
+      setShowDeleteModal(false);
+    }
+  
+    const handleDelete = async () => {
+        if(assistantId !== '0'){
+            await deleteAllAssistants();
+        } else {
+            deleteAssistant(assistantId);
+        }
+        setShowDeleteModal(false);
+        getAssistants();
+    };
 
     const checkOpenAIAvailable = () => {
         if(config.length !== undefined){
@@ -84,29 +102,9 @@ export default function Admin() {
         }
     }
 
-    const actionTemplate = (rowData) => {
-        return (
-            <div className='actions'>
-                {/* { rowData.info === "" || rowData.info === undefined? (
-                    <button onClick={() => handleAI(rowData)} className="actionButton">
-                        <img src={ai} alt="ai" className='actionImg'/>
-                    </button>
-                    ) : (null)
-                }
-                <button onClick={() => handleView(rowData)} className="actionButton">
-                    <img src={info} alt="info" className='actionImg'/>
-                </button>
-                <button onClick={() => handleEdit(rowData)} className="actionButton">
-                    <img src={edit} alt="edit" className='actionImg'/>
-                </button>
-                <button onClick={() => {
-                    setRowData(rowData);
-                    setShowDeleteModal(true);
-                }} className="actionButton">
-                    <img src={deleteSvg} alt="delete" className='actionImg'/>
-                </button> */}
-            </div>
-        );
+    const handleDeleteClick = (id) => {
+        setAssistantId(id);
+        setShowDeleteModal(true);
     };
 
     return (
@@ -142,13 +140,18 @@ export default function Admin() {
                             <div className='cardItem2'>
                                     <ul className='endpointList'>
                                         <div className='endpoint'>
-                                            <li>
+                                            <div className='endpointContent'>
                                                 <p>Asistente de OpenAI</p>
+                                            </div>
+                                            <div className='endpointContent'>
                                                 <label className="switch">
-                                                <input type="checkbox" checked={configStatus} onChange={(e) => showConfigModal(e.target.checked)}/>
-                                                <span className="slider round"></span>
+                                                    <input checked={configStatus} onChange={(e) => showConfigModal(e.target.checked)} type="checkbox"/>
+                                                    <span className="slider round"></span>
                                                 </label>
-                                            </li>
+                                            </div>
+                                            <div className='endpointContent'>
+                                                <button className="costButton" onClick={() => window.open("https://platform.openai.com/usage", "_blank")}>Ver Costes</button>
+                                            </div>
                                         </div>
                                     </ul>
                                 <div/>
@@ -162,6 +165,10 @@ export default function Admin() {
                             <div className='cardItem3' style={hideInstructions ? { display: 'none' } : {}}>
                                 <div className='managementContainer'>
                                     <h5 className='heading2'>Gestión de asistentes</h5>
+                                    <button onClick={() => handleDeleteClick(0)} className="deleteAllButton">
+                                        Vaciar
+                                        <img src={deleteSvg} alt="delete" className='actionImg'/>
+                                    </button>
                                     <div className='tableContainer'>
                                         <table className='assistantTable'>
                                             <thead>
@@ -176,7 +183,11 @@ export default function Admin() {
                                                     <tr key={assistant.id}>
                                                         <td>{assistant.assistantId}</td>
                                                         <td>{assistant.status === "INACTIVE" ? "Libre" : "Ocupado"}</td>
-                                                        <td>{actionTemplate(assistant)}</td>
+                                                        <td>
+                                                        <button onClick={() => handleDeleteClick(assistant.id)} className="actionButton">
+                                                            <img src={deleteSvg} alt="delete" className='actionImg'/>
+                                                        </button>
+                                                        </td>
                                                     </tr>
                                                 ))}
                                             </tbody>
@@ -192,6 +203,16 @@ export default function Admin() {
                     <h2>No puedes acceder a esta parte del sistema</h2>
                 </div>
             )}
+
+            {showDeleteModal && (
+                                <div className="modal">
+                                    <DeleteModal
+                                        show={showDeleteModal}
+                                        handleClose={handleDeleteModalClose}
+                                        handleDelete={handleDelete}
+                                    />
+                                </div>
+                            )}
             <div className='modal-content' style={updateModal? {} : { display: 'none' } }>
                 <Modal onHide={updateModalClose} show={updateModal}>
                     <Modal.Header closeButton>

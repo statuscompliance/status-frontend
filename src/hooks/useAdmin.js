@@ -50,7 +50,7 @@ export const useAdmin = () => {
 
     const getAssistantInst = async () => {
         try {
-            const response = await statusApi.get(`http://localhost:3001/api/assistant/2/instructions`, {
+            const response = await statusApi.get(`http://localhost:3001/api/assistant/1/instructions`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
@@ -64,7 +64,7 @@ export const useAdmin = () => {
     const updateAssistantInst = async (instructions) => {
         console.log(instructions);
         try {
-            const response = await statusApi.put(`http://localhost:3001/api/assistant/2/instructions`, {
+            const response = await statusApi.put(`http://localhost:3001/api/assistant/1/instructions`, {
                 instructions: instructions
             }, {
                 headers: {
@@ -84,11 +84,38 @@ export const useAdmin = () => {
                     Authorization: `Bearer ${accessToken}`
                 }
             });
+
             setAssistants(response.data);
         } catch (error) {
             console.error('Error fetching assistants:', error);
         }
     }
 
-    return { config, instructions,assistants, getGPTConfiguration, updateConfiguration, getAssistantInst, updateAssistantInst, getAssistants };
+    const deleteAssistant = async (assistantId) => {
+        try {
+            const response = await statusApi.delete(`http://localhost:3001/api/assistant/${assistantId}`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+            console.log(response);
+        } catch (error) {
+            console.error('Error deleting assistant:', error);
+        }
+    }
+
+    const deleteAllAssistants = async () => {
+        try {
+            const response = await statusApi.delete(`http://localhost:3001/api/assistant`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+            console.log(response);
+        } catch (error) {
+            console.error('Error deleting all assistants:', error);
+        }
+    }
+
+    return { config, instructions,assistants, getGPTConfiguration, updateConfiguration, getAssistantInst, updateAssistantInst, getAssistants, deleteAssistant, deleteAllAssistants};
 };

@@ -101,7 +101,7 @@
     border: 2px solid rgb(185, 178, 178);
     border-radius: 10px;
     background-color: #f7f7f7;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .endpointList {
@@ -114,9 +114,10 @@
 }
 .endpoint {
     columns: 2;
-    column-gap: 50px;
+    column-gap: 25px;
     width: 100%;
 }
+
 .switch {
     position: relative;
     display: inline-block;
@@ -194,7 +195,7 @@ input:checked + .slider:before {
     display: flex;
     width: 100%;
     flex-direction: column;
-    align-items: start;
+    align-items: flex-start;
     height: 100%;
     border: 2px solid rgb(185, 178, 178);
     border-radius: 10px;
@@ -204,9 +205,8 @@ input:checked + .slider:before {
 }
 
 .managementContainer{
-    width: 85%;
+    width: 90%;
     height: 100%;
-
 }
 .assistantTable {
     margin: 5%;
@@ -236,7 +236,7 @@ input:checked + .slider:before {
 /* Establecer el ancho relativo de las columnas */
 .assistantTable th:nth-child(1),
 .assistantTable td:nth-child(1) {
-    width: 30%;
+    width: 40%;
 }
 
 .assistantTable th:nth-child(2),
@@ -267,4 +267,30 @@ input:checked + .slider:before {
 
 .assistantTable .tableBody td[data-state="ACTIVE"]::before {
     background-color: red;
+}
+
+.deleteAllButton {
+    position: absolute;
+    top: 3%;
+    right: 5%;
+    width: 18%;
+    height: 40px;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    background-color: #2bb6b6;
+    filter: invert(1);
+}
+.actionButton{
+    width: 50%;
+    scale: 0.8;
+}
+.costButton {
+    position: absolute;
+    top: 25%;
+    right: 10%;
+    width: 25%;
+    height: 40px;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    background-color: #f7f7f7;
 }

@@ -6,10 +6,10 @@ const DeleteModal = ({ show, handleClose, handleDelete }) => {
         <div className="modal-content">
             <Modal onHide={handleClose} show={show}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Eliminar Mashup</Modal.Title>
+                    <Modal.Title>Eliminar</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p className='text-danger'>¿Estás seguro de que deseas eliminar este mashup? El cambio será irreversible.</p>
+                    <p className='text-danger'>¿Estás seguro de que deseas eliminar este elemento? El cambio será irreversible.</p>
                 </Modal.Body>
                 <Modal.Footer>
                     <button onClick={handleClose}>Cancelar</button>
