@@ -12,6 +12,8 @@ import edit from "../../static/images/edit.svg";
 import ai from "../../static/images/ai.svg";
 import info from "../../static/images/info.svg";
 import { useOpenAI } from '../../hooks/useOpenAI';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export default function Mashup() {
     const [showModal, setShowModal] = useState(false);
@@ -22,6 +24,9 @@ export default function Mashup() {
     const { createThread, getThreadById} = useOpenAI();
     const existsCookie = useCookie('accessToken');
     const [rowData, setRowData] = useState('');
+    const [disabled, setDisabled] = useState(false);
+    const [currentMashupDetails, setCurrentMashupDetails] = useState('');
+    const [showDetailsModal, setShowDetailsModal] = useState(false);
     const interval = 1000;
 
     const [globalFilter, setGlobalFilter] = useState('');
@@ -37,7 +42,11 @@ export default function Mashup() {
     };
 
     const handleView = async (rowData) => {
-        console.log(rowData);
+        const flow = mashups.find(mashup => mashup.id === rowData.id);
+        if(flow){
+            setCurrentMashupDetails(flow.mashupDetails);
+            setShowDetailsModal(true);
+        }
     };
 
     const handleEdit = () => {
@@ -45,16 +54,18 @@ export default function Mashup() {
     };
 
     const handleAI = async (rowData) => {
+        setDisabled(true);
+
+        setTimeout(() => {
+            setDisabled(false);
+        }, 60000);
         const flow = await getFlow(rowData.id);
         if(flow){
-            const  { newThreadId, msgError }  = await createThread(flow);
+            const  { newThreadId, msgError }  = await createThread(JSON.stringify(flow));
             if (msgError) {
-                console.log("Something went wrong generating the mashup description")
+                console.error("Something went wrong generating the mashup description")
               }else {
-                const description = await getThreadMessages(newThreadId);
-                if(description){
-                    await addFlowInfo(rowData.id, flow, description);
-                }
+                await getThreadMessages(newThreadId, rowData.id, flow);
             }
         }
     }
@@ -66,6 +77,7 @@ export default function Mashup() {
 
     const handleModalClose = () => {
         setShowModal(false);
+        setShowDetailsModal(false);
         setMashupName('');
         setMashupDescription('');
     };
@@ -74,7 +86,7 @@ export default function Mashup() {
         setShowDeleteModal(false);
     }
 
-    async function getThreadMessages(id) {
+    async function getThreadMessages(id, mashupId, flow) {
         let retryInterval = interval;
         const maxRetryInterval = 30000;
         setTimeout(async function retry() {
@@ -97,7 +109,9 @@ export default function Mashup() {
                   };
                 });
                 const aiResponse = result[0];
-                return aiResponse.content;
+                if(aiResponse.role === "assistant" && aiResponse.content){
+                    await addFlowInfo(mashupId, flow, aiResponse.content);
+                }
               } else {
                 console.error("La respuesta no tiene el formato esperado:", response);
               }
@@ -134,6 +148,26 @@ export default function Mashup() {
         </div>
     );
 
+    const modalDetails = (
+        <div className="modal-content">
+            <Modal onHide={handleModalClose} show={showDetailsModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Detalles del mashup</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <form>
+                        <div className="form-group">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>{currentMashupDetails}</ReactMarkdown>
+                        </div>
+                    </form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <button onClick={handleModalClose}>Cerrar</button>
+                </Modal.Footer>
+            </Modal>
+        </div>
+    );
+
     const handleCreateButtonClick = () => {
         setShowModal(true);
     };
@@ -147,15 +181,13 @@ export default function Mashup() {
             <button className="create-button" onClick={handleCreateButtonClick}>+</button>
         </div>
     );
+
     const actionTemplate = (rowData) => {
         return (
             <div className='actions'>
-                { rowData.info === "" || rowData.info === undefined? (
-                    <button onClick={() => handleAI(rowData)} className="actionButton">
-                        <img src={ai} alt="ai" className='actionImg'/>
-                    </button>
-                    ) : (null)
-                }
+                <button onClick={() => handleAI(rowData)} className={`actionButton ${disabled? 'disabled' : ''}`} disabled={disabled}>
+                    <img src={ai} alt="ai" className='actionImg'/>
+                </button>
                 <button onClick={() => handleView(rowData)} className="actionButton">
                     <img src={info} alt="info" className='actionImg'/>
                 </button>
@@ -182,12 +214,17 @@ export default function Mashup() {
                 </div>
                 <DataTable className="dataTable" value={mashups} paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]} globalFilter={globalFilter}>
                     <Column className="column" field="label" header="Nombre" style={{ width: '25%' }}></Column>
-                    <Column className="column" field="info" header="Descripción" style={{ width: '35%' }}></Column>
+                    <Column className="column" field="mashupDescription" header="Descripción" style={{ width: '35%' }}></Column>
                     <Column body={actionTemplate} className="column" field="action" header="Acciones" style={{ width: '15%' }}></Column>
                 </DataTable>
                 {showModal && (
                 <div className="modal">
                     {modalContent}
+                </div>
+                )}
+                {showDetailsModal && (
+                <div className="modal">
+                    {modalDetails}
                 </div>
                 )}
                 {showDeleteModal && (

@@ -1,26 +1,67 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNode } from '../../hooks/useNode';
 import '../../static/css/iframe.css';
+import { Modal } from 'react-bootstrap';
 
 
 export default function Editor() {
-    const { isNodeRedDeployed, checkNodeRedDeployment } = useNode();
+    const { isNodeRedDeployed,nodeRedToken , checkNodeRedDeployment, signIn, nodeRedCookie } = useNode();
+    const [loginModal, setLoginModal] = useState(false);
+    const [name, setName] = useState('');
+    const [password, setPassword] = useState('');
     
     useEffect(() => {
         checkNodeRedDeployment();
+        nodeRedCookie();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     },[isNodeRedDeployed, checkNodeRedDeployment]);
 
+    const closeLoginModal = () => {
+        setLoginModal(false);
+    }
+
+    const handleLogin = async () => {
+        await signIn(name, password);
+        checkNodeRedDeployment();
+        nodeRedCookie();
+        closeLoginModal();
+    }
 
     return (
         <div className='editor'>
-            {isNodeRedDeployed ? (
+            {isNodeRedDeployed && nodeRedToken? (
                 <iframe className="node-red-off" src="http://localhost:1880" title="Node-RED"></iframe>
             ) : (
                 <div className='node-red-off'>
                     <p className='msg pt-serif-bold'>Despliega Node-RED de forma local para abrir el editor.</p>
-                    <button className='btnReload pt-serif-regular' onClick={() => window.location.reload()}>Listo</button>
+                    <button className='btnReload pt-serif-regular' onClick={() => setLoginModal(true)}>Listo</button>
                 </div>
             )}
+
+            <div className='modal-content' style={isNodeRedDeployed? {} : { display: 'none' } }>
+                <Modal onHide={closeLoginModal} show={loginModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Iniciar sesión en Node-RED</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <form>
+                            <div className="form-group">
+                                <label htmlFor="name">Nombre:</label>
+                                <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="password">Contraseña:</label>
+                                <br></br>
+                                <input type="password" id="pswd" value={password} onChange={(e) => setPassword(e.target.value)} />
+                            </div>
+                        </form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <button className="decline"onClick={closeLoginModal}>Cancelar</button>
+                        <button className="accept" onClick={() => handleLogin()}>Iniciar sesión</button>
+                    </Modal.Footer>
+                </Modal>
+            </div>
         </div>
     );
 }

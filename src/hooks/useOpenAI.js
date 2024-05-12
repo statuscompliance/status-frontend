@@ -52,16 +52,16 @@ export const useOpenAI= () => {
                     }
                 });
                 let responseAssistant;
+                // AQUÍ SE DEBE SELECCIONAR UN ASISTENTE LIBRE (POR AHORA SE COJE EL ÚLTIMO EXISTENTE)
+                // LÓGICA AQUÍ
                 if(response.data.length > 1) {
-                    responseAssistant = response.data[-1];
+                    responseAssistant = response.data[response.data.length - 1];
                 } else {
-                    responseAssistant = response.data;
+                    responseAssistant = response.data[0];
                 }
-                // AQUÍ SE DEBE SELECCIONAR UN ASISTENTE LIBRE (POR AHORA SE COJE EL ÚNICO EXISTENTE)
                 setAssistant(responseAssistant.assistantId);
             } catch (error) {
                 console.error(error);
-                console.log(`Error getting assistant`);
             }
         }
     }
@@ -87,7 +87,6 @@ export const useOpenAI= () => {
                     return {newThreadId: "", msgError: true};
                 } else {
                     console.error(error);
-                    console.log(`Error creating the thread`);
                 }
             }
         }

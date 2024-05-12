@@ -268,6 +268,12 @@ input:checked + .slider:before {
 .assistantTable .tableBody td[data-state="ACTIVE"]::before {
     background-color: red;
 }
+.assistantName{
+    cursor: pointer;
+}
+.assistantName:hover{
+    color: #347a7a;
+}
 
 .deleteAllButton {
     position: absolute;

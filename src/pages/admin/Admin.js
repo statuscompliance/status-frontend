@@ -13,11 +13,11 @@ export default function Admin() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [updateModal, setUpdateModal] = useState(false);
     const [configStatus, setConfigStatus] = useState(false);
-    const { config= [], instructions, assistants, getGPTConfiguration, updateConfiguration, getAssistantInst, updateAssistantInst, getAssistants, deleteAssistant, deleteAllAssistants } = useAdmin();
+    const { config= [], instructions, assistants, getGPTConfiguration, updateConfiguration,getAssistantInstById, updateAssistantInst, getAssistants, deleteAssistant, deleteAllAssistants } = useAdmin();
     const [newInstructions, setNewInstructions] = useState('');
     const [hideInstructions, setHideInstructions] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [assistantId, setAssistantId] = useState('');
+    const [id, setId] = useState('');
 
     useEffect(() => {
         setIsLoggedIn(existsCookie);
@@ -28,7 +28,6 @@ export default function Admin() {
     useEffect(() => {
         if (isLoggedIn && authority === 'ADMIN' && !hideInstructions) {
             getGPTConfiguration();
-            getAssistantInst();
             getAssistants();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,10 +68,10 @@ export default function Admin() {
     }
   
     const handleDelete = async () => {
-        if(assistantId !== '0'){
+        if(id !== '0'){
             await deleteAllAssistants();
         } else {
-            deleteAssistant(assistantId);
+            deleteAssistant(id);
         }
         setShowDeleteModal(false);
         getAssistants();
@@ -93,17 +92,19 @@ export default function Admin() {
         }
     }
 
-    const updateInstructions = async (newInstructions) => {
+    const updateInstructions = async (updateId,newInstructions) => {
         if(newInstructions !== instructions){
-            await updateAssistantInst(newInstructions);
-            getAssistantInst();
+            if(updateId !== ''){
+                await updateAssistantInst(updateId, newInstructions);
+                getAssistantInstById(updateId);
+            } 
         } else {
             alert('No se han realizado cambios');
         }
     }
 
     const handleDeleteClick = (id) => {
-        setAssistantId(id);
+        setId(id);
         setShowDeleteModal(true);
     };
 
@@ -123,7 +124,7 @@ export default function Admin() {
                                             value={newInstructions}
                                             onChange={(e) => setNewInstructions(e.target.value)}
                                         ></textarea>
-                                        <button className='updateButton' onClick={() => updateInstructions(newInstructions)}>Actualizar</button>
+                                        <button className='updateButton' onClick={() => updateInstructions(id,newInstructions)}>Actualizar</button>
                                     </div>
                                 </div>
                             ) : (
@@ -180,8 +181,11 @@ export default function Admin() {
                                             </thead>
                                             <tbody className='tableBody'>
                                                 {assistants.map((assistant) => (
-                                                    <tr key={assistant.id}>
-                                                        <td>{assistant.assistantId}</td>
+                                                    <tr key={assistant.id} >
+                                                        <td className='assistantName' onClick={() => {
+                                                            getAssistantInstById(assistant.id);
+                                                            setId(assistant.id);
+                                                            }}>{assistant.assistantId}</td>
                                                         <td>{assistant.status === "INACTIVE" ? "Libre" : "Ocupado"}</td>
                                                         <td>
                                                         <button onClick={() => handleDeleteClick(assistant.id)} className="actionButton">

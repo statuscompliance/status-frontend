@@ -4,30 +4,50 @@ import { statusApi } from "../api/statusApi";
 export const useNode = () => {
     const [isNodeRedDeployed, setIsNodeRedDeployed] = useState(false);
     const [mashups, setMashups] = useState([]);
+    const [nodeRedToken, setNodeRedToken] = useState(false);
 
     useEffect(() => {
-        checkNodeRedDeployment();
-        getMashups();
+        const fetchData = async () => {
+            const active = await checkStatus();
+            if (active) {
+                setIsNodeRedDeployed(true);
+                getMashups();
+            }
+        };
+        fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+    
 
     const checkNodeRedDeployment = async () => {
-        try{
-            const response = await statusApi.get('http://localhost:1880');
-            if (response.status === 200) {
-                setIsNodeRedDeployed(true);
-            }
-        } catch(error) {
-            if (error) {
-                setIsNodeRedDeployed(false);
-            }
+        const nodeRed = await checkStatus();
+        if(nodeRed) {
+            setIsNodeRedDeployed(true);
+        } else {
+            setIsNodeRedDeployed(false);
         }
     };
+
+    const nodeRedCookie = async () => {
+        const cookie = await getCookie();
+        if(cookie !== '') {
+            setNodeRedToken(true);
+        } else {
+            setNodeRedToken(false);
+        }
+    }
+
     async function checkStatus() {
         try {
             await statusApi.get('http://localhost:1880');
             return true;
         } catch (error) {
-            return false;
+            if (error.code === 'ERR_NETWORK') {
+                return false;
+            } else {
+                console.error(error.message);
+                return false;
+            }
         }
     }
 
@@ -38,6 +58,32 @@ export const useNode = () => {
         } else {
             return '';
         }
+    }
+
+    const signIn = async (username, password) => {
+        checkNodeRedDeployment();
+            if (isNodeRedDeployed) {
+                statusApi.post('http://localhost:1880/auth/token', {
+                    "client_id": "node-red-admin",
+                    "grant_type": "password",
+                    "scope": "*",
+                    "username": username,
+                    "password": password
+                }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then((response) => {
+                    const now = new Date();
+                    const oneWeekLater = new Date(now.getTime()+ response.data.expires_in*1000);
+                    const accessExpires = oneWeekLater.toUTCString();
+                    document.cookie = `nodeRedAccessToken=${response.data.access_token}; expires=${accessExpires}`;
+                    setNodeRedToken(true);
+                }).catch((error) => {
+                    console.error(error.message);
+                });
+            }
     }
 
     const getMashups = async () => {
@@ -57,12 +103,32 @@ export const useNode = () => {
                     }
                 });
                 const filteredMashups = response.data.filter(obj => obj.type === 'tab');
-                setMashups(filteredMashups);
+                const parsedMashups = parseMashups(filteredMashups);
+                console.log(parsedMashups);
+                setMashups(parsedMashups);
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }
     };
+
+
+    function parseMashups(mashups) {
+        for (let i = 0; i < mashups.length; i++) {
+            const text = mashups[i].info;
+            if (text.includes('**Details**') && text.includes('**Description**')) {
+                const textWithoutDesc= text.replace('**Description**', '');
+                const matches = textWithoutDesc.split('**Details**');
+                mashups[i].mashupDescription = matches[0].trim();
+                mashups[i].mashupDetails = matches[1].trim();
+            } else {
+                mashups[i].mashupDescription = mashups[i].info;
+                mashups[i].mashupDetails = mashups[i].info;
+            }
+        }
+        return mashups;
+    }
+    
 
     const createInitialMashup = async (name,description) => {
         const accessToken = await getCookie();
@@ -80,7 +146,7 @@ export const useNode = () => {
                 });
                 return response.data;
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }
     };
@@ -96,7 +162,7 @@ export const useNode = () => {
                 });
                 getMashups();
             } catch (error) {
-                console.log(error);
+                console.error(error);
             }
         }
     };
@@ -196,6 +262,6 @@ export const useNode = () => {
         }
     }
 
-    return { isNodeRedDeployed,mashups, checkNodeRedDeployment, createInitialMashup, deleteMashup, temporalMashup, getFlow, addFlowInfo};
+    return { isNodeRedDeployed,mashups, nodeRedToken, checkNodeRedDeployment, signIn, createInitialMashup, deleteMashup, temporalMashup, getFlow, addFlowInfo, nodeRedCookie};
 };
 

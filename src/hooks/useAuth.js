@@ -1,11 +1,9 @@
 import { useState} from "react";
 import { statusApi } from "../api/statusApi";
-import { useNode } from './useNode';
 
 export const useAuth = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const { isNodeRedDeployed, checkNodeRedDeployment } = useNode();
     const [authority, setAuthority] = useState('');
 
     function getCookie(){
@@ -26,7 +24,6 @@ export const useAuth = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-
         statusApi.post('http://localhost:3001/api/user/signIn', {
             username: username,
             password: password
@@ -35,7 +32,7 @@ export const useAuth = () => {
                 'Content-Type': 'application/json',
             }
         })
-        .then((response) => {
+        .then(async (response) => {
             const now = new Date();
             const oneHourLater = new Date(now.getTime()+ 60 * 60 * 1000);
             const oneDayLater = new Date(now.getTime()+ 24 * 60 * 60 * 1000);
@@ -44,41 +41,18 @@ export const useAuth = () => {
 
             document.cookie = `accessToken=${response.data.accessToken}; expires=${accessExpires}`;
             document.cookie = `refreshToken=${response.data.refreshToken}; expires=${refreshExpires}`;
-            checkNodeRedDeployment();
-            if (isNodeRedDeployed) {
-                statusApi.post('http://localhost:1880/auth/token', {
-                    "client_id": "node-red-admin",
-                    "grant_type": "password",
-                    "scope": "*",
-                    "username": username,
-                    "password": password
-                }, {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                })
-                .then((response) => {
-                    const accessExpires = response.data.expires_in;
-                    document.cookie = `nodeRedAccessToken=${response.data.access_token}; expires=${accessExpires}`;
-                    window.location.href = window.location.origin;
-                }).catch((error) => {
-                    console.error(error.message);
-                });
-            } else {
-                throw new Error('Node-RED is not deployed');
-            }
+            // await checkNodeRedDeployment();
+            // await signIn(username, password);
+            window.location.href = window.location.origin;
         })
         .catch((error) => {
             if (error.response && error.response.status === 404) {
                 document.getElementById('error-message').innerText = 'El usuario introducido no está registrado en el sistema';
-            } else if (error && error.message === 'Node-RED is not deployed') {
-                document.getElementById('error-message').innerText = 'Inicialmente, Node-RED no está desplegado. Por favor, despliegue Node-RED y vuelva a intentarlo';
             } else if (error.response && error.response.status === 401){
                 document.getElementById('error-message').innerText = 'La contraseña introducida no es correcta';
             } else {
                 document.getElementById('error-message').innerText = 'Error al iniciar sesión. Por favor, inténtelo de nuevo o contacte con el administrador del sistema';
             }
-            
         });
     };
 
@@ -102,7 +76,7 @@ export const useAuth = () => {
     }
 
     const getAuthority = async () => {
-        const accessToken = await getCookie();
+        const accessToken = getCookie();
         if(accessToken) {
             try {
                 const response = await statusApi.get(`http://localhost:3001/api/user/auth/`, {
@@ -114,8 +88,6 @@ export const useAuth = () => {
             } catch (error) {
                 console.error('Error fetching user authority:', error);
             }
-        } else {
-            console.error('No access token found');
         }
     }
 

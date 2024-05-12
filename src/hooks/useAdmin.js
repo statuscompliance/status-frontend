@@ -48,9 +48,9 @@ export const useAdmin = () => {
         }
     }
 
-    const getAssistantInst = async () => {
+    const getAssistantInstById = async (assistantId) => {
         try {
-            const response = await statusApi.get(`http://localhost:3001/api/assistant/1/instructions`, {
+            const response = await statusApi.get(`http://localhost:3001/api/assistant/${assistantId}/instructions`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
@@ -61,17 +61,15 @@ export const useAdmin = () => {
         }
     }
 
-    const updateAssistantInst = async (instructions) => {
-        console.log(instructions);
+    const updateAssistantInst = async (assistantId,instructions) => {
         try {
-            const response = await statusApi.put(`http://localhost:3001/api/assistant/1/instructions`, {
+            await statusApi.put(`http://localhost:3001/api/assistant/${assistantId}/instructions`, {
                 instructions: instructions
             }, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
             });
-            console.log(response);
         } catch (error) {
             console.error('Error updating assistant:', error);
         }
@@ -91,14 +89,13 @@ export const useAdmin = () => {
         }
     }
 
-    const deleteAssistant = async (assistantId) => {
+    const deleteAssistant = async (id) => {
         try {
-            const response = await statusApi.delete(`http://localhost:3001/api/assistant/${assistantId}`, {
+            await statusApi.delete(`http://localhost:3001/api/assistant/${id}`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
             });
-            console.log(response);
         } catch (error) {
             console.error('Error deleting assistant:', error);
         }
@@ -106,16 +103,15 @@ export const useAdmin = () => {
 
     const deleteAllAssistants = async () => {
         try {
-            const response = await statusApi.delete(`http://localhost:3001/api/assistant`, {
+            await statusApi.delete(`http://localhost:3001/api/assistant`, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`
                 }
             });
-            console.log(response);
         } catch (error) {
             console.error('Error deleting all assistants:', error);
         }
     }
 
-    return { config, instructions,assistants, getGPTConfiguration, updateConfiguration, getAssistantInst, updateAssistantInst, getAssistants, deleteAssistant, deleteAllAssistants};
+    return { config, instructions,assistants, getGPTConfiguration, updateConfiguration, getAssistantInstById, updateAssistantInst, getAssistants, deleteAssistant, deleteAllAssistants};
 };

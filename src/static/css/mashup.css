@@ -295,6 +295,11 @@
     border-radius: 40px;
     background-color: rgba(187, 123, 136, 0.633);
 }
+.actionButton.disabled{
+    background-color: rgba(187, 123, 136, 0.233);
+    display: disabled;
+    cursor: not-allowed;
+}
 
 .actionImg {
     position: relative;
