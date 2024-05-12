@@ -1,9 +1,3 @@
-.profile-container {
-    background-color: #ffffff;
-    padding: 20px;
-    font-family: 'Satoshi', sans-serif;
-}
-
 .profile-info {
     margin-bottom: 20px;
 }
@@ -31,13 +25,19 @@
 }
 
 .logo-img {
+    filter: invert(100%);
     width: 24px;
-    margin-left: 5px;
     vertical-align: middle;
 }
 
 .profile-connections {
-    margin-top: 20px;
+    margin-top: 70%;
+    border: 3px solid #e1e4e8;
+    border-radius: 6px;
+    background-color: #ffffff;
+    width: 40vh;
+    padding: 20px;
+    font-family: 'Satoshi', sans-serif;
 }
 
 .profile-connections button {
@@ -49,7 +49,12 @@
     padding: 8px 12px;
     margin-bottom: 10px;
     border-radius: 6px;
-    cursor: pointer;
+}
+.connection{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .profile-connections button:hover {
@@ -70,7 +75,6 @@
 }
 
 .github-login{
-    cursor: pointer;
     align-items: center;
 }
 
@@ -86,6 +90,5 @@
 }
 
 .trello-login{
-    cursor: pointer;
     align-items: center;
 }

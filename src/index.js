@@ -53,11 +53,6 @@ const App = () => {
         setShowLogoutModal(false);
     };
 
-    function clean(){
-        localStorage.clear();
-        window.location.href = '/';
-    }
-
     const handleRefreshToken = (e) => {
         handleRefresh(e);
         setShowModal(false);
@@ -164,9 +159,6 @@ const App = () => {
                             </li>
                         </ul>
                     </nav>
-                    <div className="btn-container">
-                        <button className="btn btn-light pt-serif-regular" onClick={clean}>Disconnect</button>
-                    </div>
                     <div className="line"></div>
                     <div className="github-container">
                         <a href="https://github.com/statuscompliance/node-red-status" rel="noopener noreferrer" target="_blank">
