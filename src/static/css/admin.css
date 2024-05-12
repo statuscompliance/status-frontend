@@ -104,6 +104,12 @@
     align-items: flex-start;
 }
 
+.cardItem2::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
 .endpointList {
     margin-top: 3%;
     overflow-y: scroll;
@@ -114,7 +120,7 @@
 }
 .endpoint {
     columns: 2;
-    column-gap: 25px;
+    column-gap: 20px;
     width: 100%;
 }
 
@@ -286,10 +292,12 @@ input:checked + .slider:before {
     background-color: #2bb6b6;
     filter: invert(1);
 }
+
 .actionButton{
     width: 50%;
     scale: 0.8;
 }
+
 .costButton {
     position: absolute;
     top: 25%;
@@ -299,4 +307,115 @@ input:checked + .slider:before {
     border: 2px solid rgb(185, 178, 178);
     border-radius: 10px;
     background-color: #f7f7f7;
+}
+
+.assistantContainer{
+    width: 100%;
+    height: 100%;
+    margin-top: 4%;
+    margin-bottom: 3%;
+}
+
+.limitContainer{
+    display: flex;
+    position: absolute;
+    float: left;
+    width: 70%;
+    margin-right: 5%;
+    margin-left: 5%;
+}
+
+.createContainer{
+    display: flex;
+    margin-right: 5%;
+    margin-left: 10%;
+    float: right;
+    width: 30%;
+    height: 65%;
+}
+
+.limitText{
+    font-size: 21px;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    height: 60px;
+    width: 8vh;
+    padding-top: 12px;
+    padding-left: 10px;
+    margin-right: 10px;
+}
+
+.limitInput{
+    margin-right: 5%;
+    width: 8vh;
+    padding-left: 10px;
+    height: 60px;
+    font-size: 20px;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    background-color: #f7f7f7;
+}
+
+.limitButton{
+    width: 13vh;
+    height: 60px;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    background-color: #f7f7f7;
+}
+
+.limitButton.editable{
+    background-color: #bf0a2e;
+    color: white;
+}
+
+.createButton{
+    width: 20vh;
+    height: 60px;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    background-color: #f7f7f7;
+}
+
+.createButton:hover{
+    cursor: pointer;
+}
+
+.assistantTools {
+    display: flex;
+    flex-direction: column;
+    margin-top: 5%;
+    margin-right: 5%;
+    width: 90%;
+    height: 100%;
+}
+
+.tool input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+
+.assistantModel label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.assistantModel select {
+    width: 100%;
+    height: 30px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.assistantModel select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.create{
+    background-color: #139d6a;
 }

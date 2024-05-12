@@ -42,6 +42,27 @@ export const useOpenAI= () => {
         }
     }
 
+    const createAssistant = async (name, instructions, tools, model) => {
+        if(document.cookie.split('; ').find(row => row.startsWith(`accessToken=`))) {
+            const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1];
+            try {
+                await statusApi.post('http://localhost:3001/api/assistant/admin', {
+                    name: name,
+                    instructions: instructions,
+                    tools: tools,
+                    model: model
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`
+                    }
+                });
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    }
+
+
     const getAssistant = async () => {
         if(document.cookie.split('; ').find(row => row.startsWith(`accessToken=`))) {
             const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1];
@@ -57,7 +78,7 @@ export const useOpenAI= () => {
                 if(response.data.length > 1) {
                     responseAssistant = response.data[response.data.length - 1];
                 } else {
-                    responseAssistant = response.data[0];
+                    responseAssistant = response.data;
                 }
                 setAssistant(responseAssistant.assistantId);
             } catch (error) {
@@ -142,6 +163,7 @@ export const useOpenAI= () => {
         threads,
         getThreadById,
         createThread,
+        createAssistant,
         sendNewMessage,
         changeThreadName
     };

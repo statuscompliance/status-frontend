@@ -27,6 +27,7 @@ export default function Mashup() {
     const [disabled, setDisabled] = useState(false);
     const [currentMashupDetails, setCurrentMashupDetails] = useState('');
     const [showDetailsModal, setShowDetailsModal] = useState(false);
+    const [currentMashupName, setCurrentMashupName] = useState('');
     const interval = 1000;
 
     const [globalFilter, setGlobalFilter] = useState('');
@@ -44,6 +45,7 @@ export default function Mashup() {
     const handleView = async (rowData) => {
         const flow = mashups.find(mashup => mashup.id === rowData.id);
         if(flow){
+            setCurrentMashupName(flow.label);
             setCurrentMashupDetails(flow.mashupDetails);
             setShowDetailsModal(true);
         }
@@ -152,7 +154,7 @@ export default function Mashup() {
         <div className="modal-content">
             <Modal onHide={handleModalClose} show={showDetailsModal}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Detalles del mashup</Modal.Title>
+                    <Modal.Title>{currentMashupName}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <form>

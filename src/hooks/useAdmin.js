@@ -1,4 +1,4 @@
-import { useState} from "react";
+import { useEffect, useState} from "react";
 import { statusApi } from "../api/statusApi";
 import { getCookie } from "./useCookie";
 
@@ -7,8 +7,15 @@ export const useAdmin = () => {
     const [instructions, setInstructions] = useState('');
     const accessToken =  getCookie('accessToken');
     const [assistants, setAssistants] = useState([]);
+    const [limit, setLimit] = useState(0);
     
-
+    useEffect(() => {
+        const fetchData = async () => {
+            await getLimit();
+        };
+        fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const getConfigurationByEndpoint = async (endpoint) => {
         try{
@@ -32,6 +39,19 @@ export const useAdmin = () => {
         setConfig([ threads, assistant ]);
     }
 
+    const getLimit = async () => {  
+        try {
+            const response = await statusApi.get(`http://localhost:3001/api/config/assistant/limit`, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+            setLimit(response.data.limit);
+        } catch (error) {
+            console.error('Error fetching limit:', error);
+        }
+    }
+
     const updateConfiguration = async (endpoint, available) => {
         try {
             const response = await statusApi.put(`http://localhost:3001/api/config`, {
@@ -47,6 +67,20 @@ export const useAdmin = () => {
             console.error('Error updating configuration:', error);
         }
     }
+
+    const updateLimit = async (limit) => {
+        try {
+            await statusApi.put(`http://localhost:3001/api/config/assistant/limit/${limit}`,{}, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+            getLimit();
+        } catch (error) {
+            console.error('Error updating limit:', error);
+        }
+    }
+
 
     const getAssistantInstById = async (assistantId) => {
         try {
@@ -113,5 +147,5 @@ export const useAdmin = () => {
         }
     }
 
-    return { config, instructions,assistants, getGPTConfiguration, updateConfiguration, getAssistantInstById, updateAssistantInst, getAssistants, deleteAssistant, deleteAllAssistants};
+    return { config, instructions,assistants,limit, updateLimit, getGPTConfiguration, updateConfiguration, getAssistantInstById, updateAssistantInst, getAssistants, deleteAssistant, deleteAllAssistants};
 };
