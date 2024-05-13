@@ -114,16 +114,25 @@ export const useNode = () => {
 
 
     function parseMashups(mashups) {
-        for (let i = 0; i < mashups.length; i++) {
-            const text = mashups[i].info;
-            if (text.includes('**Details**') && text.includes('**Description**')) {
+        for (const mashup of mashups) {
+            const text = mashup.info;
+            const detailsRegex1 = /\*\*Details\*\*/;
+            const descriptionRegex1 = /\*\*Description\*\*/;
+            const detailsRegex2 = /\*\*Details:\*\*/;
+            const descriptionRegex2 = /\*\*Description:\*\*/;
+            if (detailsRegex1.test(text) && descriptionRegex1.test(text)){
                 const textWithoutDesc= text.replace('**Description**', '');
                 const matches = textWithoutDesc.split('**Details**');
-                mashups[i].mashupDescription = matches[0].trim();
-                mashups[i].mashupDetails = matches[1].trim();
-            } else {
-                mashups[i].mashupDescription = mashups[i].info;
-                mashups[i].mashupDetails = mashups[i].info;
+                mashup.mashupDescription = matches[0].trim();
+                mashup.mashupDetails = matches[1].trim();
+            } else if (detailsRegex2.test(text) && descriptionRegex2.test(text)){
+                const textWithoutDesc= text.replace('**Description:**', '');
+                const matches = textWithoutDesc.split('**Details:**');
+                mashup.mashupDescription = matches[0].trim();
+                mashup.mashupDetails = matches[1].trim();
+            } else{
+                mashup.mashupDescription = mashup.info;
+                mashup.mashupDetails = mashup.info;
             }
         }
         return mashups;
