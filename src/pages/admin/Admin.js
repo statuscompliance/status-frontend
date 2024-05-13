@@ -24,6 +24,7 @@ export default function Admin() {
     const [showNewAssistantModal, setShowNewAssistantModal] = useState(false);
     const [newAssistantName, setNewAssistantName] = useState('');
     const [newAssistantInstructions, setNewAssistantInstructions] = useState('');
+    const [limitReached, setLimitReached] = useState(false);
 
     useEffect(() => {
         setIsLoggedIn(existsCookie);
@@ -77,6 +78,7 @@ export default function Admin() {
         setShowNewAssistantModal(false);
         setNewAssistantName('');
         setNewAssistantInstructions('');
+        setLimitReached(false);
     }
 
     const handleCreateAssistant = async () => {
@@ -102,9 +104,13 @@ export default function Admin() {
             model = assistantModelInput.value;
         }
         if (newAssistantName && newAssistantInstructions && tools.length > 0 && model) {
-            await createAssistant(newAssistantName, newAssistantInstructions, tools, model);
-            newAssistantModalClose();
-            getAssistants();
+            const status = await createAssistant(newAssistantName, newAssistantInstructions, tools, model);
+            if(status === 429){
+                setLimitReached(true);
+            } else {
+                newAssistantModalClose();
+                getAssistants();
+            }
         } else {
             alert('Por favor, rellene todos los campos');
         }
@@ -205,7 +211,8 @@ export default function Admin() {
                                 <option value="gpt-3.5-turbo-0125">gpt-3.5-turbo-0125</option>
                                 <option value="gpt-4-turbo">gpt-4-turbo</option>
                                 <option value="gpt-4">gpt-4</option>
-                            </select>
+                            </select> 
+                            {limitReached? <p className='limitError'>Se ha alcanzado el límite de asistentes</p> : null}
                         </div>
                     </form>
                 </Modal.Body>

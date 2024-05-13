@@ -419,3 +419,12 @@ input:checked + .slider:before {
 .create{
     background-color: #139d6a;
 }
+
+.limitError{
+    border: 2px solid red;
+    padding: 5px;
+    border-radius: 4px;
+    color: red;
+    font-size: 17px;
+    margin-top: 15px;
+}

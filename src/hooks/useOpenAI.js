@@ -46,7 +46,7 @@ export const useOpenAI= () => {
         if(document.cookie.split('; ').find(row => row.startsWith(`accessToken=`))) {
             const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1];
             try {
-                await statusApi.post('http://localhost:3001/api/assistant/admin', {
+                const response= await statusApi.post('http://localhost:3001/api/assistant/admin', {
                     name: name,
                     instructions: instructions,
                     tools: tools,
@@ -56,8 +56,9 @@ export const useOpenAI= () => {
                         Authorization: `Bearer ${accessToken}`
                     }
                 });
+                return response.status;
             } catch (error) {
-                console.error(error);
+                return error.response.status;
             }
         }
     }
