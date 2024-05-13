@@ -17,6 +17,7 @@ import logoSvg from './static/images/logo.svg';
 import githubLogo from './static/images/githubLogo.svg';
 import { useCookie } from './hooks/useCookie';
 import { useAuth } from './hooks/useAuth';
+import { useAdmin } from './hooks/useAdmin';
 import { Modal } from 'react-bootstrap';
 
 const App = () => {
@@ -26,11 +27,22 @@ const App = () => {
     const [showLogoutModal, setShowLogoutModal] = useState(false);
 
     const { handleRefresh, getAuthority, authority } = useAuth();
+    const { config= [], getGPTConfiguration} = useAdmin();
+
 
     useEffect(() => {
         setIsLoggedIn(existsCookie);
         getAuthority();
+        
     }, [existsCookie, getAuthority]);
+
+    
+    useEffect(() => {
+        async function fetchData() {
+            await getGPTConfiguration();
+        }
+        fetchData();
+    }, [config, getGPTConfiguration]);
 
     const handleLogout = () => {
         statusApi.get('http://localhost:3001/api/user/signOut')
@@ -144,9 +156,11 @@ const App = () => {
                             <li className="nav-item">
                                 <Link className="nav-link pt-serif-regular" to="/editor">Node-RED</Link>
                             </li>
-                            <li className="nav-item">
-                                <Link className="nav-link pt-serif-regular" to="/chat">Chat</Link>
-                            </li>
+                            {config && config[0] && config[1] && config[0].available && config[1].available && (
+                                <li className="nav-item">
+                                    <Link className="nav-link pt-serif-regular" to="/chat">Chat</Link>
+                                </li>
+                            )}
                             <li className='nav-item'>
                                 <Link className="nav-link pt-serif-regular" to="/profile">Profile</Link>
                             </li>

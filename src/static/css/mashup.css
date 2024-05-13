@@ -16,6 +16,12 @@
     align-items: center;
     font-size: 90%;
 }
+
+.mashups.blur {
+    filter: blur(1.5px);
+    cursor: not-allowed;
+}
+
 .dataTable {
     top: 15%;
     width: 85%;
@@ -307,4 +313,31 @@
     height: 25px;
     margin: 5%;
     cursor: pointer;
+}
+
+.descLoader {
+    width: fit-content;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    z-index: 2;
+    height: 8px;
+    width: 40%;
+    font-weight: bold;
+    font-family: 'Satoshi', sans-serif;
+    font-size: 30px;
+    padding-bottom: 8px;
+    background: linear-gradient(currentColor 0 0) 0 100%/0% 3px no-repeat;
+    animation: l2 2s linear infinite;
+    top: 50%;
+    left: 27%;
+}
+
+.descLoader:before {
+    position: relative;
+    top: -50px;
+    display: block;
+    width: 100%;
+    text-align: center;
   }

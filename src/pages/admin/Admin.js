@@ -230,11 +230,11 @@ export default function Admin() {
                 <div className='cont'>
                     {/* <h1>Panel de Administración</h1> */}
                     <div className='assistantCard'>
-                        <div className='cardItem1' style={hideInstructions ? { display: 'none' } : {}}>
+                        <div className='cardItem1'>
                             {instructions.length > 0 && !hideInstructions? (
                                 <div className='instructionsContainer'>
                                     <h4 className='heading'>Instrucciones del asistente</h4>
-                                    <div className='editor'>
+                                    <div className='editor' style={hideInstructions ? { display: 'none' } : {}}>
                                         <textarea
                                             className='textArea'
                                             value={newInstructions}
@@ -254,7 +254,7 @@ export default function Admin() {
                     </div>
                     <div className='adminCard'>
                         <div className='endpoints'>
-                            <div className='cardItem2'>
+                            <div className='cardItem2' >
                                     <ul className='endpointList'>
                                         <div className='endpoint'>
                                             <div className='endpointContent'>
@@ -266,7 +266,7 @@ export default function Admin() {
                                                     <span className="slider round"></span>
                                                 </label>
                                             </div>
-                                            <div className='endpointContent'>
+                                            <div className='endpointContent' >
                                                 <button className="costButton" onClick={() => window.open("https://platform.openai.com/usage", "_blank")}>Ver Costes</button>
                                             </div>
                                         </div>
@@ -276,7 +276,7 @@ export default function Admin() {
                         </div>
                         <div className='signUp'>
                             <div className='cardItem2'>
-                                <div className='assistantContainer'>
+                                <div className='assistantContainer' style={hideInstructions ? { display: 'none' } : {}}>
                                     <div className='limitContainer'>
                                         {editLimit?(
                                             <input className='limitInput' type="number" placeholder={limit}/> 
@@ -292,14 +292,14 @@ export default function Admin() {
                             </div>
                         </div>
                         <div className='management'>
-                            <div className='cardItem3' style={hideInstructions ? { display: 'none' } : {}}>
+                            <div className='cardItem3'>
                                 <div className='managementContainer'>
                                     <h5 className='heading2'>Gestión de asistentes</h5>
-                                    <button onClick={() => handleDeleteClick(0)} className="deleteAllButton">
+                                    <button onClick={() => handleDeleteClick(0)} className="deleteAllButton" style={hideInstructions ? { display: 'none' } : {}}>
                                         Vaciar
                                         <img src={deleteSvg} alt="delete" className='actionImg'/>
                                     </button>
-                                    <div className='tableContainer'>
+                                    <div className='tableContainer' style={hideInstructions ? { display: 'none' } : {}}>
                                         <table className='assistantTable'>
                                             <thead>
                                                 <tr>

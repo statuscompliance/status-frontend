@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNode } from '../../hooks/useNode';
 import '../../static/css/iframe.css';
+import ai from "../../static/images/ai.svg";
 import { Modal } from 'react-bootstrap';
 
 
@@ -30,7 +31,13 @@ export default function Editor() {
     return (
         <div className='editor'>
             {isNodeRedDeployed && nodeRedToken? (
-                <iframe className="node-red-off" src="http://localhost:1880" title="Node-RED"></iframe>
+                <div className='node-red-off'>
+                    <iframe className='node-red-editor' src="http://localhost:1880" title="Node-RED"></iframe>
+                    <button className="chatButton" onClick={() =>window.location.href = '/chat'}>
+                        <img src={ai} alt="ai" className='chatImg'/>
+                        Asistente
+                    </button>
+                </div>
             ) : (
                 <div className='node-red-off'>
                     <p className='msg pt-serif-bold'>Despliega Node-RED de forma local para abrir el editor.</p>

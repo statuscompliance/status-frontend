@@ -104,7 +104,6 @@ export const useNode = () => {
                 });
                 const filteredMashups = response.data.filter(obj => obj.type === 'tab');
                 const parsedMashups = parseMashups(filteredMashups);
-                console.log(parsedMashups);
                 setMashups(parsedMashups);
             } catch (error) {
                 console.error(error);

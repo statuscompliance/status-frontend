@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import "../../static/css/mashup.css";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -12,6 +12,7 @@ import edit from "../../static/images/edit.svg";
 import ai from "../../static/images/ai.svg";
 import info from "../../static/images/info.svg";
 import { useOpenAI } from '../../hooks/useOpenAI';
+import { useAdmin } from '../../hooks/useAdmin';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -22,12 +23,14 @@ export default function Mashup() {
     const [mashupDescription, setMashupDescription] = useState('');
     const { isNodeRedDeployed, mashups, createInitialMashup, deleteMashup, getFlow, addFlowInfo} = useNode();
     const { createThread, getThreadById} = useOpenAI();
+    const { config= [], getGPTConfiguration} = useAdmin();
     const existsCookie = useCookie('accessToken');
     const [rowData, setRowData] = useState('');
     const [disabled, setDisabled] = useState(false);
     const [currentMashupDetails, setCurrentMashupDetails] = useState('');
     const [showDetailsModal, setShowDetailsModal] = useState(false);
     const [currentMashupName, setCurrentMashupName] = useState('');
+    const [showLoader, setShowLoader] = useState(false);
     const interval = 1000;
 
     const [globalFilter, setGlobalFilter] = useState('');
@@ -57,6 +60,7 @@ export default function Mashup() {
 
     const handleAI = async (rowData) => {
         setDisabled(true);
+        setShowLoader(true);
 
         setTimeout(() => {
             setDisabled(false);
@@ -66,8 +70,9 @@ export default function Mashup() {
             const  { newThreadId, msgError }  = await createThread(JSON.stringify(flow));
             if (msgError) {
                 console.error("Something went wrong generating the mashup description")
-              }else {
+            } else {
                 await getThreadMessages(newThreadId, rowData.id, flow);
+                setShowLoader(false);
             }
         }
     }
@@ -184,10 +189,16 @@ export default function Mashup() {
         </div>
     );
 
+    useEffect(() => {
+        getGPTConfiguration();
+    }, [config, getGPTConfiguration]);
+
+
     const actionTemplate = (rowData) => {
         return (
             <div className='actions'>
-                <button onClick={() => handleAI(rowData)} className={`actionButton ${disabled? 'disabled' : ''}`} disabled={disabled}>
+                <button onClick={() => handleAI(rowData)} className={`actionButton ${disabled? 'disabled' : ''}`} disabled={disabled} style={config && config[0] && 
+                    config[1] && config[0].available && config[1].available ? {} : { display: 'none' }}>
                     <img src={ai} alt="ai" className='actionImg'/>
                 </button>
                 <button onClick={() => handleView(rowData)} className="actionButton">
@@ -209,8 +220,11 @@ export default function Mashup() {
     
     return (
         <div className='body'>
+            {showLoader && (
+                <div className="descLoader"></div>
+            )}
             {existsCookie && isNodeRedDeployed? (
-            <div className='mashups'>
+            <div className={`mashups ${showLoader? 'blur': ''}`}>
                 <div className="datatable-header">
                     {filterHeader}
                 </div>
