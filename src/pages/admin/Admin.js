@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useCookie } from "../../hooks/useCookie";
 import { useAdmin } from "../../hooks/useAdmin";
@@ -7,21 +7,20 @@ import { Modal } from "react-bootstrap";
 import DeleteModal from "../../components/DeleteModal";
 import deleteSvg from "../../static/images/delete.svg";
 import { useOpenAI } from "../../hooks/useOpenAI";
+import { Context } from "../../hooks/useAdmin";
 
 export default function Admin() {
   const existsCookie = useCookie("accessToken");
   const { getAuthority, authority } = useAuth();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [updateModal, setUpdateModal] = useState(false);
-  const [configStatus, setConfigStatus] = useState(false);
+  const { assistant, setAssistant, thread, setThread } = useContext(Context);
   const {
     instructions,
     assistants,
     limit,
-    configData,
     getLimit,
     updateLimit,
-    getGPTConfiguration,
     updateConfiguration,
     getAssistantInstById,
     updateAssistantInst,
@@ -32,12 +31,12 @@ export default function Admin() {
   const { createAssistant } = useOpenAI();
   const [newInstructions, setNewInstructions] = useState("");
   const [hideInstructions, setHideInstructions] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [id, setId] = useState("");
-  const [editLimit, setEditLimit] = useState(false);
-  const [showNewAssistantModal, setShowNewAssistantModal] = useState(false);
   const [newAssistantName, setNewAssistantName] = useState("");
   const [newAssistantInstructions, setNewAssistantInstructions] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showNewAssistantModal, setShowNewAssistantModal] = useState(false);
+  const [id, setId] = useState("");
+  const [editLimit, setEditLimit] = useState(false);
   const [limitReached, setLimitReached] = useState(false);
   const [limitError, setLimitError] = useState(false);
 
@@ -45,9 +44,6 @@ export default function Admin() {
     setIsLoggedIn(existsCookie);
     if (!authority) {
       getAuthority();
-    }
-    if (Object.keys(configData).length === 0) {
-      getGPTConfiguration();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [existsCookie]);
@@ -67,11 +63,11 @@ export default function Admin() {
   }, [instructions]);
 
   useEffect(() => {
-    if (configData && Object.keys(configData).length > 0) {
+    if (existsCookie) {
       checkOpenAIAvailable();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [configData]);
+  }, [existsCookie]);
 
   useEffect(() => {
     if (limitError) {
@@ -83,19 +79,18 @@ export default function Admin() {
   }, [limitError]);
 
   const updateModalClose = () => {
-    setConfigStatus(!configStatus);
     setUpdateModal(false);
   };
 
   const handleUpdateConfig = async () => {
-    await updateConfiguration("/api/thread", configStatus);
-    await updateConfiguration("/api/assistant", configStatus);
-    await getGPTConfiguration();
+    await updateConfiguration("/api/thread", !thread);
+    await updateConfiguration("/api/assistant", !assistant);
+    setAssistant(!assistant);
+    setThread(!thread);
     updateModalClose();
   };
 
   const showConfigModal = (state) => {
-    setConfigStatus(state);
     setUpdateModal(true);
   };
 
@@ -165,26 +160,19 @@ export default function Admin() {
   };
 
   const checkOpenAIAvailable = () => {
-    if (Object.keys(configData).length !== undefined) {
-      const thread = configData.thread.available;
-      const assistant = configData.assistant.available;
+    if (thread && assistant) {
       setHideInstructions(false);
-      setConfigStatus(thread && assistant);
-      if (!(thread && assistant)) {
-        setHideInstructions(true);
-      }
     } else {
       setHideInstructions(true);
-      return false;
     }
   };
 
-  const handleUpdateLimit = () => {
+  const handleUpdateLimit = async () => {
     setEditLimit(true);
     if (document.querySelector(".limitInput")) {
       const newLimit = document.querySelector(".limitInput").value;
       if (newLimit !== limit && newLimit !== "" && limit !== "") {
-        const response = updateLimit(newLimit);
+        const response = await updateLimit(newLimit);
         setLimitError(response);
       } else {
         alert("No se han realizado cambios");
@@ -323,7 +311,7 @@ export default function Admin() {
                     <div className="endpointContent">
                       <label className="switch">
                         <input
-                          checked={configStatus}
+                          checked={thread && assistant}
                           onChange={(e) => showConfigModal(e.target.checked)}
                           type="checkbox"
                         />

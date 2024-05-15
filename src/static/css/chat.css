@@ -244,6 +244,17 @@
   font-size: 22px;
 }
 
+.historyEmpty{
+  position: relative;
+  display: flex;
+  justify-content: center;
+  font-size: 23px;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  margin:20%;
+}
+
 .threadList{
   position: relative;
   display: flex;
@@ -284,11 +295,17 @@
   border-radius: 10px;
 }
 
-.editor{
+.editorContainer{
+  width: 100%;
+  height: 100%;
+}
+
+.chatEditor{
   position: absolute;
-  display: flex;
-  width: 85%;
-  height: 85%;
+  justify-content: center;
+  right: 5%;
+  width: 100%;
+  height: 100%;
   margin-top: 4%;
 }
 
@@ -296,9 +313,9 @@
   position: relative;
   margin-top: 3%;
   margin-left: 10%;
-  width: 100%;
+  width: 85%;
   display: flex;
-  height: 100%;
+  height: 85%;
   border: 5px solid #bf0a2e;
   border-radius: 10px;
   background-color: transparent;
@@ -351,34 +368,25 @@
 }
 
 .palette{
-  position: relative;
+  position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 3%;
-  gap: 20px; 
   width: 10%;
   height: 100%;
   background: rgb(242, 242, 242); 
   border-radius: 6px;
   box-shadow: 0 2px 6px #171a1f, 0 0 2px #171a1f;
-  right: -30%;
-  transition: right 0.01s ease;
 }
 
 .palette.show{
-  position: absolute;
+  position: relative;
+  flex-direction: row;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  right: 0%;
-  margin-top: 3%;
-  gap: 20px; 
-  right: -13%;
-  transition: right 4.5s ease;
-  width: 10%;
-  height: 100%;
+  left: 47%;
+  bottom: 5%;
+  height: 60px;
+  width: 120px;
   background: rgb(242, 242, 242); 
   border-radius: 6px;
   box-shadow: 0 2px 6px #171a1f, 0 0 2px #171a1f;

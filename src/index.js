@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import Catalog from "./pages/catalog/Catalog";
 import Mashup from "./pages/mashup/Mashup";
@@ -19,7 +19,7 @@ import { useCookie } from "./hooks/useCookie";
 import { useAuth } from "./hooks/useAuth";
 import { useAdmin } from "./hooks/useAdmin";
 import { Modal } from "react-bootstrap";
-
+import { Context } from "./hooks/useAdmin";
 const App = () => {
   const [showModal, setShowModal] = useState(false);
   const existsCookie = useCookie("accessToken");
@@ -27,22 +27,36 @@ const App = () => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const { handleRefresh, getAuthority, authority } = useAuth();
-  const { configData, getGPTConfiguration } = useAdmin();
+  const { getGPTConfiguration } = useAdmin();
+  const [assistant, setAssistant] = useState(null);
+  const [thread, setThread] = useState(null);
 
   useEffect(() => {
     setIsLoggedIn(existsCookie);
     if (!authority) {
       getAuthority();
     }
-  }, [existsCookie, getGPTConfiguration, configData, getAuthority, authority]);
+  }, [existsCookie, getAuthority, authority]);
 
+  // useEffect(() => {
+  //   if (existsCookie && !configData) {
+  //     getGPTConfiguration();
+  //   } else {
+  //     setInterval(() => {
+  //       getGPTConfiguration();
+  //     }, 6000);
+  //   }
+  // }, [configData, getGPTConfiguration, existsCookie]);
   useEffect(() => {
-    if (existsCookie && !configData) {
-      getGPTConfiguration();
-    } else if (existsCookie) {
-      getGPTConfiguration();
+    async function fetchData() {
+      const { assistant, thread } = await getGPTConfiguration();
+      setAssistant(assistant);
+      setThread(thread);
     }
-  }, [configData, getGPTConfiguration, existsCookie]);
+    if (existsCookie) {
+      fetchData();
+    }
+  }, [existsCookie, getGPTConfiguration]);
 
   const handleLogout = () => {
     statusApi
@@ -102,131 +116,129 @@ const App = () => {
   }, []);
 
   return (
-    <BrowserRouter>
-      {showModal && isLoggedIn && (
-        <div className="timeout">
-          <Modal onHide={() => setShowModal(false)} show={showModal}>
-            <Modal.Header closeButton>
-              <Modal.Title>¿Sigues ahí?</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              Tu sesión está a punto de expirar. Cuenta atrás:{" "}
-              <CountdownTimer onTimeout={handleLogout} />
-            </Modal.Body>
-            <Modal.Footer>
-              <button onClick={closeLogoutModal}>Cancelar</button>
-              <button onClick={handleRefreshToken}>Sí</button>
-            </Modal.Footer>
-          </Modal>
-        </div>
-      )}
-      {isLoggedIn && showLogoutModal ? (
-        <div className="logout">
-          <Modal onHide={closeLogoutModal} show={showLogoutModal}>
-            <Modal.Header closeButton>
-              <Modal.Title>Confirmación</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>¿Estás seguro que deseas cerrar sesión?</Modal.Body>
-            <Modal.Footer>
-              <button onClick={closeLogoutModal}>Cancelar</button>
-              <button onClick={handleLogout}>Cerrar sesión</button>
-            </Modal.Footer>
-          </Modal>
-        </div>
-      ) : (
-        <div></div>
-      )}
-      {/* Sidebar */}
-      <div className="sidebar">
-        <Link
-          className="navbar-brand navbar-dark pt-serif-bold d-flex align-items-center"
-          to="/"
-        >
-          <img alt="Logo" className="logo-svg" src={logoSvg} />
-          <span className="ml-2">STATUS</span>
-        </Link>
-        <nav className="navbar navbar-dark flex-column">
-          <ul className="navbar-nav align-items-start">
-            {authority === "ADMIN" ? (
+    <Context.Provider value={{ assistant, setAssistant, thread, setThread }}>
+      <BrowserRouter>
+        {showModal && isLoggedIn && (
+          <div className="timeout">
+            <Modal onHide={() => setShowModal(false)} show={showModal}>
+              <Modal.Header closeButton>
+                <Modal.Title>¿Sigues ahí?</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                Tu sesión está a punto de expirar. Cuenta atrás:{" "}
+                <CountdownTimer onTimeout={handleLogout} />
+              </Modal.Body>
+              <Modal.Footer>
+                <button onClick={closeLogoutModal}>Cancelar</button>
+                <button onClick={handleRefreshToken}>Sí</button>
+              </Modal.Footer>
+            </Modal>
+          </div>
+        )}
+        {isLoggedIn && showLogoutModal ? (
+          <div className="logout">
+            <Modal onHide={closeLogoutModal} show={showLogoutModal}>
+              <Modal.Header closeButton>
+                <Modal.Title>Confirmación</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>¿Estás seguro que deseas cerrar sesión?</Modal.Body>
+              <Modal.Footer>
+                <button onClick={closeLogoutModal}>Cancelar</button>
+                <button onClick={handleLogout}>Cerrar sesión</button>
+              </Modal.Footer>
+            </Modal>
+          </div>
+        ) : (
+          <div></div>
+        )}
+        {/* Sidebar */}
+        <div className="sidebar">
+          <Link
+            className="navbar-brand navbar-dark pt-serif-bold d-flex align-items-center"
+            to="/"
+          >
+            <img alt="Logo" className="logo-svg" src={logoSvg} />
+            <span className="ml-2">STATUS</span>
+          </Link>
+          <nav className="navbar navbar-dark flex-column">
+            <ul className="navbar-nav align-items-start">
+              {authority === "ADMIN" ? (
+                <li className="nav-item">
+                  <Link className="nav-link pt-serif-regular" to="/admin">
+                    Administración de OpenAI
+                  </Link>
+                </li>
+              ) : null}
               <li className="nav-item">
-                <Link className="nav-link pt-serif-regular" to="/admin">
-                  Administración de OpenAI
+                <Link className="nav-link pt-serif-regular" to="/catalogs">
+                  Catálogos
                 </Link>
               </li>
-            ) : null}
-            <li className="nav-item">
-              <Link className="nav-link pt-serif-regular" to="/catalogs">
-                Catálogos
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link pt-serif-regular" to="/mashups">
-                Mashups
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link pt-serif-regular" to="/editor">
-                Node-RED
-              </Link>
-            </li>
-            {configData &&
-              configData.thread &&
-              configData.assistant &&
-              configData.thread.available &&
-              configData.assistant.available && (
+              <li className="nav-item">
+                <Link className="nav-link pt-serif-regular" to="/mashups">
+                  Mashups
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link pt-serif-regular" to="/editor">
+                  Node-RED
+                </Link>
+              </li>
+              {thread && assistant && (
                 <li className="nav-item">
                   <Link className="nav-link pt-serif-regular" to="/chat">
                     Chat
                   </Link>
                 </li>
               )}
-            <li className="nav-item">
-              <Link className="nav-link pt-serif-regular" to="/profile">
-                Profile
-              </Link>
-            </li>
-            <li className="nav-item">
-              {existsCookie ? (
-                <p
-                  className="nav-link pt-serif-regular"
-                  onClick={openLogoutModal}
-                >
-                  Cerrar sesión
-                </p>
-              ) : (
-                <Link className="nav-link pt-serif-regular" to="/login">
-                  Iniciar sesión
+              <li className="nav-item">
+                <Link className="nav-link pt-serif-regular" to="/profile">
+                  Profile
                 </Link>
-              )}
-            </li>
-          </ul>
-        </nav>
-        <div className="line"></div>
-        <div className="github-container">
-          <a
-            href="https://github.com/statuscompliance/node-red-status"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <img alt="github" className="github-svg" src={githubLogo} />
-          </a>
+              </li>
+              <li className="nav-item">
+                {existsCookie ? (
+                  <p
+                    className="nav-link pt-serif-regular"
+                    onClick={openLogoutModal}
+                  >
+                    Cerrar sesión
+                  </p>
+                ) : (
+                  <Link className="nav-link pt-serif-regular" to="/login">
+                    Iniciar sesión
+                  </Link>
+                )}
+              </li>
+            </ul>
+          </nav>
+          <div className="line"></div>
+          <div className="github-container">
+            <a
+              href="https://github.com/statuscompliance/node-red-status"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              <img alt="github" className="github-svg" src={githubLogo} />
+            </a>
+          </div>
         </div>
-      </div>
-      {/* Routes */}
-      <div className="content">
-        <Routes>
-          <Route exact element={<Home />} path="/" />
-          <Route element={<Catalog />} path="/catalogs" />
-          <Route element={<Mashup />} path="/mashups" />
-          <Route element={<NewCatalog />} path="/new_catalog" />
-          <Route element={<Profile />} path="/profile" />
-          <Route element={<Login />} path="/login" />
-          <Route element={<Editor />} path="/editor" />
-          <Route element={<Chat />} path="/chat" />
-          <Route element={<Admin />} path="/admin" />
-        </Routes>
-      </div>
-    </BrowserRouter>
+        {/* Routes */}
+        <div className="content">
+          <Routes>
+            <Route exact element={<Home />} path="/" />
+            <Route element={<Catalog />} path="/catalogs" />
+            <Route element={<Mashup />} path="/mashups" />
+            <Route element={<NewCatalog />} path="/new_catalog" />
+            <Route element={<Profile />} path="/profile" />
+            <Route element={<Login />} path="/login" />
+            <Route element={<Editor />} path="/editor" />
+            <Route element={<Chat />} path="/chat" />
+            <Route element={<Admin />} path="/admin" />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </Context.Provider>
   );
 };
 

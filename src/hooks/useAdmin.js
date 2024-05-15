@@ -1,13 +1,14 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { statusApi } from "../api/statusApi";
 import { getCookie } from "./useCookie";
+
+export const Context = React.createContext();
 
 export const useAdmin = () => {
   const [instructions, setInstructions] = useState("");
   const accessToken = getCookie("accessToken");
   const [assistants, setAssistants] = useState([]);
   const [limit, setLimit] = useState(0);
-  const [configData, setConfigData] = useState([]);
 
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -41,7 +42,7 @@ export const useAdmin = () => {
   const getGPTConfiguration = async () => {
     const thread = await getConfigurationByEndpoint("/api/thread");
     const assistant = await getConfigurationByEndpoint("/api/assistant");
-    setConfigData({ thread, assistant });
+    return { assistant: assistant.available, thread: thread.available };
   };
 
   const getLimit = async () => {
@@ -180,7 +181,6 @@ export const useAdmin = () => {
     instructions,
     assistants,
     limit,
-    configData,
     getLimit,
     updateLimit,
     getGPTConfiguration,

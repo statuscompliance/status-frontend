@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "../../static/css/mashup.css";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -12,9 +12,9 @@ import edit from "../../static/images/edit.svg";
 import ai from "../../static/images/ai.svg";
 import info from "../../static/images/info.svg";
 import { useOpenAI } from "../../hooks/useOpenAI";
-import { useAdmin } from "../../hooks/useAdmin";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Context } from "../../hooks/useAdmin";
 
 export default function Mashup() {
   const [showModal, setShowModal] = useState(false);
@@ -30,7 +30,7 @@ export default function Mashup() {
     addFlowInfo,
   } = useNode();
   const { createThread, getThreadById } = useOpenAI();
-  const { configData } = useAdmin();
+  const { assistant, thread } = useContext(Context);
   const existsCookie = useCookie("accessToken");
   const [rowData, setRowData] = useState("");
   const [disabled, setDisabled] = useState(false);
@@ -231,15 +231,7 @@ export default function Mashup() {
           onClick={() => handleAI(rowData)}
           className={`actionButton ${disabled ? "disabled" : ""}`}
           disabled={disabled}
-          style={
-            configData &&
-            configData.thread &&
-            configData.assistant &&
-            configData.thread.available &&
-            configData.assistant.available
-              ? {}
-              : { display: "none" }
-          }
+          style={assistant && thread ? {} : { display: "none" }}
         >
           <img src={ai} alt="ai" className="actionImg" />
         </button>

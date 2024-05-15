@@ -16,15 +16,15 @@ export default function Editor() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
 
-  useEffect(() => {
-    checkNodeRedDeployment();
-    nodeRedCookie();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isNodeRedDeployed, checkNodeRedDeployment]);
-
   const closeLoginModal = () => {
     setLoginModal(false);
   };
+
+  useEffect(() => {
+    if (isNodeRedDeployed) {
+      nodeRedCookie();
+    }
+  }, [isNodeRedDeployed, nodeRedCookie]);
 
   const handleLogin = async () => {
     await signIn(name, password);
@@ -58,7 +58,7 @@ export default function Editor() {
         </div>
       ) : (
         <div className="node-red-off">
-          <p className="msg pt-serif-bold">
+          <p className="disclaimer">
             Despliega Node-RED de forma local para abrir el editor.
           </p>
           <button
