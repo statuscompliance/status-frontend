@@ -343,6 +343,7 @@
   width: 100%;
   text-align: center;
 }
+
 .loader.hide{
   display: none;
 }

@@ -111,7 +111,7 @@ const App = () => {
 
     const timer = setInterval(() => {
       setShowModal(true);
-    }, 3420000); // 57 minutos en milisegundos
+    }, 2700000); // 57 minutos en milisegundos - 3420000
     return () => clearInterval(timer);
   }, []);
 

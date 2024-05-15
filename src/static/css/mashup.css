@@ -290,6 +290,7 @@
     background-color: #989898;
     color: #fff;
 }
+
 /* Estilo para el icono del dropdown cuando está abierto */
 .p-dropdown[data-p-focus="true"] .p-dropdown-trigger-icon {
     transform: rotate(180deg);
@@ -333,7 +334,7 @@
     font-family: "Satoshi", sans-serif;
     font-size: 30px;
     padding-bottom: 8px;
-    background: linear-gradient(currentColor 0 0) 0 100%/0% 3px no-repeat;
+    background: linear-gradient(currentcolor 0 0) 0 100%/0% 3px no-repeat;
     animation: l2 2s linear infinite;
     top: 50%;
     left: 27%;

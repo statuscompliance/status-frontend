@@ -180,7 +180,7 @@ input:checked + .slider::before {
     border-radius: 34px;
 }
   
-.slider.round:before {
+.slider.round::before {
     border-radius: 50%;
 }
 
@@ -215,6 +215,7 @@ input:checked + .slider::before {
     width: 90%;
     height: 100%;
 }
+
 .assistantTable {
     margin: 5%;
     width: 100%;
