@@ -156,18 +156,18 @@ export default function Mashup() {
             <div className="form-group">
               <label htmlFor="mashupName">Nombre del mashup:</label>
               <input
-                type="text"
                 id="mashupName"
-                value={mashupName}
                 onChange={(e) => setMashupName(e.target.value)}
+                type="text"
+                value={mashupName}
               />
             </div>
             <div className="form-group">
               <label htmlFor="mashupDescription">Descripción:</label>
               <textarea
                 id="mashupDescription"
-                value={mashupDescription}
                 onChange={(e) => setMashupDescription(e.target.value)}
+                value={mashupDescription}
               />
             </div>
           </form>
@@ -213,9 +213,9 @@ export default function Mashup() {
       <span className="p-input-icon-left">
         <i className="pi pi-search" />
         <InputText
-          type="search"
           onInput={onGlobalFilterChange}
           placeholder="Buscar..."
+          type="search"
         />
       </span>
       <button className="create-button" onClick={handleCreateButtonClick}>
@@ -228,18 +228,18 @@ export default function Mashup() {
     return (
       <div className="actions">
         <button
-          onClick={() => handleAI(rowData)}
           className={`actionButton ${disabled ? "disabled" : ""}`}
           disabled={disabled}
+          onClick={() => handleAI(rowData)}
           style={assistant && thread ? {} : { display: "none" }}
         >
-          <img src={ai} alt="ai" className="actionImg" />
+          <img alt="ai" className="actionImg" src={ai} />
         </button>
-        <button onClick={() => handleView(rowData)} className="actionButton">
-          <img src={info} alt="info" className="actionImg" />
+        <button className="actionButton" onClick={() => handleView(rowData)}>
+          <img alt="info" className="actionImg" src={info} />
         </button>
-        <button onClick={() => handleEdit(rowData)} className="actionButton">
-          <img src={edit} alt="edit" className="actionImg" />
+        <button className="actionButton" onClick={() => handleEdit(rowData)}>
+          <img alt="edit" className="actionImg" src={edit} />
         </button>
         <button
           onClick={() => {
@@ -248,7 +248,7 @@ export default function Mashup() {
           }}
           className="actionButton"
         >
-          <img src={deleteSvg} alt="delete" className="actionImg" />
+          <img alt="delete" className="actionImg" src={deleteSvg} />
         </button>
       </div>
     );
@@ -262,11 +262,11 @@ export default function Mashup() {
           <div className="datatable-header">{filterHeader}</div>
           <DataTable
             className="dataTable"
-            value={mashups}
+            globalFilter={globalFilter}
             paginator
             rows={5}
             rowsPerPageOptions={[5, 10, 25, 50]}
-            globalFilter={globalFilter}
+            value={mashups}
           >
             <Column
               className="column"
@@ -293,9 +293,9 @@ export default function Mashup() {
           {showDeleteModal && (
             <div className="modal">
               <DeleteModal
-                show={showDeleteModal}
                 handleClose={handleDeleteModalClose}
                 handleDelete={handleDelete}
+                show={showDeleteModal}
               />
             </div>
           )}

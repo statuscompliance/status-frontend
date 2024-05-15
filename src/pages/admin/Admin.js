@@ -46,7 +46,7 @@ export default function Admin() {
       getAuthority();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [existsCookie]);
+  }, [existsCookie, authority]);
 
   useEffect(() => {
     if (isLoggedIn && authority === "ADMIN" && !hideInstructions) {
@@ -90,7 +90,7 @@ export default function Admin() {
     updateModalClose();
   };
 
-  const showConfigModal = (state) => {
+  const showConfigModal = () => {
     setUpdateModal(true);
   };
 

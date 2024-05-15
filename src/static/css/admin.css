@@ -118,6 +118,7 @@
 .endpointList li {
     list-style: none;
 }
+
 .endpoint {
     columns: 2;
     column-gap: 20px;
@@ -149,7 +150,7 @@
     transition: .4s;
 }
   
-.slider:before {
+.slider::before {
     position: absolute;
     content: "";
     height: 26px;
@@ -169,7 +170,7 @@ input:focus + .slider {
     box-shadow: 0 0 1px #bf0a2e;
 }
   
-input:checked + .slider:before {
+input:checked + .slider::before {
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
     transform: translateX(26px);
@@ -274,9 +275,11 @@ input:checked + .slider:before {
 .assistantTable .tableBody td[data-state="ACTIVE"]::before {
     background-color: red;
 }
+
 .assistantName{
     cursor: pointer;
 }
+
 .assistantName:hover{
     color: #347a7a;
 }
@@ -413,7 +416,7 @@ input:checked + .slider:before {
 .assistantModel select:focus {
     outline: none;
     border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    box-shadow: 0 0 0 0.2rem #007bff39;
 }
 
 .create{
