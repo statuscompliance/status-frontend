@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Card, Row, Col } from "react-bootstrap";
+import { Button, Card, Form, Row, Col } from "react-bootstrap";
 import { useControls } from "../../hooks/useControls";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -33,11 +33,24 @@ const CatalogDetails = ({ selectedCatalog }) => {
     createControlInputInDB,
   } = useControls();
 
-  // Handler function for updating catalog name
-  const handleCatalogChange = (event) => {
+  const handleNameChange = (event) => {
     setSpecificCatalog((prevCatalog) => ({
       ...prevCatalog,
       name: event.target.value,
+    }));
+  };
+
+  const handleStartDateChange = (event) => {
+    setSpecificCatalog((prevCatalog) => ({
+      ...prevCatalog,
+      startDate: event.target.value,
+    }));
+  };
+
+  const handleEndDateChange = (event) => {
+    setSpecificCatalog((prevCatalog) => ({
+      ...prevCatalog,
+      endDate: event.target.value,
     }));
   };
 
@@ -54,7 +67,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
     if (lastAddedId) {
       dispatch(addEmptyInput({ controlId: lastAddedId }));
     }
-  }, [lastAddedId]);
+  }, [lastAddedId, dispatch]);
 
   // Handler function for updating catalog (triggered by "Save" button click)
   const handleSubmit = async (event) => {
@@ -77,37 +90,84 @@ const CatalogDetails = ({ selectedCatalog }) => {
   // Triggers catalog deletion or updates
   useEffect(() => {
     if (catalogToDelete !== null) {
+      deleteTpaByCatalogId(selectedCatalog.id)
       deleteCatalog(catalogToDelete);
     }
     if (catalogToUpdate !== null) {
       const requestBody = {
         name: specificCatalog.name,
+        startDate: specificCatalog.startDate,
+        endDate: specificCatalog.endDate,
       };
       updateCatalog(catalogToUpdate, requestBody);
     }
   }, [catalogToDelete, catalogToUpdate, specificCatalog]);
 
-  // Delete a catalog by ID
-  const deleteCatalog = (catalogId) => {
-    fetch(`http://localhost:3001/api/catalog/${catalogId}`, {
-      method: "DELETE",
-    })
-      .then((response) => {
-        if (response.ok) {
-          console.log("Catálogo eliminado exitosamente.");
-          dispatch(clearControls());
-          dispatch(clearInputs());
-          window.location.reload();
-        } else {
-          console.error("Error al eliminar el catálogo.");
+  const deleteTpaByCatalogId = async (catalogId) => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/delete-tpa/${catalogId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         }
-      })
-      .catch((error) => {
-        console.error("Error al realizar la solicitud:", error);
-      })
-      .finally(() => {
-        setCatalogToDelete(null);
       });
+
+      if (response.ok) {
+        console.log("TPA eliminado del servidor");
+      } else {
+        console.error("Error al eliminar el TPA:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error al realizar la solicitud:", error);
+    }
+  };
+
+  // Delete a catalog by ID
+  const deleteCatalog = async (catalogId) => {
+    try {
+      // Fetch all controls associated with the catalog
+      const controlsResponse = await fetch(`http://localhost:3001/api/catalogControls/${catalogId}`);
+      if (!controlsResponse.ok) throw new Error("Error al obtener los controles del catálogo");
+      
+      const controls = await controlsResponse.json();
+
+      // Loop through each control and delete its associated inputs and input_controls
+      for (const control of controls) {
+        // Fetch input_controls associated with the control
+        const inputControlsResponse = await fetch(`http://localhost:3001/api/control/${control.id}/input_controls`);
+        if (!inputControlsResponse.ok) throw new Error(`Error al obtener input_controls del control ${control.id}`);
+        
+        const inputControls = await inputControlsResponse.json();
+
+        // Delete each input_control
+        for (const inputControl of inputControls) {
+          await fetch(`http://localhost:3001/api/input_control/${inputControl.id}`, {
+            method: "DELETE",
+          });
+        }
+
+        // Delete the control itself
+        await fetch(`http://localhost:3001/api/control/${control.id}`, {
+          method: "DELETE",
+        });
+      }
+
+      // Finally, delete the catalog
+      const catalogResponse = await fetch(`http://localhost:3001/api/catalog/${catalogId}`, {
+        method: "DELETE",
+      });
+
+      if (!catalogResponse.ok) throw new Error("Error al eliminar el catálogo");
+
+      console.log("Catálogo eliminado exitosamente.");
+      dispatch(clearControls());
+      dispatch(clearInputs());
+      window.location.reload();
+    } catch (error) {
+      console.error("Error al eliminar el catálogo y sus dependencias:", error);
+    } finally {
+      setCatalogToDelete(null);
+    }
   };
 
   // Update a catalog by ID
@@ -259,9 +319,6 @@ const CatalogDetails = ({ selectedCatalog }) => {
 
   // Handler function for create a control input
   const handleCreateControlInput = async (controlDataId, inputId, value) => {
-    console.log(controlDataId);
-    console.log(inputId);
-    console.log(value);
     const inputControlResponse = await createControlInputInDB(
       controlDataId,
       inputId,
@@ -299,6 +356,60 @@ const CatalogDetails = ({ selectedCatalog }) => {
     }
   };
 
+  const handleCalculateClick = async () => {
+    try {
+      const catalogId = selectedCatalog.id;
+      const tpaResponse = await fetch(
+        `http://localhost:3001/api/tpa/${catalogId}`
+      );
+      if (!tpaResponse.ok) throw new Error("Fallo al obtener el TPA");
+      const tpaData = await tpaResponse.json();
+
+      await fetch(
+        "http://localhost:5400/api/v6/agreements/tpa-example-project",
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      await fetch("http://localhost:5400/api/v6/agreements", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(tpaData),
+      });
+
+      const contractData = {
+        periods: [
+          {
+            from: selectedCatalog.startDate,
+            to: selectedCatalog.endDate,
+          },
+        ],
+      };
+      await fetch(
+        "http://localhost:5300/api/v4/contracts/tpa-example-project/createPointsFromPeriods",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(contractData),
+        }
+      );
+      window.open(
+        "http://localhost:5600/dashboard/script/dashboardLoader.js?dashboardURL=http:%2F%2Flocalhost:5300%2Fapi%2Fv4%2Fdashboards%2Ftpa-example-project%2Fmain&orgId=1",
+        "_blank"
+      );
+    } catch (error) {
+      console.error("Error realizando las peticiones:", error);
+    }
+  };
+
   // JSX representing the component's UI
   return (
     <div className="detail-panel">
@@ -306,18 +417,44 @@ const CatalogDetails = ({ selectedCatalog }) => {
         <form onSubmit={handleSubmit}>
           <Card.Body>
             {/* Basic catalog information */}
-            <p>
-              Nombre del catálogo:{" "}
-              <input
-                type="text"
-                value={specificCatalog.name}
-                className="form-control"
-                onChange={handleCatalogChange}
-              />
-            </p>
+            <Row>
+              <Form.Group className="mb-3" controlId="catalogName">
+                <Form.Label>Nombre del Catálogo:</Form.Label>
+                <Form.Control
+                  maxLength={100}
+                  onChange={handleNameChange}
+                  required
+                  type="text"
+                  value={specificCatalog.name}
+                />
+              </Form.Group>
+            </Row>
+            <Row>
+              <Col>
+                <Form.Group className="mb-3" controlId="catalogStartDate">
+                  <Form.Label>Fecha de inicio:</Form.Label>
+                  <Form.Control
+                    type="date"
+                    value={specificCatalog.startDate || ""}
+                    onChange={handleStartDateChange}
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group className="mb-3" controlId="catalogEndDate">
+                  <Form.Label>Fecha de fin:</Form.Label>
+                  <Form.Control
+                    type="date"
+                    value={specificCatalog.endDate || ""}
+                    onChange={handleEndDateChange}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+
             <ControlForm handleRemoveControl={handleRemoveControl} />
             {/* Action buttons */}
-            <Row className="mt-3 mb-3 d-flex justify-content-between">
+            <Row className="mt-3 mb-3 d-flex justify-content-center">
               {controls.length === 0 && (
                 <Col xs="auto">
                   <Button onClick={addControl} variant="primary">
@@ -327,11 +464,17 @@ const CatalogDetails = ({ selectedCatalog }) => {
               )}
               <Col xs="auto">
                 <div className="d-flex">
-                  <Button type="submit" variant="success">
+                  <Button
+                    className="btn-primary"
+                    onClick={handleCalculateClick}
+                  >
+                    Calcular
+                  </Button>
+                  <Button type="submit" className="ms-3 btn btn-success">
                     Actualizar
                   </Button>
                   <Button
-                    className="ms-2 btn btn-danger"
+                    className="ms-3 btn btn-danger"
                     onClick={handleDeleteClick}
                   >
                     Eliminar

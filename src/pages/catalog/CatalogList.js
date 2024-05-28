@@ -32,9 +32,6 @@ function CatalogList({ onCatalogSelect }) {
     <div className="container d-flex flex-column align-items-center pt-serif-regular">
       <Card className="w-100 mb-3">
         <Card.Body className="text-center">
-          <Button className="calculate-button mb-3" variant="danger">
-            Calcular
-          </Button>
           <ul className="list-group">
             {/* Render each catalog item */}
             {catalogs.map((catalog) => (

@@ -139,7 +139,7 @@ const ControlForm = ({ handleRemoveControl }) => {
                           className="mb-3"
                           controlId={`controlStartDate_${control.id}`}
                         >
-                          <Form.Label>Fecha de Inicio:</Form.Label>
+                          <Form.Label>Fecha de inicio:</Form.Label>
                           <Form.Control
                             type="date"
                             value={control.startDate}
@@ -158,7 +158,7 @@ const ControlForm = ({ handleRemoveControl }) => {
                           className="mb-3"
                           controlId={`controlEndDate_${control.id}`}
                         >
-                          <Form.Label>Fecha de Fin:</Form.Label>
+                          <Form.Label>Fecha de fin:</Form.Label>
                           <Form.Control
                             type="date"
                             value={control.endDate}
@@ -179,7 +179,7 @@ const ControlForm = ({ handleRemoveControl }) => {
                           className="mb-3"
                           controlId={`controlPeriod_${control.id}`}
                         >
-                          <Form.Label>Período:</Form.Label>
+                          <Form.Label>Periodicidad:</Form.Label>
                           <Form.Select
                             value={control.period}
                             onChange={(e) =>
@@ -228,38 +228,42 @@ const ControlForm = ({ handleRemoveControl }) => {
                       </Col>
                     </Row>
                     {/* Render the mashup inputs */}
-                    {inputs.inputs[control.id]?.map((input) => (
-                      <Form.Group className="mb-3" key={input.id}>
-                        <Form.Label>{input.name}:</Form.Label>
-                        {input.type === "STRING" ? (
-                          <Form.Control
-                            type="text"
-                            value={input.value || ""}
-                            onChange={(e) =>
-                              handleInputChange(
-                                control.id,
-                                input.id,
-                                e.target.value
-                              )
-                            }
-                            required
-                          />
-                        ) : (
-                          <Form.Control
-                            type="number"
-                            value={parseInt(input.value) || ""}
-                            onChange={(e) =>
-                              handleInputChange(
-                                control.id,
-                                input.id,
-                                parseInt(e.target.value)
-                              )
-                            }
-                            required
-                          />
-                        )}
-                      </Form.Group>
-                    ))}
+                    {inputs.inputs[control.id] && inputs.inputs[control.id].length > 0 && (
+                      <div className="bg-dark p-3 mb-3">
+                        {inputs.inputs[control.id]?.map((input) => (
+                          <Form.Group className="mb-3" key={input.id}>
+                            <Form.Label>{input.name}:</Form.Label>
+                            {input.type === "STRING" ? (
+                              <Form.Control
+                                type="text"
+                                value={input.value || ""}
+                                onChange={(e) =>
+                                  handleInputChange(
+                                    control.id,
+                                    input.id,
+                                    e.target.value
+                                  )
+                                }
+                                required
+                              />
+                            ) : (
+                              <Form.Control
+                                type="number"
+                                value={parseInt(input.value) || ""}
+                                onChange={(e) =>
+                                  handleInputChange(
+                                    control.id,
+                                    input.id,
+                                    parseInt(e.target.value)
+                                  )
+                                }
+                                required
+                              />
+                            )}
+                          </Form.Group>
+                        ))}
+                      </div>
+                    )}
                     <Row className="justify-content-between">
                       <Col xs="auto">
                         <Button onClick={addControl} variant="primary">

@@ -4,6 +4,8 @@ import { statusApi } from "../api/statusApi";
 export const useCatalogs = () => {
   const [catalogs, setCatalogs] = useState([]);
   const [catalogName, setCatalogName] = useState("");
+  const [catalogStartDate, setCatalogStartDate] = useState("");
+  const [catalogEndDate, setCatalogEndDate] = useState("");
 
   useEffect(() => {
     getCatalogsFromTheDatabase();
@@ -14,9 +16,12 @@ export const useCatalogs = () => {
     setCatalogs(resp.data);
   };
 
-  const createCatalogInDB = async (catalogName) => {
+  const createCatalogInDB = async (catalogName, url, startDate, endDate) => {
     const resp = await statusApi.post("http://localhost:3001/api/catalog", {
       name: catalogName,
+      url: url,
+      startDate: startDate,
+      endDate: endDate,
     });
     return resp.data;
   };
@@ -27,8 +32,26 @@ export const useCatalogs = () => {
     setCatalogs(updatedCatalogs);
   };
 
+  const updateCatalogInDB = async (catalogName, url, startDate, endDate) => {
+    const resp = await statusApi.post("http://localhost:3001/api/catalog", {
+      name: catalogName,
+      url: url,
+      startDate: startDate,
+      endDate: endDate,
+    });
+    return resp.data;
+  };
+
   const handleNameChange = (e) => {
     setCatalogName(e.target.value);
+  };
+
+  const handleStartDateChange = (e) => {
+    setCatalogStartDate(e.target.value);
+  };
+
+  const handleEndDateChange = (e) => {
+    setCatalogEndDate(e.target.value);
   };
 
   const removeCatalog = (index) => {
@@ -38,9 +61,14 @@ export const useCatalogs = () => {
   return {
     catalogs,
     createCatalogInDB,
+    updateCatalogInDB,
     updateCatalog,
     catalogName,
+    catalogStartDate,
+    catalogEndDate,
     handleNameChange,
+    handleStartDateChange,
+    handleEndDateChange,
     removeCatalog,
   };
 };

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { statusApi } from "../api/statusApi";
 
 export const useInput = () => {
