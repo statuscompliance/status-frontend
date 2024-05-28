@@ -25,7 +25,7 @@ export const useControls = () => {
 
   const getInputControlsByControlIdFromDB = async (id) => {
     const resp = await statusApi.get(
-      `http://localhost:3001/api/control/${id}/input_controls`
+      `http://localhost:3001/api/controls/${id}/input-controls`
     );
     return resp.data;
   };
@@ -39,7 +39,7 @@ export const useControls = () => {
     mashupId,
     catalogId
   ) => {
-    const resp = await statusApi.post("http://localhost:3001/api/control", {
+    const resp = await statusApi.post("http://localhost:3001/api/controls", {
       name: name,
       description: description,
       startDate: startDate,
@@ -68,7 +68,7 @@ export const useControls = () => {
 
   const createControlInputInDB = async (control_id, input_id, value) => {
     const resp = await statusApi.post(
-      "http://localhost:3001/api/input_control",
+      "http://localhost:3001/api/input-controls",
       {
         control_id: control_id,
         input_id: input_id,
@@ -80,7 +80,7 @@ export const useControls = () => {
 
   const updateControlInputInDb = async (id, value) => {
     const resp = await statusApi.patch(
-      `http://localhost:3001/api/input_control/${id}`,
+      `http://localhost:3001/api/input-controls/${id}`,
       {
         value: value,
       }
@@ -90,14 +90,14 @@ export const useControls = () => {
 
   const deleteControlByIdInDb = async (id) => {
     const resp = await statusApi.delete(
-      `http://localhost:3001/api/control/${id}`
+      `http://localhost:3001/api/controls/${id}`
     );
     return resp.data;
   };
 
   const deleteInputControlsByControlIdInDb = async (id) => {
     const resp = await statusApi.delete(
-      `http://localhost:3001/api/control/${id}/input_controls`
+      `http://localhost:3001/api/controls/${id}/input-controls`
     );
     return resp.data;
   };

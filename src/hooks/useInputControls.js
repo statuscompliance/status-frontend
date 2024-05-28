@@ -9,7 +9,7 @@ export const useInputControls = () => {
     control_id
   ) => {
     const resp = await statusApi.get(
-      `http://localhost:3001/api/input_control/${input_id}/${control_id}/values`
+      `http://localhost:3001/api/input-controls/${input_id}/controls/${control_id}/values`
     );
     return resp.data;
   };

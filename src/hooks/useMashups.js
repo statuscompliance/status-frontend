@@ -9,21 +9,21 @@ export const useMashups = () => {
   }, []);
 
   const getMashupsFromTheDB = async () => {
-    const resp = await statusApi.get("http://localhost:3001/api/mashup");
+    const resp = await statusApi.get("http://localhost:3001/api/mashups");
     setMashups(resp.data);
   };
 
-  const getMashupByIdFromTheDB = async (mashupId) => {
+  const getMashupByIdFromTheDB = async (mashup_id) => {
     const resp = await statusApi.get(
-      `http://localhost:3001/api/mashup/${mashupId}`
+      `http://localhost:3001/api/mashups/${mashup_id}`
     );
     return resp.data;
   };
 
-  const getInputsForMashupFromTheDB = async (mashupId) => {
+  const getInputsForMashupFromTheDB = async (mashup_id) => {
     try {
       const response = await statusApi.get(
-        `http://localhost:3001/api/${mashupId}/inputs`
+        `http://localhost:3001/api/mashups/${mashup_id}/inputs`
       );
       return response.data;
     } catch (error) {

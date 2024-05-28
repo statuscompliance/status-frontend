@@ -105,8 +105,8 @@ const CatalogDetails = ({ selectedCatalog }) => {
 
   const deleteTpaByCatalogId = async (catalogId) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/delete-tpa/${catalogId}`, {
-        method: "POST",
+      const response = await fetch(`http://localhost:3001/api/catalogs/${catalogId}/tpa`, {
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         }
@@ -126,7 +126,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
   const deleteCatalog = async (catalogId) => {
     try {
       // Fetch all controls associated with the catalog
-      const controlsResponse = await fetch(`http://localhost:3001/api/catalogControls/${catalogId}`);
+      const controlsResponse = await fetch(`http://localhost:3001/api/catalogs/${catalogId}/controls`);
       if (!controlsResponse.ok) throw new Error("Error al obtener los controles del catálogo");
       
       const controls = await controlsResponse.json();
@@ -134,26 +134,26 @@ const CatalogDetails = ({ selectedCatalog }) => {
       // Loop through each control and delete its associated inputs and input_controls
       for (const control of controls) {
         // Fetch input_controls associated with the control
-        const inputControlsResponse = await fetch(`http://localhost:3001/api/control/${control.id}/input_controls`);
+        const inputControlsResponse = await fetch(`http://localhost:3001/api/controls/${control.id}/input-controls`);
         if (!inputControlsResponse.ok) throw new Error(`Error al obtener input_controls del control ${control.id}`);
         
         const inputControls = await inputControlsResponse.json();
 
         // Delete each input_control
         for (const inputControl of inputControls) {
-          await fetch(`http://localhost:3001/api/input_control/${inputControl.id}`, {
+          await fetch(`http://localhost:3001/api/input-controls/${inputControl.id}`, {
             method: "DELETE",
           });
         }
 
         // Delete the control itself
-        await fetch(`http://localhost:3001/api/control/${control.id}`, {
+        await fetch(`http://localhost:3001/api/controls/${control.id}`, {
           method: "DELETE",
         });
       }
 
       // Finally, delete the catalog
-      const catalogResponse = await fetch(`http://localhost:3001/api/catalog/${catalogId}`, {
+      const catalogResponse = await fetch(`http://localhost:3001/api/catalogs/${catalogId}`, {
         method: "DELETE",
       });
 
@@ -196,7 +196,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
   // Update catalog information
   const updateCatalogInfo = async (catalogId, catalogData) => {
     const response = await fetch(
-      `http://localhost:3001/api/catalog/${catalogId}`,
+      `http://localhost:3001/api/catalogs/${catalogId}`,
       {
         method: "PATCH",
         headers: {
@@ -221,7 +221,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
     const mashupIdChanged = currentControl.mashup_id !== control.mashup_id;
 
     const response = await fetch(
-      `http://localhost:3001/api/control/${control.id}`,
+      `http://localhost:3001/api/controls/${control.id}`,
       {
         method: "PATCH",
         headers: {
@@ -255,7 +255,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
   // Get the current status of a control by ID
   const getCurrentControlState = async (controlId) => {
     const response = await fetch(
-      `http://localhost:3001/api/control/${controlId}`
+      `http://localhost:3001/api/controls/${controlId}`
     );
     if (!response.ok) {
       throw new Error("Error al obtener el estado actual del control");
@@ -360,7 +360,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
     try {
       const catalogId = selectedCatalog.id;
       const tpaResponse = await fetch(
-        `http://localhost:3001/api/tpa/${catalogId}`
+        `http://localhost:3001/api/catalogs/${catalogId}/tpa`
       );
       if (!tpaResponse.ok) throw new Error("Fallo al obtener el TPA");
       const tpaData = await tpaResponse.json();

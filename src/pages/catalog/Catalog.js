@@ -22,7 +22,7 @@ function Catalog() {
       dispatch(clearInputs());
       // Obtenemos los controles del catálogo seleccionado y los almacenamos en el estado
       const response = await fetch(
-        `http://localhost:3001/api/catalogControls/${catalogId}`
+        `http://localhost:3001/api/catalogs/${catalogId}/controls`
       );
 
       if (response.ok) {
@@ -37,7 +37,7 @@ function Catalog() {
         // Obtenemos los input_controls asociados a cada control
         const inputControlPromises = data.map((control, index) =>
           fetch(
-            `http://localhost:3001/api/control/${control.id}/input_controls`
+            `http://localhost:3001/api/controls/${control.id}/input-controls`
           ).then((response) =>
             response.ok
               ? response.json()

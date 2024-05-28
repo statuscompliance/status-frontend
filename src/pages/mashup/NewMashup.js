@@ -27,7 +27,7 @@ function NewMashup() {
         };
 
         try {
-            const response = await fetch('http://localhost:3001/api/mashup', {
+            const response = await fetch('http://localhost:3001/api/mashups', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

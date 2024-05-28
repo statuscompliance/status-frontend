@@ -212,7 +212,7 @@ function NewCatalog() {
 
   const saveTpa = async (tpaContent, catalogId) => {
     try {
-      const response = await fetch("http://localhost:3001/api/save-tpa", {
+      const response = await fetch("http://localhost:3001/api/catalogs/tpa", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
