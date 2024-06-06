@@ -76,7 +76,6 @@ function NewCatalog() {
     try {
       const catalogResponse = await createCatalogInDB(
         catalogName,
-        "http://prueba.com",
         catalogStartDate,
         catalogEndDate
       );
@@ -219,7 +218,7 @@ function NewCatalog() {
         },
         body: JSON.stringify({
           content: tpaContent,
-          catalogId: catalogId,
+          catalog_id: catalogId,
         }),
       });
 

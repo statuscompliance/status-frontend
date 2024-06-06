@@ -37,7 +37,7 @@ function Catalog() {
         // Obtenemos los input_controls asociados a cada control
         const inputControlPromises = data.map((control, index) =>
           fetch(
-            `http://localhost:3001/api/controls/${control.id}/input-controls`
+            `http://localhost:3001/api/controls/${control.id}/input_controls`
           ).then((response) =>
             response.ok
               ? response.json()

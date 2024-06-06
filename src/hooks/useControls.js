@@ -25,7 +25,7 @@ export const useControls = () => {
 
   const getInputControlsByControlIdFromDB = async (id) => {
     const resp = await statusApi.get(
-      `http://localhost:3001/api/controls/${id}/input-controls`
+      `http://localhost:3001/api/controls/${id}/input_controls`
     );
     return resp.data;
   };
@@ -68,7 +68,7 @@ export const useControls = () => {
 
   const createControlInputInDB = async (control_id, input_id, value) => {
     const resp = await statusApi.post(
-      "http://localhost:3001/api/input-controls",
+      "http://localhost:3001/api/input_controls",
       {
         control_id: control_id,
         input_id: input_id,
@@ -80,7 +80,7 @@ export const useControls = () => {
 
   const updateControlInputInDb = async (id, value) => {
     const resp = await statusApi.patch(
-      `http://localhost:3001/api/input-controls/${id}`,
+      `http://localhost:3001/api/input_controls/${id}`,
       {
         value: value,
       }
@@ -97,7 +97,7 @@ export const useControls = () => {
 
   const deleteInputControlsByControlIdInDb = async (id) => {
     const resp = await statusApi.delete(
-      `http://localhost:3001/api/controls/${id}/input-controls`
+      `http://localhost:3001/api/controls/${id}/input_controls`
     );
     return resp.data;
   };

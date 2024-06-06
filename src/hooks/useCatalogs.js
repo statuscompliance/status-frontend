@@ -16,10 +16,9 @@ export const useCatalogs = () => {
     setCatalogs(resp.data);
   };
 
-  const createCatalogInDB = async (catalogName, url, startDate, endDate) => {
+  const createCatalogInDB = async (catalogName, startDate, endDate) => {
     const resp = await statusApi.post("http://localhost:3001/api/catalogs", {
       name: catalogName,
-      url: url,
       startDate: startDate,
       endDate: endDate,
     });
@@ -32,10 +31,9 @@ export const useCatalogs = () => {
     setCatalogs(updatedCatalogs);
   };
 
-  const updateCatalogInDB = async (catalogName, url, startDate, endDate) => {
+  const updateCatalogInDB = async (catalogName, startDate, endDate) => {
     const resp = await statusApi.post("http://localhost:3001/api/catalogs", {
       name: catalogName,
-      url: url,
       startDate: startDate,
       endDate: endDate,
     });

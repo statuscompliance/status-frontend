@@ -60,7 +60,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
     if (controls.length > 0) {
       setSelectedMashupId(controls[0].mashup_id);
     }
-  }, [selectedCatalog, controls]);
+  }, [selectedCatalog]);
 
   // Adds an empty input for the last added control
   useEffect(() => {
@@ -134,14 +134,14 @@ const CatalogDetails = ({ selectedCatalog }) => {
       // Loop through each control and delete its associated inputs and input_controls
       for (const control of controls) {
         // Fetch input_controls associated with the control
-        const inputControlsResponse = await fetch(`http://localhost:3001/api/controls/${control.id}/input-controls`);
+        const inputControlsResponse = await fetch(`http://localhost:3001/api/controls/${control.id}/input_controls`);
         if (!inputControlsResponse.ok) throw new Error(`Error al obtener input_controls del control ${control.id}`);
         
         const inputControls = await inputControlsResponse.json();
 
         // Delete each input_control
         for (const inputControl of inputControls) {
-          await fetch(`http://localhost:3001/api/input-controls/${inputControl.id}`, {
+          await fetch(`http://localhost:3001/api/input_controls/${inputControl.id}`, {
             method: "DELETE",
           });
         }
@@ -194,9 +194,10 @@ const CatalogDetails = ({ selectedCatalog }) => {
   };
 
   // Update catalog information
-  const updateCatalogInfo = async (catalogId, catalogData) => {
+  const updateCatalogInfo = async (id, catalogData) => {
+    console.log(id)
     const response = await fetch(
-      `http://localhost:3001/api/catalogs/${catalogId}`,
+      `http://localhost:3001/api/catalogs/${id}`,
       {
         method: "PATCH",
         headers: {
