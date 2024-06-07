@@ -338,7 +338,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
   const handleUpdateControlInput = async (id, input) => {
     let value = input.value;
     if (input.type === "NUMBER") {
-      value = parseInt(input.value);
+      value = parseInt(input.value, 10);
     }
     await updateControlInputInDb(id, value);
   };

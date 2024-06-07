@@ -249,12 +249,12 @@ const ControlForm = ({ handleRemoveControl }) => {
                             ) : (
                               <Form.Control
                                 type="number"
-                                value={parseInt(input.value) || ""}
+                                value={parseInt(input.value, 10) || ""}
                                 onChange={(e) =>
                                   handleInputChange(
                                     control.id,
                                     input.id,
-                                    parseInt(e.target.value)
+                                    parseInt(e.target.value, 10)
                                   )
                                 }
                                 required

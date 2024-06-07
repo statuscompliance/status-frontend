@@ -58,7 +58,7 @@ function Catalog() {
                 ...inputDetail,
                 value:
                   inputDetail.type === "NUMBER"
-                    ? parseInt(input.value)
+                    ? parseInt(input.value, 10)
                     : input.value,
               };
             })
