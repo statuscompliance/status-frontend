@@ -20,7 +20,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
   const [catalogToUpdate, setCatalogToUpdate] = useState(null);
   const [catalogToDelete, setCatalogToDelete] = useState(null);
   const [controlsToDelete, setControlsToDelete] = useState([]);
-  const [setSelectedMashupId] = useState("");
+  const [selectedMashupId, setSelectedMashupId] = useState("");
   const controls = useSelector((state) => state.controls.controls);
   const inputs = useSelector((state) => state.inputs);
   const lastAddedId = useSelector((state) => state.controls.lastAddedId);
