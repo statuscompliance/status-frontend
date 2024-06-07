@@ -35,7 +35,7 @@ function Catalog() {
 
         // Use Promise.all to fetch input controls for all catalog controls in parallel
         // Obtenemos los input_controls asociados a cada control
-        const inputControlPromises = data.map((control, index) =>
+        const inputControlPromises = data.map((control) =>
           fetch(
             `http://localhost:3001/api/controls/${control.id}/input_controls`
           ).then((response) =>

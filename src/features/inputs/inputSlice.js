@@ -26,7 +26,7 @@ export const inputSlice = createSlice({
       const { controlId, inputs } = action.payload;
       state.inputs[controlId] = inputs;
     },
-    clearInputs: (state, action) => {
+    clearInputs: (state) => {
       state.inputs = {};
     },
     updateInputAtIndex: (state, action) => {

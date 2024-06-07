@@ -51,7 +51,7 @@ function NewCatalog() {
 
     const controlData = await response;
     const inputControlPromises = Object.entries(inputs.inputs[control.id]).map(
-      ([inputId, inputInfo]) =>
+      ([inputInfo]) =>
         handleCreateControlInput(controlData.id, inputInfo.id, inputInfo.value)
     );
 

@@ -14,7 +14,7 @@ const ControlForm = ({ handleRemoveControl }) => {
   const inputs = useSelector((state) => state.inputs);
   const { mashups, getInputsForMashupFromTheDB } = useMashups();
   const { getValuesByInputIdAndControlIdFromTheDB } = useInputControls();
-  const [selectedMashupId, setSelectedMashupId] = useState("");
+  const [setSelectedMashupId] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
 
   // Handler function for updating control details
@@ -81,7 +81,7 @@ const ControlForm = ({ handleRemoveControl }) => {
       {controls.length > 0 && (
         <Carousel
           activeIndex={activeIndex}
-          onSelect={(selectedIndex, e) => {
+          onSelect={(selectedIndex) => {
             setActiveIndex(selectedIndex);
           }}
           controls={false}

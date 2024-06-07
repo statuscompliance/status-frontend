@@ -20,7 +20,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
   const [catalogToUpdate, setCatalogToUpdate] = useState(null);
   const [catalogToDelete, setCatalogToDelete] = useState(null);
   const [controlsToDelete, setControlsToDelete] = useState([]);
-  const [selectedMashupId, setSelectedMashupId] = useState("");
+  const [setSelectedMashupId] = useState("");
   const controls = useSelector((state) => state.controls.controls);
   const inputs = useSelector((state) => state.inputs);
   const lastAddedId = useSelector((state) => state.controls.lastAddedId);
@@ -316,7 +316,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
 
     const controlData = await response;
     const inputControlPromises = Object.entries(inputs.inputs[control.id]).map(
-      ([inputId, inputInfo]) =>
+      ([inputInfo]) =>
         handleCreateControlInput(controlData.id, inputInfo.id, inputInfo.value)
     );
 

@@ -40,7 +40,7 @@ export const controlSlice = createSlice({
     setControls: (state, action) => {
       state.controls = action.payload;
     },
-    clearControls: (state, action) => {
+    clearControls: (state) => {
       state.controls = [];
     },
     removeControl: (state, action) => {
