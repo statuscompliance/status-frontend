@@ -81,7 +81,7 @@ const ControlForm = ({ handleRemoveControl }) => {
       {controls.length > 0 && (
         <Carousel
           activeIndex={activeIndex}
-          onSelect={(selectedIndex) => {
+          onSelect={(selectedIndex, e) => {
             setActiveIndex(selectedIndex);
           }}
           controls={false}
