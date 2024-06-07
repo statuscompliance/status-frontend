@@ -20,7 +20,7 @@ function Catalog() {
     try {
       dispatch(clearControls());
       dispatch(clearInputs());
-      // Obtenemos los controles del catálogo seleccionado y los almacenamos en el estado
+
       const response = await fetch(
         `http://localhost:3001/api/catalogs/${catalogId}/controls`
       );
@@ -34,7 +34,6 @@ function Catalog() {
         }
 
         // Use Promise.all to fetch input controls for all catalog controls in parallel
-        // Obtenemos los input_controls asociados a cada control
         const inputControlPromises = data.map((control, index) =>
           fetch(
             `http://localhost:3001/api/controls/${control.id}/input_controls`
@@ -46,11 +45,9 @@ function Catalog() {
         );
         const inputControls = await Promise.all(inputControlPromises);
 
-        // Recorremos los input_controls
         inputControls.forEach(async (inputData, index) => {
           const control = data[index];
 
-          // Obtenemos los inputs y values
           const inputsWithValues = await Promise.all(
             inputData.map(async (input) => {
               const inputDetail = await getInputByIdFromDB(input.input_id);

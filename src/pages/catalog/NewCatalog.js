@@ -100,7 +100,6 @@ function NewCatalog() {
     dispatch(addEmptyControl());
   };
 
-  
   // JSX representing the component's UI
   return (
     <div className="container">

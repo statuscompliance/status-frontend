@@ -112,37 +112,31 @@ const CatalogDetails = ({ selectedCatalog }) => {
     }
   }, [catalogToDelete, catalogToUpdate, specificCatalog]);
 
-  // Delete a catalog by ID
+  // ------------------------------------------ Delete catalog ------------------------------------------ //
   const deleteCatalog = async (catalogId) => {
     try {
-      // Fetch all controls associated with the catalog
       const controlsResponse = await fetch(`http://localhost:3001/api/catalogs/${catalogId}/controls`);
       if (!controlsResponse.ok) throw new Error("Error al obtener los controles del catálogo");
       
       const controls = await controlsResponse.json();
 
-      // Loop through each control and delete its associated inputs and input_controls
       for (const control of controls) {
-        // Fetch input_controls associated with the control
         const inputControlsResponse = await fetch(`http://localhost:3001/api/controls/${control.id}/input_controls`);
         if (!inputControlsResponse.ok) throw new Error(`Error al obtener input_controls del control ${control.id}`);
         
         const inputControls = await inputControlsResponse.json();
 
-        // Delete each input_control
         for (const inputControl of inputControls) {
           await fetch(`http://localhost:3001/api/input_controls/${inputControl.id}`, {
             method: "DELETE",
           });
         }
 
-        // Delete the control itself
         await fetch(`http://localhost:3001/api/controls/${control.id}`, {
           method: "DELETE",
         });
       }
 
-      // Finally, delete the catalog
       const catalogResponse = await fetch(`http://localhost:3001/api/catalogs/${catalogId}`, {
         method: "DELETE",
       });
@@ -160,7 +154,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
     }
   };
 
-  // Update a catalog by ID
+  // -------------------------------------------- Update catalog -------------------------------------------- //
   const updateCatalog = async (catalogId, catalogData) => {
     try {
       await updateCatalogInfo(catalogId, catalogData);
@@ -185,7 +179,6 @@ const CatalogDetails = ({ selectedCatalog }) => {
     }
   };
 
-  // Update catalog information
   const updateCatalogInfo = async (id, catalogData) => {
     const response = await fetch(
       `http://localhost:3001/api/catalogs/${id}`,
@@ -207,7 +200,10 @@ const CatalogDetails = ({ selectedCatalog }) => {
     return response.json();
   };
 
-  // Update an existing control
+  // ---------------------------------- Control and input_control management ---------------------------------- //
+
+  /* Updates the controls that have been modified from the catalog (only 
+  those that existed before, not those that have been newly created) */
   const updateExistingControl = async (control) => {
     const currentControl = await getCurrentControlState(control.id);
     const mashupIdChanged = currentControl.mashup_id !== control.mashup_id;
@@ -244,7 +240,8 @@ const CatalogDetails = ({ selectedCatalog }) => {
     }
   };
 
-  // Get the current status of a control by ID
+  /** Returns the current database status of a control, to know if the 
+   * mashup has been changed */
   const getCurrentControlState = async (controlId) => {
     const response = await fetch(
       `http://localhost:3001/api/controls/${controlId}`
@@ -255,39 +252,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
     return response.json();
   };
 
-  // Create input_controls from a control
-  const createInputControlsForControl = async (controlId) => {
-    for (const input of inputs.inputs[controlId]) {
-      await handleCreateControlInput(
-        controlId,
-        input.id,
-        input.value ? input.value : -1
-      );
-    }
-  };
-
-  // Update input_control frrom a control
-  const updateInputControlsForControl = async (controlId) => {
-    const inputControls = await getInputControlsByControlIdFromDB(controlId);
-    for (const inputControl of inputControls) {
-      handleUpdateControlInput(
-        inputControl.id,
-        inputs.inputs[inputControl.control_id].filter(
-          (input) => input.id === inputControl.input_id
-        )[0]
-      );
-    }
-  };
-
-  // Remove input_controls from a control
-  const deleteInputControlsForControl = async (controlId) => {
-    const inputControls = await getInputControlsByControlIdFromDB(controlId);
-    for (const inputControl of inputControls) {
-      await handleDeleteControlInput(inputControl.control_id);
-    }
-  };
-
-  // Handler function for create a control
+  // Creates the new controls associated with the catalog update
   const handleCreateControl = async (control, catalogId) => {
     const response = await createControlInDB(
       control.name,
@@ -309,7 +274,18 @@ const CatalogDetails = ({ selectedCatalog }) => {
     return response.ok;
   };
 
-  // Handler function for create a control input
+  /** Creates all input_controls of a new control that was created when 
+   * the catalog was updated */
+  const createInputControlsForControl = async (controlId) => {
+    for (const input of inputs.inputs[controlId]) {
+      await handleCreateControlInput(
+        controlId,
+        input.id,
+        input.value ? input.value : -1
+      );
+    }
+  };
+
   const handleCreateControlInput = async (controlDataId, inputId, value) => {
     const inputControlResponse = await createControlInputInDB(
       controlDataId,
@@ -319,7 +295,20 @@ const CatalogDetails = ({ selectedCatalog }) => {
     return inputControlResponse;
   };
 
-  // Handler function for update a control input
+  /** Updates all input_controls of a control that has been updated 
+   *  when the catalog was updated */
+  const updateInputControlsForControl = async (controlId) => {
+    const inputControls = await getInputControlsByControlIdFromDB(controlId);
+    for (const inputControl of inputControls) {
+      handleUpdateControlInput(
+        inputControl.id,
+        inputs.inputs[inputControl.control_id].filter(
+          (input) => input.id === inputControl.input_id
+        )[0]
+      );
+    }
+  };
+
   const handleUpdateControlInput = async (id, input) => {
     let value = input.value;
     if (input.type === "NUMBER") {
@@ -328,18 +317,25 @@ const CatalogDetails = ({ selectedCatalog }) => {
     await updateControlInputInDb(id, value);
   };
 
-  // Handler function for delete a control input
+  /** Deletes all input_controls of a control that was deleted when 
+   * the catalog was updated */
+  const deleteInputControlsForControl = async (controlId) => {
+    const inputControls = await getInputControlsByControlIdFromDB(controlId);
+    for (const inputControl of inputControls) {
+      await handleDeleteControlInput(inputControl.control_id);
+    }
+  };
+
   const handleDeleteControlInput = async (id) => {
     const inputControlResponse = await deleteInputControlsByControlIdInDb(id);
     return inputControlResponse;
   };
 
-  // Handler function for add a empty control
+  // -------------------------------- Adding and removing controls from the form -------------------------------- //
   const addControl = () => {
     dispatch(addEmptyControl());
   };
 
-  // Handler function for remove a control
   const handleRemoveControl = (controlId) => {
     dispatch(removeControl({ id: controlId }));
     dispatch(removeInput({ index: controlId }));
@@ -348,6 +344,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
     }
   };
 
+  // -------------------------------------------- Calculate button -------------------------------------------- //
   const handleCalculateClick = async () => {
     try {
       const catalogId = selectedCatalog.id;
@@ -378,8 +375,8 @@ const CatalogDetails = ({ selectedCatalog }) => {
     }
   };
 
-  // JSX representing the component's UI
-  return (
+// ---------------------------------------------------- JSX ---------------------------------------------------- //
+return (
     <div className="detail-panel">
       <Card style={{ backgroundColor: "#bf0a2e", color: "#ffff" }}>
         <form onSubmit={handleSubmit}>
