@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { generateTPA, deleteTpaByCatalogId } from './TpaUtils';
 import { Button, Card, Form, Row, Col } from "react-bootstrap";
 import { useControls } from "../../hooks/useControls";
 import { useBluejay } from "../../hooks/useBluejay";
@@ -14,6 +15,7 @@ import {
   clearInputs,
 } from "../../features/inputs/inputSlice";
 import ControlForm from "./ControlForm";
+import { useMashups } from "../../hooks/useMashups";
 
 const CatalogDetails = ({ selectedCatalog }) => {
   const [specificCatalog, setSpecificCatalog] = useState(selectedCatalog);
@@ -38,6 +40,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
     deleteAgreement,
     createPoints,
   } = useBluejay();
+  const { getMashupByIdFromTheDB } = useMashups();
 
   const handleNameChange = (event) => {
     setSpecificCatalog((prevCatalog) => ({
@@ -109,25 +112,6 @@ const CatalogDetails = ({ selectedCatalog }) => {
     }
   }, [catalogToDelete, catalogToUpdate, specificCatalog]);
 
-  const deleteTpaByCatalogId = async (catalogId) => {
-    try {
-      const response = await fetch(`http://localhost:3001/api/catalogs/${catalogId}/tpa`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        }
-      });
-
-      if (response.ok) {
-        console.log("TPA eliminado del servidor");
-      } else {
-        console.error("Error al eliminar el TPA:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Error al realizar la solicitud:", error);
-    }
-  };
-
   // Delete a catalog by ID
   const deleteCatalog = async (catalogId) => {
     try {
@@ -191,6 +175,8 @@ const CatalogDetails = ({ selectedCatalog }) => {
           await handleCreateControl(control, catalogId);
         }
       }
+      await deleteTpaByCatalogId(catalogId);
+      await generateTPA(controls, catalogId, getMashupByIdFromTheDB, inputs);
 
       console.log("Catálogo y controles actualizados con éxito.");
       window.location.reload();
@@ -201,7 +187,6 @@ const CatalogDetails = ({ selectedCatalog }) => {
 
   // Update catalog information
   const updateCatalogInfo = async (id, catalogData) => {
-    console.log(id)
     const response = await fetch(
       `http://localhost:3001/api/catalogs/${id}`,
       {
