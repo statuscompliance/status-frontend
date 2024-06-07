@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button, Card, Form, Row, Col } from "react-bootstrap";
 import { useControls } from "../../hooks/useControls";
+import { useBluejay } from "../../hooks/useBluejay";
 import { useSelector, useDispatch } from "react-redux";
 import {
   addEmptyControl,
@@ -32,6 +33,11 @@ const CatalogDetails = ({ selectedCatalog }) => {
     deleteInputControlsByControlIdInDb,
     createControlInputInDB,
   } = useControls();
+  const {
+    postAgreement,
+    deleteAgreement,
+    createPoints,
+  } = useBluejay();
 
   const handleNameChange = (event) => {
     setSpecificCatalog((prevCatalog) => ({
@@ -365,25 +371,6 @@ const CatalogDetails = ({ selectedCatalog }) => {
       );
       if (!tpaResponse.ok) throw new Error("Fallo al obtener el TPA");
       const tpaData = await tpaResponse.json();
-
-      await fetch(
-        "http://localhost:5400/api/v6/agreements/tpa-example-project",
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      await fetch("http://localhost:5400/api/v6/agreements", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(tpaData),
-      });
-
       const contractData = {
         periods: [
           {
@@ -392,16 +379,11 @@ const CatalogDetails = ({ selectedCatalog }) => {
           },
         ],
       };
-      await fetch(
-        "http://localhost:5300/api/v4/contracts/tpa-example-project/createPointsFromPeriods",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(contractData),
-        }
-      );
+
+      await deleteAgreement();
+      await postAgreement(tpaData);
+      await createPoints(contractData)
+
       window.open(
         "http://localhost:5600/dashboard/script/dashboardLoader.js?dashboardURL=http:%2F%2Flocalhost:5300%2Fapi%2Fv4%2Fdashboards%2Ftpa-example-project%2Fmain&orgId=1",
         "_blank"
