@@ -1,26 +1,6 @@
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-top: 20px;
-}
-.btn-add{
-    margin-top: 5%;
-    width: 40%;
-}
-.list-group-item{
-    margin-left: 1%;
-    width: 98%;
-}
-.list-group-item:hover{
-    cursor: pointer;
-    transform: scale(1.01);
-    color: #989494;
-}
 .add-svg{
     filter: invert(100%);
-    width: 20%;
+    width: 10%;
     height: 10%;
     margin-top: 1%;
     margin-left: 1%;

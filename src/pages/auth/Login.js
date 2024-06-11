@@ -1,34 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
-
+import "../../static/css/login.css";
 
 export default function Login() {
     const { username, password, handleUsernameChange, handlePasswordChange, handleSubmit } = useAuth();
-    
+    // eslint-disable-next-line no-unused-vars
+    const [errorMessage, setErrorMessage] = useState('');
+
+
+
     return (
-        <div>
-            <h1>Iniciar sesión</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="username">Usuario:</label>
-                    <input
-                        id="username"
-                        onChange={handleUsernameChange}
-                        type="text"
-                        value={username}
-                    />
-                </div>
-                <div> 
-                    <label htmlFor="password">Contraseña:</label>
-                    <input
-                        id="password"
-                        onChange={handlePasswordChange}
-                        type="password"
-                        value={password}
-                    />
-                </div>
-                <button type="submit">Enviar</button>
-            </form>
+        <div className='loginContainer'>
+            <div className='loginSquare'>
+                <p className='loginText'>Iniciar sesión</p>
+                <form onSubmit={handleSubmit}>
+                    <div className='usernameBox'>
+                        <label className='usernameLabel' htmlFor="username">Usuario:</label>
+                        <input
+                            id="username"
+                            onChange={handleUsernameChange}
+                            placeholder='Introduce tu nombre de usuario'
+                            type="text"
+                            value={username}
+                        />
+                    </div>
+                    <div className='pwdBox'> 
+                        <label className='pwdLabel' htmlFor="password">Contraseña:</label>
+                        <input
+                            id="password"
+                            onChange={handlePasswordChange}
+                            placeholder='Introduce tu contraseña'
+                            type="password"
+                            value={password}
+                        />
+                    </div>
+                    <button className='loginButton' type="submit">Enviar</button>
+                </form>
+                <p id="error-message">{errorMessage}</p>
+            </div>
         </div>
     );
 }
