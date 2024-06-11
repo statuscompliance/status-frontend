@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { BrowserRouter, Link, Routes, Route } from "react-router-dom";
+import { Provider } from "react-redux";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./static/css/index.css";
+import logoSvg from "./static/images/logo.svg";
+import githubLogo from "./static/images/githubLogo.svg";
 import Catalog from "./pages/catalog/Catalog";
 import Mashup from "./pages/mashup/Mashup";
 import NewCatalog from "./pages/catalog/NewCatalog";
@@ -9,17 +15,14 @@ import Editor from "./pages/node-red/Editor";
 import Chat from "./pages/chat/Chat";
 import Home from "./pages/Home";
 import Admin from "./pages/admin/Admin";
-import { BrowserRouter, Link, Routes, Route } from "react-router-dom";
+import { store } from "./app/store";
 import { statusApi } from "./api/statusApi";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./static/css/index.css";
-import logoSvg from "./static/images/logo.svg";
-import githubLogo from "./static/images/githubLogo.svg";
 import { useCookie } from "./hooks/useCookie";
 import { useAuth } from "./hooks/useAuth";
 import { useAdmin } from "./hooks/useAdmin";
 import { Modal } from "react-bootstrap";
 import { Context } from "./hooks/useAdmin";
+
 const App = () => {
   const [showModal, setShowModal] = useState(false);
   const existsCookie = useCookie("accessToken");
@@ -38,15 +41,6 @@ const App = () => {
     }
   }, [existsCookie, getAuthority, authority]);
 
-  // useEffect(() => {
-  //   if (existsCookie && !configData) {
-  //     getGPTConfiguration();
-  //   } else {
-  //     setInterval(() => {
-  //       getGPTConfiguration();
-  //     }, 6000);
-  //   }
-  // }, [configData, getGPTConfiguration, existsCookie]);
   useEffect(() => {
     async function fetchData() {
       const { assistant, thread } = await getGPTConfiguration();
@@ -111,7 +105,7 @@ const App = () => {
 
     const timer = setInterval(() => {
       setShowModal(true);
-    }, 2700000); // 57 minutos en milisegundos - 3420000
+    }, 2700000); // 45 minutos en milisegundos - 2700000
     return () => clearInterval(timer);
   }, []);
 
@@ -264,4 +258,9 @@ const CountdownTimer = ({ onTimeout }) => {
 
 const container = document.getElementById("root");
 const root = createRoot(container);
-root.render(<App />);
+
+root.render(
+  <Provider store={store}>
+    <App />
+  </Provider>
+);
