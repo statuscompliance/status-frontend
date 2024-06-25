@@ -4,6 +4,7 @@ import CatalogList from "./CatalogList";
 import CatalogDetails from "./CatalogDetails";
 import { useInput } from "../../hooks/useInput";
 import { useCatalogs } from "../../hooks/useCatalogs";
+import { useInputControls } from "../../hooks/useInputControls";
 import { useDispatch } from "react-redux";
 import {
   setControls,
@@ -15,6 +16,7 @@ function Catalog() {
   const [selectedCatalog, setSelectedCatalog] = useState(null);
   const { getInputByIdFromDB } = useInput();
   const { getCatalogControlsInDB } = useCatalogs();
+  const { getInputControlsByControlIdFromTheDB } = useInputControls();
   const dispatch = useDispatch();
 
   // Function to fetch controls for a selected catalog
@@ -34,11 +36,9 @@ function Catalog() {
 
         // Use Promise.all to fetch input controls for all catalog controls in parallel
         const inputControlPromises = data.map((control, index) =>
-          fetch(
-            `http://localhost:3001/api/controls/${control.id}/input_controls`
-          ).then((response) =>
-            response.ok
-              ? response.json()
+          getInputControlsByControlIdFromTheDB(control.id).then((response) =>
+            response
+              ? response
               : Promise.reject("Error fetching input controls")
           )
         );
