@@ -23,6 +23,13 @@ export const useControls = () => {
     ]);
   };
 
+  const getControlByIdFromDB = async (id) => {
+    const resp = await statusApi.get(
+      `http://localhost:3001/api/controls/${id}`
+    );
+    return resp.data;
+  };
+
   const getInputControlsByControlIdFromDB = async (id) => {
     const resp = await statusApi.get(
       `http://localhost:3001/api/controls/${id}/input_controls`
@@ -55,6 +62,22 @@ export const useControls = () => {
     const updatedControls = [...controls];
     updatedControls[index][field] = value;
     setControls(updatedControls);
+  };
+
+  const updateControlInDb = async (id, name, description, period, startDate, endDate, mashup_id, catalog_id) => {
+    const resp = await statusApi.patch(
+      `http://localhost:3001/api/controls/${id}`,
+      {
+        name: name,
+        description: description,
+        period: period,
+        startDate: startDate,
+        endDate: endDate,
+        mashup_id: mashup_id,
+        catalog_id: catalog_id,
+      }
+    );
+    return resp.data;
   };
 
   const removeControl = (index) => {
@@ -111,11 +134,13 @@ export const useControls = () => {
   return {
     controls,
     setControls,
+    getControlByIdFromDB,
     getInputControlsByControlIdFromDB,
     addEmptyControl,
     createControlInDB,
     updateControlInputInDb,
     updateControl,
+    updateControlInDb,
     removeControl,
     deleteControlByIdInDb,
     deleteInputControlsByControlIdInDb,

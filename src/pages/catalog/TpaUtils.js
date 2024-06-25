@@ -4,7 +4,7 @@ const toUpperSnakeCase = (name) => {
   return name.toUpperCase().replace(/\s+/g, "_");
 };
 
-const generateTPA = async (controls, catalogId, getMashupByIdFromTheDB, inputs) => {
+const generateTPA = async (controls, catalogId, getMashupByIdFromTheDB, inputs, createTpaInDB, deleteTpaByCatalogId) => {
   const tpa = JSON.parse(JSON.stringify(tpaTemplate));
 
   for (const control of controls) {
@@ -35,7 +35,7 @@ const generateTPA = async (controls, catalogId, getMashupByIdFromTheDB, inputs) 
   }
 
   const tpaString = JSON.stringify(tpa, null, 2);
-  await saveTpa(tpaString, catalogId);
+  await saveTpa(tpaString, catalogId, createTpaInDB);
 };
 
 const addMetricToTPA = async (tpa, metricName, mashup, config) => {
@@ -123,20 +123,11 @@ const addGuaranteeToTPA = async (
   });
 };
 
-const saveTpa = async (tpaContent, catalogId) => {
+const saveTpa = async (tpaContent, catalogId, createTpaInDB) => {
   try {
-    const response = await fetch("http://localhost:3001/api/catalogs/tpa", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        content: tpaContent,
-        catalog_id: catalogId,
-      }),
-    });
+    const response = createTpaInDB(tpaContent, catalogId)
 
-    if (response.ok) {
+    if (response) {
       console.log("TPA guardado en el servidor");
     } else {
       console.error("Error al guardar el TPA:", response.statusText);
@@ -146,16 +137,12 @@ const saveTpa = async (tpaContent, catalogId) => {
   }
 };
 
-const deleteTpaByCatalogId = async (catalogId) => {
+const deleteTpaByCatalogId = async (catalogId, deleteTpaByIdFromTheDatabase) => {
   try {
-    const response = await fetch(`http://localhost:3001/api/catalogs/${catalogId}/tpa`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      }
-    });
+    console.log("llego al método de borrar")
+    const response = deleteTpaByIdFromTheDatabase(catalogId);
 
-    if (response.ok) {
+    if (response) {
       console.log("TPA eliminado del servidor");
     } else {
       console.error("Error al eliminar el TPA:", response.statusText);

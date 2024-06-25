@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { generateTPA, deleteTpaByCatalogId } from './TpaUtils';
 import { Button, Card, Form, Row, Col } from "react-bootstrap";
 import { useControls } from "../../hooks/useControls";
+import { useCatalogs } from "../../hooks/useCatalogs";
+import { useInputControls } from "../../hooks/useInputControls";
+import { useTpas } from "../../hooks/useTpas";
 import { useBluejay } from "../../hooks/useBluejay";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -28,13 +31,29 @@ const CatalogDetails = ({ selectedCatalog }) => {
   const lastAddedId = useSelector((state) => state.controls.lastAddedId);
   const dispatch = useDispatch();
   const {
+    getControlByIdFromDB,
     getInputControlsByControlIdFromDB,
     createControlInDB,
     updateControlInputInDb,
+    updateControlInDb,
     deleteControlByIdInDb,
     deleteInputControlsByControlIdInDb,
     createControlInputInDB,
   } = useControls();
+  const {
+    getCatalogControlsInDB,
+    updateCatalogInDB,
+    deleteCatalogByIdFromTheDatabase,
+  } = useCatalogs();
+  const {
+    getInputControlsByControlIdFromTheDB,
+    deleteInputControlsFromTheDB,
+  } = useInputControls();
+  const {
+    getTpaByCatalogIdFromTheDatabase,
+    createTpaInDB,
+    deleteTpaByIdFromTheDatabase,
+  } = useTpas();
   const {
     postAgreement,
     deleteAgreement,
@@ -69,6 +88,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
     if (controls.length > 0) {
       setSelectedMashupId(controls[0].mashup_id);
     }
+    setControlsToDelete([]);
   }, [selectedCatalog]);
 
   // Adds an empty input for the last added control
@@ -99,7 +119,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
   // Triggers catalog deletion or updates
   useEffect(() => {
     if (catalogToDelete !== null) {
-      deleteTpaByCatalogId(selectedCatalog.id)
+      deleteTpaByCatalogId(selectedCatalog.id, deleteTpaByIdFromTheDatabase)
       deleteCatalog(catalogToDelete);
     }
     if (catalogToUpdate !== null) {
@@ -115,33 +135,21 @@ const CatalogDetails = ({ selectedCatalog }) => {
   // ------------------------------------------ Delete catalog ------------------------------------------ //
   const deleteCatalog = async (catalogId) => {
     try {
-      const controlsResponse = await fetch(`http://localhost:3001/api/catalogs/${catalogId}/controls`);
-      if (!controlsResponse.ok) throw new Error("Error al obtener los controles del catálogo");
-      
-      const controls = await controlsResponse.json();
+      const controls = await getCatalogControlsInDB(catalogId);
+      if (!controls) throw new Error("Error al obtener los controles del catálogo");      
 
       for (const control of controls) {
-        const inputControlsResponse = await fetch(`http://localhost:3001/api/controls/${control.id}/input_controls`);
-        if (!inputControlsResponse.ok) throw new Error(`Error al obtener input_controls del control ${control.id}`);
+        const inputControls = await getInputControlsByControlIdFromTheDB(control.id);
+        if (!inputControls) throw new Error(`Error al obtener input_controls del control ${control.id}`);
         
-        const inputControls = await inputControlsResponse.json();
-
         for (const inputControl of inputControls) {
-          await fetch(`http://localhost:3001/api/input_controls/${inputControl.id}`, {
-            method: "DELETE",
-          });
+          await deleteInputControlsFromTheDB(inputControl.id);
         }
-
-        await fetch(`http://localhost:3001/api/controls/${control.id}`, {
-          method: "DELETE",
-        });
+        
+        await deleteControlByIdInDb(control.id);
       }
 
-      const catalogResponse = await fetch(`http://localhost:3001/api/catalogs/${catalogId}`, {
-        method: "DELETE",
-      });
-
-      if (!catalogResponse.ok) throw new Error("Error al eliminar el catálogo");
+      await deleteCatalogByIdFromTheDatabase(catalogId);
 
       console.log("Catálogo eliminado exitosamente.");
       dispatch(clearControls());
@@ -169,8 +177,8 @@ const CatalogDetails = ({ selectedCatalog }) => {
           await handleCreateControl(control, catalogId);
         }
       }
-      await deleteTpaByCatalogId(catalogId);
-      await generateTPA(controls, catalogId, getMashupByIdFromTheDB, inputs);
+      await deleteTpaByCatalogId(catalogId, deleteTpaByIdFromTheDatabase);
+      await generateTPA(controls, catalogId, getMashupByIdFromTheDB, inputs, createTpaInDB);
 
       console.log("Catálogo y controles actualizados con éxito.");
       window.location.reload();
@@ -180,24 +188,17 @@ const CatalogDetails = ({ selectedCatalog }) => {
   };
 
   const updateCatalogInfo = async (id, catalogData) => {
-    const response = await fetch(
-      `http://localhost:3001/api/catalogs/${id}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(catalogData),
-      }
+    const response = await updateCatalogInDB(
+      id, catalogData.name, catalogData.startDate, catalogData.endDate
     ).finally(() => {
       setCatalogToUpdate(null);
     });
 
-    if (!response.ok) {
+    if (!response) {
       throw new Error("Error al actualizar el catálogo.");
     }
 
-    return response.json();
+    return response;
   };
 
   // ---------------------------------- Control and input_control management ---------------------------------- //
@@ -208,26 +209,10 @@ const CatalogDetails = ({ selectedCatalog }) => {
     const currentControl = await getCurrentControlState(control.id);
     const mashupIdChanged = currentControl.mashup_id !== control.mashup_id;
 
-    const response = await fetch(
-      `http://localhost:3001/api/controls/${control.id}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: control.name,
-          description: control.description,
-          period: control.period,
-          startDate: control.startDate,
-          endDate: control.endDate,
-          mashup_id: control.mashup_id,
-          catalog_id: control.catalog_id,
-        }),
-      }
-    );
+    const response = await updateControlInDb(control.id, control.name, control.description, control.period, 
+      control.startDate, control.endDate, control.mashup_id, control.catalog_id);
 
-    if (!response.ok) {
+    if (!response) {
       throw new Error(`Error al actualizar el control con ID ${control.id}`);
     }
 
@@ -243,13 +228,11 @@ const CatalogDetails = ({ selectedCatalog }) => {
   /** Returns the current database status of a control, to know if the 
    * mashup has been changed */
   const getCurrentControlState = async (controlId) => {
-    const response = await fetch(
-      `http://localhost:3001/api/controls/${controlId}`
-    );
-    if (!response.ok) {
+    const response = await getControlByIdFromDB(controlId);
+    if (!response) {
       throw new Error("Error al obtener el estado actual del control");
     }
-    return response.json();
+    return response;
   };
 
   // Creates the new controls associated with the catalog update
@@ -348,11 +331,8 @@ const CatalogDetails = ({ selectedCatalog }) => {
   const handleCalculateClick = async () => {
     try {
       const catalogId = selectedCatalog.id;
-      const tpaResponse = await fetch(
-        `http://localhost:3001/api/catalogs/${catalogId}/tpa`
-      );
-      if (!tpaResponse.ok) throw new Error("Fallo al obtener el TPA");
-      const tpaData = await tpaResponse.json();
+      const tpaData = await getTpaByCatalogIdFromTheDatabase(catalogId);
+      if (!tpaData) throw new Error("Fallo al obtener el TPA");
       const contractData = {
         periods: [
           {

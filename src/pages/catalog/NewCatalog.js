@@ -4,6 +4,7 @@ import { Form, Card, Row, Col, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useCatalogs } from "../../hooks/useCatalogs";
 import { useControls } from "../../hooks/useControls";
+import { useTpas } from "../../hooks/useTpas";
 import { useSelector, useDispatch } from "react-redux";
 import {
   addEmptyControl,
@@ -28,6 +29,10 @@ function NewCatalog() {
   const controls = useSelector((state) => state.controls.controls);
   const navigate = useNavigate();
   const { getMashupByIdFromTheDB } = useMashups();
+  const {
+    createTpaInDB,
+    deleteTpaByIdFromTheDatabase,
+  } = useTpas();
 
   const { createControlInDB, createControlInputInDB } = useControls();
 
@@ -88,7 +93,7 @@ function NewCatalog() {
       );
       await Promise.all(controlPromises);
 
-      generateTPA(controls, catalogId, getMashupByIdFromTheDB, inputs);
+      generateTPA(controls, catalogId, getMashupByIdFromTheDB, inputs, createTpaInDB, deleteTpaByIdFromTheDatabase);
 
       navigate("/catalogs");
     } catch (error) {

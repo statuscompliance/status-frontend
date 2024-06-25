@@ -3,6 +3,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import CatalogList from "./CatalogList";
 import CatalogDetails from "./CatalogDetails";
 import { useInput } from "../../hooks/useInput";
+import { useCatalogs } from "../../hooks/useCatalogs";
 import { useDispatch } from "react-redux";
 import {
   setControls,
@@ -13,6 +14,7 @@ import { setInputs, clearInputs } from "../../features/inputs/inputSlice";
 function Catalog() {
   const [selectedCatalog, setSelectedCatalog] = useState(null);
   const { getInputByIdFromDB } = useInput();
+  const { getCatalogControlsInDB } = useCatalogs();
   const dispatch = useDispatch();
 
   // Function to fetch controls for a selected catalog
@@ -21,12 +23,9 @@ function Catalog() {
       dispatch(clearControls());
       dispatch(clearInputs());
 
-      const response = await fetch(
-        `http://localhost:3001/api/catalogs/${catalogId}/controls`
-      );
+      const data = await getCatalogControlsInDB(catalogId);
 
-      if (response.ok) {
-        const data = await response.json();
+      if (data ) {
         dispatch(setControls(data));
 
         if (data.length === 0) {

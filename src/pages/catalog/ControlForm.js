@@ -26,10 +26,10 @@ const ControlForm = ({ handleRemoveControl }) => {
       // Actualiza el control actual con el ID del mashup seleccionado
       dispatch(editControl({ controlId, field, value }));
 
-      if (value !== -1) {
+      if (value && value !== -1) {
         // Obtener las entradas para el mashup seleccionado
         newInputs = await getInputsForMashupFromTheDB(value);
-
+        
         newInputs = await Promise.all(
           newInputs.map(async (input) => {
             const inputValue = await getValuesByInputIdAndControlIdFromTheDB(

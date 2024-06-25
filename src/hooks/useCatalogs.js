@@ -31,12 +31,22 @@ export const useCatalogs = () => {
     setCatalogs(updatedCatalogs);
   };
 
-  const updateCatalogInDB = async (catalogName, startDate, endDate) => {
-    const resp = await statusApi.post("http://localhost:3001/api/catalogs", {
+  const updateCatalogInDB = async (id, catalogName, startDate, endDate) => {
+    const resp = await statusApi.patch(`http://localhost:3001/api/catalogs/${id}`, {
       name: catalogName,
       startDate: startDate,
       endDate: endDate,
     });
+    return resp.data;
+  };
+
+  const getCatalogControlsInDB = async (catalogId) => {
+    const resp = await statusApi.get(`http://localhost:3001/api/catalogs/${catalogId}/controls`);
+    return resp.data;
+  };
+
+  const deleteCatalogByIdFromTheDatabase = async (catalogId) => {
+    const resp = await statusApi.delete(`http://localhost:3001/api/catalogs/${catalogId}`);
     return resp.data;
   };
 
@@ -68,5 +78,7 @@ export const useCatalogs = () => {
     handleStartDateChange,
     handleEndDateChange,
     removeCatalog,
+    getCatalogControlsInDB,
+    deleteCatalogByIdFromTheDatabase,
   };
 };

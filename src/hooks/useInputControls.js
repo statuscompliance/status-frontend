@@ -14,6 +14,20 @@ export const useInputControls = () => {
     return resp.data;
   };
 
+  const getInputControlsByControlIdFromTheDB = async (control_id) => {
+    const resp = await statusApi.get(
+      `http://localhost:3001/api/controls/${control_id}/input_controls`
+    );
+    return resp.data;
+  };
+
+  const deleteInputControlsFromTheDB = async (id) => {
+    const resp = await statusApi.delete(
+      `http://localhost:3001/api/input_controls/${id}`
+    );
+    return resp.data;
+  };
+
   const updateValues = (values) => {
     setValues(values);
   };
@@ -22,6 +36,8 @@ export const useInputControls = () => {
     values,
     setValues,
     getValuesByInputIdAndControlIdFromTheDB,
+    getInputControlsByControlIdFromTheDB,
+    deleteInputControlsFromTheDB,
     updateValues,
   };
 };
