@@ -3,10 +3,14 @@ import { Button, Card } from "react-bootstrap";
 import { useCatalogs } from "../../hooks/useCatalogs";
 import { useNavigate } from "react-router-dom";
 import "../../static/css/catalogList.css";
+import { useDispatch } from "react-redux";
 import addSvg from "../../static/images/add.svg";
+import { clearControls } from "../../features/controls/controlSlice";
+import { clearInputs } from "../../features/inputs/inputSlice";
 
 function CatalogList({ onCatalogSelect }) {
   const navigate = useNavigate(); // Hook for navigation
+  const dispatch = useDispatch();
 
   // Custom hook to retrieve catalogs data
   const { catalogs } = useCatalogs();
@@ -18,6 +22,8 @@ function CatalogList({ onCatalogSelect }) {
 
   // Handler function for new catalog button click
   const handleNewCatalogClick = () => {
+    dispatch(clearControls());
+    dispatch(clearInputs());
     navigate("/new_catalog");
   };
 
@@ -26,9 +32,6 @@ function CatalogList({ onCatalogSelect }) {
     <div className="container d-flex flex-row align-items-center">
       <Card className="w-100 mb-3">
         <Card.Body className="text-center">
-          <Button className="calculate-button mb-3" variant="danger">
-            Calcular
-          </Button>
           <ul className="list-group">
             {/* Render each catalog item */}
             {catalogs.map((catalog) => (

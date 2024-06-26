@@ -1,45 +1,114 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Card } from 'react-bootstrap';
+import React, { useState, useEffect } from "react";
+import { generateTPA, deleteTpaByCatalogId } from './TpaUtils';
+import { Button, Card, Form, Row, Col } from "react-bootstrap";
+import { useControls } from "../../hooks/useControls";
+import { useCatalogs } from "../../hooks/useCatalogs";
+import { useInputControls } from "../../hooks/useInputControls";
+import { useTpas } from "../../hooks/useTpas";
+import { useBluejay } from "../../hooks/useBluejay";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  addEmptyControl,
+  removeControl,
+  clearControls,
+} from "../../features/controls/controlSlice";
+import {
+  addEmptyInput,
+  removeInput,
+  clearInputs,
+} from "../../features/inputs/inputSlice";
+import ControlForm from "./ControlForm";
+import { useMashups } from "../../hooks/useMashups";
 
-const CatalogDetails = ({ selectedCatalog, catalogControls }) => {
-  // State variables initialization
+const CatalogDetails = ({ selectedCatalog }) => {
   const [specificCatalog, setSpecificCatalog] = useState(selectedCatalog);
-  const [specificControls, setSpecificControls] = useState(catalogControls);
-  const [selectedMashups, setSelectedMashups] = useState([]);
+  const [catalogToUpdate, setCatalogToUpdate] = useState(null);
   const [catalogToDelete, setCatalogToDelete] = useState(null);
-  const [catalogToUpdate, setCatalogToUpdate] = useState(null); 
+  const [controlsToDelete, setControlsToDelete] = useState([]);
+  const [selectedMashupId, setSelectedMashupId] = useState("");
+  const controls = useSelector((state) => state.controls.controls);
+  const inputs = useSelector((state) => state.inputs);
+  const lastAddedId = useSelector((state) => state.controls.lastAddedId);
+  const dispatch = useDispatch();
+  const {
+    getControlByIdFromDB,
+    getInputControlsByControlIdFromDB,
+    createControlInDB,
+    updateControlInputInDb,
+    updateControlInDb,
+    deleteControlByIdInDb,
+    deleteInputControlsByControlIdInDb,
+    createControlInputInDB,
+  } = useControls();
+  const {
+    getCatalogControlsInDB,
+    updateCatalogInDB,
+    deleteCatalogByIdFromTheDatabase,
+  } = useCatalogs();
+  const {
+    getInputControlsByControlIdFromTheDB,
+    deleteInputControlsFromTheDB,
+  } = useInputControls();
+  const {
+    getTpaByCatalogIdFromTheDatabase,
+    createTpaInDB,
+    deleteTpaByIdFromTheDatabase,
+  } = useTpas();
+  const {
+    postAgreement,
+    deleteAgreement,
+    createPoints,
+  } = useBluejay();
+  const { getMashupByIdFromTheDB } = useMashups();
 
-  // Update state when selectedCatalog or catalogControls changes
-  useEffect(() => {
-    setSpecificCatalog(selectedCatalog);
-    setSpecificControls(catalogControls);
-  }, [selectedCatalog, catalogControls]);
-
-  // Handler function for updating catalog name
-  const handleCatalogChange = (event) => {
+  const handleNameChange = (event) => {
     setSpecificCatalog((prevCatalog) => ({
       ...prevCatalog,
       name: event.target.value,
     }));
   };
 
-  // Handler function for updating control details
-  const handleControlChange = (index, field, value) => {
-    const updatedDetails = [...specificControls];
-    updatedDetails[index][field] = value;
-    setSpecificControls(updatedDetails);
+  const handleStartDateChange = (event) => {
+    setSpecificCatalog((prevCatalog) => ({
+      ...prevCatalog,
+      startDate: event.target.value,
+    }));
   };
 
-  // Handler function for updating selected mashups
-  const handleMashupChange = (index, value) => {
-    const updatedMashups = [...selectedMashups];
-    updatedMashups[index] = value;
-    setSelectedMashups(updatedMashups);
+  const handleEndDateChange = (event) => {
+    setSpecificCatalog((prevCatalog) => ({
+      ...prevCatalog,
+      endDate: event.target.value,
+    }));
   };
+
+  // Change the selected catalog and mashup
+  useEffect(() => {
+    setSpecificCatalog(selectedCatalog);
+    if (controls.length > 0) {
+      setSelectedMashupId(controls[0].mashup_id);
+    }
+    setControlsToDelete([]);
+  }, [selectedCatalog]);
+
+  // Adds an empty input for the last added control
+  useEffect(() => {
+    if (lastAddedId) {
+      dispatch(addEmptyInput({ controlId: lastAddedId }));
+    }
+  }, [lastAddedId, dispatch]);
 
   // Handler function for updating catalog (triggered by "Save" button click)
-  const handleUpdateClick = () => {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    await Promise.all(
+      controlsToDelete.map(async (controlId) => {
+        await deleteInputControlsByControlIdInDb(controlId);
+        await deleteControlByIdInDb(controlId);
+      })
+    );
     setCatalogToUpdate(selectedCatalog.id);
+    setControlsToDelete([]);
   };
 
   // Handler function for deleting catalog (triggered by "Delete" button click)
@@ -47,122 +116,319 @@ const CatalogDetails = ({ selectedCatalog, catalogControls }) => {
     setCatalogToDelete(selectedCatalog.id);
   };
 
+  // Triggers catalog deletion or updates
   useEffect(() => {
-    // If a catalog is to be deleted
     if (catalogToDelete !== null) {
-      fetch(`http://localhost:3001/api/catalog/${catalogToDelete}`, {
-        method: 'DELETE',
-      })
-        .then((response) => {
-          if (response.ok) {
-            console.log('Catálogo eliminado exitosamente.');
-            window.location.reload();
-          } else {
-            console.error('Error al eliminar el catálogo.');
-          }
-        })
-        .catch((error) => {
-          console.error('Error al realizar la solicitud:', error);
-        })
-        .finally(() => {
-          setCatalogToDelete(null);
-        });
+      deleteTpaByCatalogId(selectedCatalog.id, deleteTpaByIdFromTheDatabase)
+      deleteCatalog(catalogToDelete);
     }
-    // If a catalog is to be updated
     if (catalogToUpdate !== null) {
       const requestBody = {
         name: specificCatalog.name,
+        startDate: specificCatalog.startDate,
+        endDate: specificCatalog.endDate,
       };
-      fetch(`http://localhost:3001/api/catalog/${catalogToUpdate}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-      })
-        .then((response) => {
-          if (response.ok) {
-            console.log('Catálogo actualizado exitosamente.');
-            window.location.reload();
-          } else {
-            console.error('Error al actualizar el catálogo.');
-          }
-        })
-        .catch((error) => {
-          console.error('Error al realizar la solicitud:', error);
-        })
-        .finally(() => {
-          setCatalogToUpdate(null);
-        });
+      updateCatalog(catalogToUpdate, requestBody);
     }
   }, [catalogToDelete, catalogToUpdate, specificCatalog]);
 
-  // JSX representing the component's UI
-  return (
+  // ------------------------------------------ Delete catalog ------------------------------------------ //
+  const deleteCatalog = async (catalogId) => {
+    try {
+      const controls = await getCatalogControlsInDB(catalogId);
+      if (!controls) throw new Error("Error al obtener los controles del catálogo");      
+
+      for (const control of controls) {
+        const inputControls = await getInputControlsByControlIdFromTheDB(control.id);
+        if (!inputControls) throw new Error(`Error al obtener input_controls del control ${control.id}`);
+        
+        for (const inputControl of inputControls) {
+          await deleteInputControlsFromTheDB(inputControl.id);
+        }
+        
+        await deleteControlByIdInDb(control.id);
+      }
+
+      await deleteCatalogByIdFromTheDatabase(catalogId);
+
+      console.log("Catálogo eliminado exitosamente.");
+      dispatch(clearControls());
+      dispatch(clearInputs());
+      window.location.reload();
+    } catch (error) {
+      console.error("Error al eliminar el catálogo y sus dependencias:", error);
+    } finally {
+      setCatalogToDelete(null);
+    }
+  };
+
+  // -------------------------------------------- Update catalog -------------------------------------------- //
+  const updateCatalog = async (catalogId, catalogData) => {
+    try {
+      await updateCatalogInfo(catalogId, catalogData);
+
+      for (const control of controls) {
+        const controlInputs = inputs.inputs[control.id];
+        if (typeof control.id === "number") {
+          // If it existed, we updated it
+          await updateExistingControl(control, controlInputs);
+        } else {
+          // If it is a new control, we create it
+          await handleCreateControl(control, catalogId);
+        }
+      }
+      await deleteTpaByCatalogId(catalogId, deleteTpaByIdFromTheDatabase);
+      await generateTPA(controls, catalogId, getMashupByIdFromTheDB, inputs, createTpaInDB);
+
+      console.log("Catálogo y controles actualizados con éxito.");
+      window.location.reload();
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
+  const updateCatalogInfo = async (id, catalogData) => {
+    const response = await updateCatalogInDB(
+      id, catalogData.name, catalogData.startDate, catalogData.endDate
+    ).finally(() => {
+      setCatalogToUpdate(null);
+    });
+
+    if (!response) {
+      throw new Error("Error al actualizar el catálogo.");
+    }
+
+    return response;
+  };
+
+  // ---------------------------------- Control and input_control management ---------------------------------- //
+
+  /* Updates the controls that have been modified from the catalog (only 
+  those that existed before, not those that have been newly created) */
+  const updateExistingControl = async (control) => {
+    const currentControl = await getCurrentControlState(control.id);
+    const mashupIdChanged = currentControl.mashup_id !== control.mashup_id;
+
+    const response = await updateControlInDb(control.id, control.name, control.description, control.period, 
+      control.startDate, control.endDate, control.mashup_id, control.catalog_id);
+
+    if (!response) {
+      throw new Error(`Error al actualizar el control con ID ${control.id}`);
+    }
+
+    // If the mashup_id has been changed, we update the input_controls
+    if (mashupIdChanged) {
+      await deleteInputControlsForControl(control.id);
+      await createInputControlsForControl(control.id);
+    } else {
+      await updateInputControlsForControl(control.id);
+    }
+  };
+
+  /** Returns the current database status of a control, to know if the 
+   * mashup has been changed */
+  const getCurrentControlState = async (controlId) => {
+    const response = await getControlByIdFromDB(controlId);
+    if (!response) {
+      throw new Error("Error al obtener el estado actual del control");
+    }
+    return response;
+  };
+
+  // Creates the new controls associated with the catalog update
+  const handleCreateControl = async (control, catalogId) => {
+    const response = await createControlInDB(
+      control.name,
+      control.description,
+      control.startDate,
+      control.endDate,
+      control.period,
+      control.mashup_id,
+      catalogId
+    );
+
+    const controlData = await response;
+    const inputControlPromises = Object.entries(inputs.inputs[control.id]).map(
+      ([inputId, inputInfo]) =>
+        handleCreateControlInput(controlData.id, inputInfo.id, inputInfo.value)
+    );
+
+    await Promise.all(inputControlPromises);
+    return response.ok;
+  };
+
+  /** Creates all input_controls of a new control that was created when 
+   * the catalog was updated */
+  const createInputControlsForControl = async (controlId) => {
+    for (const input of inputs.inputs[controlId]) {
+      await handleCreateControlInput(
+        controlId,
+        input.id,
+        input.value ? input.value : -1
+      );
+    }
+  };
+
+  const handleCreateControlInput = async (controlDataId, inputId, value) => {
+    const inputControlResponse = await createControlInputInDB(
+      controlDataId,
+      inputId,
+      value
+    );
+    return inputControlResponse;
+  };
+
+  /** Updates all input_controls of a control that has been updated 
+   *  when the catalog was updated */
+  const updateInputControlsForControl = async (controlId) => {
+    const inputControls = await getInputControlsByControlIdFromDB(controlId);
+    for (const inputControl of inputControls) {
+      handleUpdateControlInput(
+        inputControl.id,
+        inputs.inputs[inputControl.control_id].filter(
+          (input) => input.id === inputControl.input_id
+        )[0]
+      );
+    }
+  };
+
+  const handleUpdateControlInput = async (id, input) => {
+    let value = input.value;
+    if (input.type === "NUMBER") {
+      value = parseInt(input.value, 10);
+    }
+    await updateControlInputInDb(id, value);
+  };
+
+  /** Deletes all input_controls of a control that was deleted when 
+   * the catalog was updated */
+  const deleteInputControlsForControl = async (controlId) => {
+    const inputControls = await getInputControlsByControlIdFromDB(controlId);
+    for (const inputControl of inputControls) {
+      await handleDeleteControlInput(inputControl.control_id);
+    }
+  };
+
+  const handleDeleteControlInput = async (id) => {
+    const inputControlResponse = await deleteInputControlsByControlIdInDb(id);
+    return inputControlResponse;
+  };
+
+  // -------------------------------- Adding and removing controls from the form -------------------------------- //
+  const addControl = () => {
+    dispatch(addEmptyControl());
+  };
+
+  const handleRemoveControl = (controlId) => {
+    dispatch(removeControl({ id: controlId }));
+    dispatch(removeInput({ index: controlId }));
+    if (typeof controlId === "number") {
+      setControlsToDelete((prev) => [...prev, controlId]);
+    }
+  };
+
+  // -------------------------------------------- Calculate button -------------------------------------------- //
+  const handleCalculateClick = async () => {
+    try {
+      const catalogId = selectedCatalog.id;
+      const tpaData = await getTpaByCatalogIdFromTheDatabase(catalogId);
+      if (!tpaData) throw new Error("Fallo al obtener el TPA");
+      const contractData = {
+        periods: [
+          {
+            from: selectedCatalog.startDate,
+            to: selectedCatalog.endDate,
+          },
+        ],
+      };
+
+      await deleteAgreement();
+      await postAgreement(tpaData);
+      await createPoints(contractData)
+
+      window.open(
+        "http://localhost:5600/dashboard/script/dashboardLoader.js?dashboardURL=http:%2F%2Flocalhost:5300%2Fapi%2Fv4%2Fdashboards%2Ftpa-example-project%2Fmain&orgId=1",
+        "_blank"
+      );
+    } catch (error) {
+      console.error("Error realizando las peticiones:", error);
+    }
+  };
+
+// ---------------------------------------------------- JSX ---------------------------------------------------- //
+return (
     <div className="detail-panel">
-      <Card>
-        <Card.Body>
-          {/* Basic catalog information */}
-          <h3>
-            Nombre: <input
-              type="text"
-              value={specificCatalog.name}
-              className="form-control"
-              onChange={handleCatalogChange}
-            />
-          </h3>
-          {/* Rendering controls */}
-          <h3 className="mt-3">Controles:</h3>
-          <div>
-            {specificControls.map((control, index) => (
-              <div key={index} className="mt-3">
-                <input
+      <Card style={{ backgroundColor: "#bf0a2e", color: "#ffff" }}>
+        <form onSubmit={handleSubmit}>
+          <Card.Body>
+            {/* Basic catalog information */}
+            <Row>
+              <Form.Group className="mb-3" controlId="catalogName">
+                <Form.Label>Nombre del Catálogo:</Form.Label>
+                <Form.Control
+                  maxLength={100}
+                  onChange={handleNameChange}
+                  required
                   type="text"
-                  value={control.name}
-                  className="form-control"
-                  onChange={(e) => handleControlChange(index, 'name', e.target.value)}
+                  value={specificCatalog.name}
                 />
-                {/* Select dropdown for mashup selection */}
-                <select
-                  value={selectedMashups[index]}
-                  className="form-select"
-                  onChange={(e) => handleMashupChange(index, e.target.value)}
-                >
-                  <option value="">Selecciona Mashup</option>
-                  <option value="Mashup 1">Mashup 1</option>
-                  <option value="Mashup 2">Mashup 2</option>
-                </select>
-                {/* TO DO: Additional inputs based on selected mashup */}
-                {selectedMashups[index] === 'Mashup 1' && (
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="Nombre"
-                      className="form-control"
-                      />
-                    <input
-                      type="text"
-                      placeholder="Película favorita"
-                      className="form-control"
-                    />
-                  </div>
-                )}
-                {selectedMashups[index] === 'Mashup 2' && (
-                  <input
-                    type="number"
-                    placeholder="Edad"
-                    className="form-control"
+              </Form.Group>
+            </Row>
+            <Row>
+              <Col>
+                <Form.Group className="mb-3" controlId="catalogStartDate">
+                  <Form.Label>Fecha de inicio:</Form.Label>
+                  <Form.Control
+                    type="date"
+                    value={specificCatalog.startDate || ""}
+                    onChange={handleStartDateChange}
                   />
-                )}
-              </div>
-            ))}
-          </div>
-          {/* Action buttons */}
-          <div className="actions text-center mt-3">
-            <Button className="btn btn-success" onClick={handleUpdateClick}>Guardar</Button>
-            <Button className="btn btn-danger" onClick={handleDeleteClick}>Eliminar</Button>
-          </div>
-        </Card.Body>
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group className="mb-3" controlId="catalogEndDate">
+                  <Form.Label>Fecha de fin:</Form.Label>
+                  <Form.Control
+                    type="date"
+                    value={specificCatalog.endDate || ""}
+                    onChange={handleEndDateChange}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+
+            <ControlForm handleRemoveControl={handleRemoveControl} />
+            {/* Action buttons */}
+            <Row className="mt-3 mb-3 d-flex justify-content-center">
+              {controls.length === 0 && (
+                <Col xs="auto">
+                  <Button onClick={addControl} variant="primary">
+                    Agregar control
+                  </Button>
+                </Col>
+              )}
+              <Col xs="auto">
+                <div className="d-flex">
+                  <Button
+                    className="btn-primary"
+                    onClick={handleCalculateClick}
+                  >
+                    Calcular
+                  </Button>
+                  <Button type="submit" className="ms-3 btn btn-success">
+                    Actualizar
+                  </Button>
+                  <Button
+                    className="ms-3 btn btn-danger"
+                    onClick={handleDeleteClick}
+                  >
+                    Eliminar
+                  </Button>
+                </div>
+              </Col>
+            </Row>
+          </Card.Body>
+        </form>
       </Card>
     </div>
   );
