@@ -1,52 +1,72 @@
-body {
-    position: relative;
-    font-size: 21px; /* Tamaño de letra base */
+#root {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    font-size: 18px;
 }
-.app {
-    display: flex;
-    height: 100vh; /* Ajusta la altura de la aplicación */
-}
+
 .sidebar {
-    position: relative;
+    position: absolute;
     width: 16%;
     background-color: #bf0a2e; /* Cambia el color de fondo de la barra lateral según sea necesario */
-    height: 100vh; /* Ajusta la altura de la barra lateral */
+    height: 100%; /* Ajusta la altura de la barra lateral */
 }
+
+.content {
+    position: relative;
+    height: 100%;
+    left: 16%;
+    width: 84%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .navbar-brand{
     margin-left: 10%; /* Ajusta el margen izquierdo del logotipo */
 }
+
 .navbar-brand:hover{
     cursor: pointer; /* Cambia el cursor al pasar por encima */
     transform: scale(1.1)  translateX(2%);
 }
+
 .navbar-logo {
     margin-top: 12%; /* Puedes ajustar este valor según tus necesidades */
 }
+
 .logo-svg {
     filter: invert(100%);
     width: 45%; /* Ancho del SVG */
     height: auto; /* Para mantener la proporción del aspecto */
 }
+
 .nav-item:hover{
     cursor: pointer; /* Cambia el cursor al pasar por encima */
     transform: scale(1.1);
 }
+
 .ml-2 {
     margin-top: 12%;
     margin-left: -9%;
     font-size: 110%;
 }
+
 .sidebar .nav-link {
     padding: .5rem 1rem; /* Ajusta el relleno de los elementos de enlace en la barra lateral */
-    color: #ffff; /* Cambia el color del texto según sea necesario */
+    color: white; /* Cambia el color del texto según sea necesario */
 }
+
 .sidebar .nav-link:hover {
     padding: .5rem 1rem; /* Ajusta el relleno de los elementos de enlace en la barra lateral */
     color: #d3cdcd; /* Cambia el color del texto según sea necesario */
 }
+
 .col-md-9 {
-    padding-left: 0; /* Ajusta el espaciado a la izquierda del contenido principal */
+    padding-left: 0;
+    height: 100%; /* Ajusta el espaciado a la izquierda del contenido principal */
 }
+
 .line {
     position: absolute;
     bottom: 8%;
@@ -56,6 +76,7 @@ body {
     transform: translateX(-50%); /* Centra horizontalmente la línea */
     width: 68%;
 }
+
 .github-container {
     position: absolute;
     top: 93%;
@@ -63,15 +84,18 @@ body {
     left: 50%;
     transform: translateX(-50%);
 }
+
 .github-svg {
     filter: invert(100%);
     width: 35px;
     height: auto; 
 }
+
 .github-svg:hover{
     cursor: pointer; 
-    transform: scale(1.2) translateX(0px);
+    transform: scale(1.2) translateX(0);
 }
+
 .btn-container{
     text-align: center; 
     position: absolute;
@@ -80,29 +104,7 @@ body {
     left: 50%; 
     transform: translateX(-50%);
 }
+
 .btn {
     padding: 3px 7px;
-}
-.pt-serif-regular {
-    font-family: "PT Serif", serif;
-    font-weight: 400;
-    font-style: normal;
-}
-
-.pt-serif-bold {
-    font-family: "PT Serif", serif;
-    font-weight: 700;
-    font-style: normal;
-}
-
-.pt-serif-regular-italic {
-    font-family: "PT Serif", serif;
-    font-weight: 400;
-    font-style: italic;
-}
-
-.pt-serif-bold-italic {
-    font-family: "PT Serif", serif;
-    font-weight: 700;
-    font-style: italic;
 }

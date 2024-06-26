@@ -1,0 +1,127 @@
+.loginContainer {
+    position: absolute; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 84%; 
+    height: 100%; 
+}
+
+.loginSquare {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #FFFF; /* white */
+    border-radius: 4px; /* border-m */
+    box-shadow: 0 2px 4px #171a1f, 0 0 2px #171a1f; 
+    height: 70%;
+    width: 45%;
+}
+
+.loginText {
+    position: absolute;
+    display: flex;
+    top: 12%;
+    font-size: 32px;     
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    color: #171A1FFF;
+    padding: 30px;
+}
+
+.usernameBox{
+    position: relative;
+    display: flex;
+    align-items: center;
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    flex-direction: row;
+    height: 70%;
+}
+
+.usernameLabel{
+    position: absolute;
+    display: flex;
+    left: 10px;
+    height: 120px;
+}
+
+#username {
+    padding-left: 12px; 
+    padding-right: 12px; 
+    padding: 10px;
+    margin: 10px;
+    background: #F3F4F6FF; /* neutral-200 */
+    border-radius: 4px; /* border-m */
+    border-width: 0; 
+    outline: none; 
+}
+
+.pwdBox{
+    position: relative;
+    display: flex;
+    align-items: center;
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 700;
+    width: 100%;
+    font-style: normal;
+    flex-direction: row;
+}
+
+.pwdLabel{
+    position: absolute;
+    display: flex;
+    left: 10px;
+    height: 120px;
+}
+
+#password {
+    padding-left: 12px; 
+    padding-right: 12px; 
+    padding: 10px;
+    margin: 10px;
+    width: 100%;
+    background: #F3F4F6FF; /* neutral-200 */
+    border-radius: 4px; /* border-m */
+    border-width: 0; 
+    outline: none; 
+}
+
+.loginButton{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #bf0a2e; 
+    color: white;
+    border-radius: 4px; 
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border-width: 0; 
+    width: 100%;
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 700;
+    font-style: normal;
+    font-size: 20px;
+}    
+
+#error-message {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #be1134; 
+    color: white;
+    padding: 10px;
+    font-family: 'Satoshi', sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 20px;
+    text-align: center;
+}

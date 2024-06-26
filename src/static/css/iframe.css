@@ -1,30 +1,54 @@
-.container {
+.editor {
+    height: 100%;
+    width: 100%;
     align-items: center;
-    height: 100vh;
-}
-
-.node-red {
-    width: 110%;
-    height: 85%;
-    border: 5px solid #bf0a2e;
-    border-radius: 10px;
-    margin-left: 13%; 
 }
 
 .node-red-off{
-    width: 110%;
-    height: 85%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+    margin: 4%;
+    width: 90%;
+    height: 90%;
+}
+
+.node-red-editor{
+    position: relative;
+    margin-bottom: 2%;
+    width: 100%;
+    display: flex;
+    height: 100%;
     border: 5px solid #bf0a2e;
     border-radius: 10px;
-    margin-left: 13%; 
     background-color: transparent;
     text-align: center;
+}
+
+.disclaimer{
+    position: absolute;
+    top: 40%;
+    font-weight: 700;
+}
+
+.btnReload{
+    position: absolute;
+    top: 45%;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    height: 45px;
+    width: 70px;
+    background: green;
+    color: white;
+    border-radius: 10px;
 }
 
 .node-red-off p {
     font-size: 1.2em;
     text-align: center;
-    margin-top: 30%;
 }
 
 .node-red-off a{
@@ -40,25 +64,41 @@
 }
 
 .pt-serif-regular {
-    font-family: "PT Serif", serif;
+    font-family: "Satoshi", sans-serif;
     font-weight: 400;
     font-style: normal;
 }
 
 .pt-serif-bold {
-    font-family: "PT Serif", serif;
+    font-family: "Satoshi", sans-serif;
     font-weight: 700;
     font-style: normal;
 }
 
 .pt-serif-regular-italic {
-    font-family: "PT Serif", serif;
+    font-family: "Satoshi", sans-serif;
     font-weight: 400;
     font-style: italic;
 }
 
 .pt-serif-bold-italic {
-    font-family: "PT Serif", serif;
+    font-family: "Satoshi", sans-serif;
     font-weight: 700;
     font-style: italic;
+}
+
+.chatButton{
+    font-size: 16px;
+    width: 180px;
+    height: 55px;
+    border-radius: 40px;
+    background-color: rgba(187, 123, 136, 0.633);
+}
+
+.chatImg {
+    position: relative;
+    width: 25px;
+    height: 25px;
+    margin: 5%;
+    cursor: pointer;
 }

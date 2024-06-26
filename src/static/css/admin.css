@@ -1,0 +1,434 @@
+.adminContainer {
+    height: 100%;
+    width: 100%;
+}
+
+.cont {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    grid-template-columns: 50% 50%;
+}
+
+.assistantCard {
+    height: 65%;
+}
+
+.adminCard {
+    position: absolute;
+    width: 45%;
+    left: 50%;
+    margin-top: 5%;
+    margin-bottom:3%;
+    display: grid;
+    height: 80vh;
+    grid-template-rows: 13% 15% 72%;
+    row-gap: 18px;
+}
+
+.endpoints {
+    position: relative;
+    height: 100%;
+    word-break: break-word;
+    width: 100%;
+}
+
+.management {
+    position: relative;
+    height: 100%;
+}
+
+.cardItem1 {
+    position: absolute;
+    display: flex;
+    margin-left: 5%;
+    margin-top: 5%;
+    height: 85%;
+    width: 42%;
+    justify-content: center;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    background-color: #f7f7f7;
+}
+
+.editor {
+    position: relative;
+    width: 100%;
+    height: 95%;
+    flex-direction: column;
+    overflow-y: scroll;
+}
+
+.instructionsContainer{
+    width: 100%;
+    height: 90%;
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
+.heading {
+    margin-top: 5%;
+}
+
+.textArea {
+    width: 100%;
+    height: 100%;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    background-color: white;
+    padding: 10px;
+}
+
+.updateButton {
+    margin-top: 3%;
+    margin-bottom: 3%;
+    width: 30%;
+    height: auto;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    background-color: #f7f7f7;
+} 
+
+.updateButton:hover {
+    background-color: #e0e0e0;
+} 
+
+.cardItem2 {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    background-color: #f7f7f7;
+    align-items: flex-start;
+}
+
+.cardItem2::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.endpointList {
+    margin-top: 3%;
+    overflow-y: scroll;
+}
+
+.endpointList li {
+    list-style: none;
+}
+
+.endpoint {
+    columns: 2;
+    column-gap: 20px;
+    width: 100%;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+  
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+  
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+  
+.slider::before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+  
+input:checked + .slider {
+    background-color: #bf0a2e;
+}
+  
+input:focus + .slider {
+    box-shadow: 0 0 1px #bf0a2e;
+}
+  
+input:checked + .slider::before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+  
+.slider.round::before {
+    border-radius: 50%;
+}
+
+.decline {
+    background-color: #da6363;
+}
+
+.accept {
+    background-color: #139d6a;
+}
+
+.heading2 {
+    margin-top: 5%;
+    margin-left: 5%;
+}
+
+.cardItem3 {
+    position: relative;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    height: 100%;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    font-size: 15px;
+    background-color: #f7f7f7;
+    overflow: scroll;
+}
+
+.managementContainer{
+    width: 90%;
+    height: 100%;
+}
+
+.assistantTable {
+    margin: 5%;
+    width: 100%;
+    max-height: 100%;
+    overflow-y: scroll;
+    border-collapse: collapse;
+    background-color: #f7f7f7;
+    table-layout: fixed;
+}
+
+.assistantTable th, .assistantTable td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.assistantTable th, .assistantTable td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Establecer el ancho relativo de las columnas */
+.assistantTable th:nth-child(1),
+.assistantTable td:nth-child(1) {
+    width: 40%;
+}
+
+.assistantTable th:nth-child(2),
+.assistantTable td:nth-child(2) {
+    width: 25%;
+}
+
+.assistantTable .tableBody td:nth-child(2) {
+    color: green;
+}
+
+.assistantTable .tableBody td:nth-child(2)::before {
+    content: attr(data-state);
+}
+
+.assistantTable .tableBody td:nth-child(2)::before {
+    content: attr(data-state);
+    display: inline-block;
+    padding: 6px 8px;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+}
+
+.assistantTable .tableBody td[data-state="INACTIVE"]::before {
+    background-color: green;
+}
+
+.assistantTable .tableBody td[data-state="ACTIVE"]::before {
+    background-color: red;
+}
+
+.assistantName{
+    cursor: pointer;
+}
+
+.assistantName:hover{
+    color: #347a7a;
+}
+
+.deleteAllButton {
+    position: absolute;
+    top: 3%;
+    right: 5%;
+    width: 18%;
+    height: 40px;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    background-color: #2bb6b6;
+    filter: invert(1);
+}
+
+.actionButton{
+    width: 50%;
+    scale: 0.8;
+}
+
+.costButton {
+    position: absolute;
+    top: 25%;
+    right: 10%;
+    width: 25%;
+    height: 40px;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    background-color: #f7f7f7;
+}
+
+.assistantContainer{
+    width: 100%;
+    height: 100%;
+    margin-top: 4%;
+    margin-bottom: 3%;
+}
+
+.limitContainer{
+    display: flex;
+    position: absolute;
+    float: left;
+    width: 70%;
+    margin-right: 5%;
+    margin-left: 5%;
+}
+
+.createContainer{
+    display: flex;
+    margin-right: 5%;
+    margin-left: 10%;
+    float: right;
+    width: 30%;
+    height: 65%;
+}
+
+.limitText{
+    font-size: 21px;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    height: 60px;
+    width: 8vh;
+    padding-top: 12px;
+    padding-left: 10px;
+    margin-right: 10px;
+}
+
+.limitInput{
+    margin-right: 5%;
+    width: 8vh;
+    padding-left: 10px;
+    height: 60px;
+    font-size: 20px;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    background-color: #f7f7f7;
+}
+
+.limitButton{
+    width: 13vh;
+    height: 60px;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    background-color: #f7f7f7;
+}
+
+.limitButton.editable{
+    background-color: #bf0a2e;
+    color: white;
+}
+
+.createButton{
+    width: 20vh;
+    height: 60px;
+    border: 2px solid rgb(185, 178, 178);
+    border-radius: 10px;
+    background-color: #f7f7f7;
+}
+
+.createButton:hover{
+    cursor: pointer;
+}
+
+.assistantTools {
+    display: flex;
+    flex-direction: column;
+    margin-top: 5%;
+    margin-right: 5%;
+    width: 90%;
+    height: 100%;
+}
+
+.tool input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+
+.assistantModel label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.assistantModel select {
+    width: 100%;
+    height: 30px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.assistantModel select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem #007bff39;
+}
+
+.create{
+    background-color: #139d6a;
+}
+
+.limitError{
+    border: 2px solid red;
+    padding: 5px;
+    border-radius: 4px;
+    color: red;
+    font-size: 17px;
+    margin-top: 15px;
+}

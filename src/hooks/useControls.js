@@ -3,6 +3,7 @@ import { statusApi } from "../api/statusApi";
 
 export const useControls = () => {
   const [controls, setControls] = useState([]);
+  const [inputs, setInputs] = useState([]);
   const [lastItemRemoved, setLastItemRemoved] = useState(0);
 
   const addEmptyControl = () => {
@@ -22,6 +23,20 @@ export const useControls = () => {
     ]);
   };
 
+  const getControlByIdFromDB = async (id) => {
+    const resp = await statusApi.get(
+      `http://localhost:3001/api/controls/${id}`
+    );
+    return resp.data;
+  };
+
+  const getInputControlsByControlIdFromDB = async (id) => {
+    const resp = await statusApi.get(
+      `http://localhost:3001/api/controls/${id}/input_controls`
+    );
+    return resp.data;
+  };
+
   const createControlInDB = async (
     name,
     description,
@@ -31,7 +46,7 @@ export const useControls = () => {
     mashupId,
     catalogId
   ) => {
-    const resp = await statusApi.post("http://localhost:3001/api/control", {
+    const resp = await statusApi.post("http://localhost:3001/api/controls", {
       name: name,
       description: description,
       startDate: startDate,
@@ -49,6 +64,22 @@ export const useControls = () => {
     setControls(updatedControls);
   };
 
+  const updateControlInDb = async (id, name, description, period, startDate, endDate, mashup_id, catalog_id) => {
+    const resp = await statusApi.patch(
+      `http://localhost:3001/api/controls/${id}`,
+      {
+        name: name,
+        description: description,
+        period: period,
+        startDate: startDate,
+        endDate: endDate,
+        mashup_id: mashup_id,
+        catalog_id: catalog_id,
+      }
+    );
+    return resp.data;
+  };
+
   const removeControl = (index) => {
     const isLastItem = index === controls.length - 1;
     setControls(controls.filter((_, i) => i !== index));
@@ -60,12 +91,36 @@ export const useControls = () => {
 
   const createControlInputInDB = async (control_id, input_id, value) => {
     const resp = await statusApi.post(
-      "http://localhost:3001/api/input_control",
+      "http://localhost:3001/api/input_controls",
       {
         control_id: control_id,
         input_id: input_id,
         value: value,
       }
+    );
+    return resp.data;
+  };
+
+  const updateControlInputInDb = async (id, value) => {
+    const resp = await statusApi.patch(
+      `http://localhost:3001/api/input_controls/${id}`,
+      {
+        value: value,
+      }
+    );
+    return resp.data;
+  };
+
+  const deleteControlByIdInDb = async (id) => {
+    const resp = await statusApi.delete(
+      `http://localhost:3001/api/controls/${id}`
+    );
+    return resp.data;
+  };
+
+  const deleteInputControlsByControlIdInDb = async (id) => {
+    const resp = await statusApi.delete(
+      `http://localhost:3001/api/controls/${id}/input_controls`
     );
     return resp.data;
   };
@@ -78,12 +133,21 @@ export const useControls = () => {
 
   return {
     controls,
+    setControls,
+    getControlByIdFromDB,
+    getInputControlsByControlIdFromDB,
     addEmptyControl,
     createControlInDB,
+    updateControlInputInDb,
     updateControl,
+    updateControlInDb,
     removeControl,
+    deleteControlByIdInDb,
+    deleteInputControlsByControlIdInDb,
     lastItemRemoved,
     createControlInputInDB,
     updateControlInputs,
+    inputs,
+    setInputs,
   };
 };

@@ -3,10 +3,14 @@ import { Button, Card } from "react-bootstrap";
 import { useCatalogs } from "../../hooks/useCatalogs";
 import { useNavigate } from "react-router-dom";
 import "../../static/css/catalogList.css";
+import { useDispatch } from "react-redux";
 import addSvg from "../../static/images/add.svg";
+import { clearControls } from "../../features/controls/controlSlice";
+import { clearInputs } from "../../features/inputs/inputSlice";
 
 function CatalogList({ onCatalogSelect }) {
   const navigate = useNavigate(); // Hook for navigation
+  const dispatch = useDispatch();
 
   // Custom hook to retrieve catalogs data
   const { catalogs } = useCatalogs();
@@ -18,17 +22,16 @@ function CatalogList({ onCatalogSelect }) {
 
   // Handler function for new catalog button click
   const handleNewCatalogClick = () => {
+    dispatch(clearControls());
+    dispatch(clearInputs());
     navigate("/new_catalog");
   };
 
   // JSX representing the component's UI
   return (
-    <div className="container d-flex flex-column align-items-center pt-serif-regular">
+    <div className="container d-flex flex-row align-items-center">
       <Card className="w-100 mb-3">
         <Card.Body className="text-center">
-          <Button className="calculate-button mb-3" variant="danger">
-            Calcular
-          </Button>
           <ul className="list-group">
             {/* Render each catalog item */}
             {catalogs.map((catalog) => (
@@ -42,13 +45,11 @@ function CatalogList({ onCatalogSelect }) {
             ))}
           </ul>
           <Button
-            className="btn-add btn-success"
+            className="btn-add btn-success align-items-center mt-3"
             onClick={handleNewCatalogClick}
           >
-            <div className="d-flex align-items-center">
-              <img src={addSvg} alt="Add" className="add-svg ml-5 mb-1" />
+              <img src={addSvg} alt="Add" className="add-svg" />
               <p className="ml-3 mb-1">Nuevo catálogo</p>
-            </div>
           </Button>
         </Card.Body>
       </Card>

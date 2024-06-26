@@ -4,19 +4,23 @@ import { statusApi } from "../api/statusApi";
 export const useCatalogs = () => {
   const [catalogs, setCatalogs] = useState([]);
   const [catalogName, setCatalogName] = useState("");
+  const [catalogStartDate, setCatalogStartDate] = useState("");
+  const [catalogEndDate, setCatalogEndDate] = useState("");
 
   useEffect(() => {
     getCatalogsFromTheDatabase();
   }, []);
 
   const getCatalogsFromTheDatabase = async () => {
-    const resp = await statusApi.get("http://localhost:3001/api/catalog");
+    const resp = await statusApi.get("http://localhost:3001/api/catalogs");
     setCatalogs(resp.data);
   };
 
-  const createCatalogInDB = async (catalogName) => {
-    const resp = await statusApi.post("http://localhost:3001/api/catalog", {
+  const createCatalogInDB = async (catalogName, startDate, endDate) => {
+    const resp = await statusApi.post("http://localhost:3001/api/catalogs", {
       name: catalogName,
+      startDate: startDate,
+      endDate: endDate,
     });
     return resp.data;
   };
@@ -27,8 +31,35 @@ export const useCatalogs = () => {
     setCatalogs(updatedCatalogs);
   };
 
+  const updateCatalogInDB = async (id, catalogName, startDate, endDate) => {
+    const resp = await statusApi.patch(`http://localhost:3001/api/catalogs/${id}`, {
+      name: catalogName,
+      startDate: startDate,
+      endDate: endDate,
+    });
+    return resp.data;
+  };
+
+  const getCatalogControlsInDB = async (catalogId) => {
+    const resp = await statusApi.get(`http://localhost:3001/api/catalogs/${catalogId}/controls`);
+    return resp.data;
+  };
+
+  const deleteCatalogByIdFromTheDatabase = async (catalogId) => {
+    const resp = await statusApi.delete(`http://localhost:3001/api/catalogs/${catalogId}`);
+    return resp.data;
+  };
+
   const handleNameChange = (e) => {
     setCatalogName(e.target.value);
+  };
+
+  const handleStartDateChange = (e) => {
+    setCatalogStartDate(e.target.value);
+  };
+
+  const handleEndDateChange = (e) => {
+    setCatalogEndDate(e.target.value);
   };
 
   const removeCatalog = (index) => {
@@ -38,9 +69,16 @@ export const useCatalogs = () => {
   return {
     catalogs,
     createCatalogInDB,
+    updateCatalogInDB,
     updateCatalog,
     catalogName,
+    catalogStartDate,
+    catalogEndDate,
     handleNameChange,
+    handleStartDateChange,
+    handleEndDateChange,
     removeCatalog,
+    getCatalogControlsInDB,
+    deleteCatalogByIdFromTheDatabase,
   };
 };

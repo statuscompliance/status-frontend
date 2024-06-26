@@ -28,7 +28,7 @@ const MashupDetails = ({ selectedMashup }) => {
   useEffect(() => {
     // If a mashup is to be deleted
     if (mashupToDelete !== null) {
-      fetch(`http://localhost:3001/api/mashup/${mashupToDelete}`, {
+      fetch(`http://localhost:3001/api/mashups/${mashupToDelete}`, {
         method: 'DELETE',
       })
         .then((response) => {
@@ -51,7 +51,7 @@ const MashupDetails = ({ selectedMashup }) => {
       const requestBody = {
         name: editedMashup.name,
       };
-      fetch(`http://localhost:3001/api/mashup/${mashupToUpdate}`, {
+      fetch(`http://localhost:3001/api/mashups/${mashupToUpdate}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

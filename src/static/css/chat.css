@@ -1,0 +1,401 @@
+.chatBody{
+  position: absolute;
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.chat{
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  margin: 5% 15% 5% 8%;
+  width: 78%;
+  height: 85%;
+  max-height: 100%;
+  background: rgb(242, 242, 242); 
+  border-radius: 6px;
+  box-shadow: 0 2px 6px #171a1f, 0 0 2px #171a1f;
+}
+
+.chat.blur {
+  width: 78%;
+  filter: blur(1.5px);
+}
+
+.chat.hide {
+  display: none;
+}
+
+.chatContainer {
+  position: relative; 
+  margin-top: 5%;
+  margin-bottom: 5%;
+  width: 90%; 
+  height: 100%;
+  max-height: 100%;
+  background: rgb(242, 242, 242); 
+}
+
+.historyContainer{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+  height: 100%;
+  width: 30%;
+  background: rgb(242, 242, 242);
+}
+
+.chat2 {
+  position: relative;
+  display: flex;
+  left: 13%;
+  justify-content: center;
+  margin: 5%;
+  width: 65%;
+  height: 85%;
+  max-height: 100%;
+  background: rgb(242, 242, 242); 
+  border-radius: 6px;
+  box-shadow: 0 2px 6px #171a1f, 0 0 2px #171a1f; 
+}
+
+.chatLine{
+  position: relative;
+  display: flex;
+  width: 2px;
+  height: 85%;
+  background: #969696;
+}
+
+.inputContainer{
+  position: absolute;
+  display: flex;
+  align-items: center;
+  bottom: 2%;
+  width: 100%;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-top: auto;
+}
+
+.textbox{
+  position: relative;
+  display: flex;
+  flex: 1;
+  height: 10%;
+  border-radius: 18px; 
+  border-width: 0;
+  padding-left: 12px; 
+  padding-right: calc(12px + 35px + 10px); 
+  border: 2px solid #c2c0c0;
+  font-size: 19px;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  margin-right: 10px;
+  resize: vertical;
+  overflow-y: auto;
+}
+
+.sendButton{
+  position: relative;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #f2f2f2;
+  border: 2px solid #c2c0c0;
+}
+
+.sendIcon{
+  width: 100%;
+  height: 100%;
+}
+
+.messagesContainer{
+  position: absolute;
+  display: flex;
+  top: 4%;
+  flex-direction: column;
+  width: 100%;
+  overflow-y: auto;
+  height: calc(90% - 60px);
+}
+
+.messageContent{
+  word-break: break-word;
+}
+
+.span-assistant{
+  position: relative;
+  display: flex;
+  padding-bottom: 10px;
+  font-size: 19px;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.message-assistant{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 10px 20px;
+  padding: 10px;
+  font-size: 16px;
+  font-family: "Satoshi", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  background: #fcfcfc;
+  border-radius: 8px;
+  box-shadow: 0 1px 1px #171a1f, 0 0 2px #171a1f;
+}
+
+.error-message{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 18px;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 600;
+  font-style: normal;
+  background: #f8b6b6;
+  border: 1px solid #bf0a2e;
+  border-radius: 8px;
+  box-shadow: 0 1px 1px #bf0a2e, 0 0 2px #bf0a2e;
+}
+
+.span-user{
+  position: relative;
+  display: flex;
+  font-size: 19px;
+  padding-bottom: 10px;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.message-user{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 16px;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  background: #f2f2f2;
+  border-radius: 8px;
+  box-shadow: 0 1px 1px #171a1f, 0 0 2px #171a1f;
+}
+
+.signin-alert{
+  position: relative;
+  display: flex;
+  justify-content: center;
+  font-size: 23px;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  top: 45%;
+}
+
+.history{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  font-size: 19px;
+  margin: 10%;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.historyText{
+  position: relative;
+  display: flex;
+  word-wrap: break-word;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 22px;
+}
+
+.historyEmpty{
+  position: relative;
+  display: flex;
+  justify-content: center;
+  font-size: 23px;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  margin:20%;
+}
+
+.threadList{
+  position: relative;
+  display: flex;
+  right: 5%;
+  flex-direction: column;
+  width: 100%;
+  height: 90%;
+  list-style-type: none;
+}
+
+.bullet{
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  right: 10%;
+  margin-left: 5%;
+}
+
+.threadButton{
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  border: none;
+  background: none;
+  font-family: 'Satoshi', sans-serif;
+  font-weight: 200;
+  font-style: normal;
+  padding-left: 3px;
+  padding-right: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.threadButton:hover {
+  background-color:  #ededed;
+  border-radius: 10px;
+}
+
+.editorContainer{
+  width: 100%;
+  height: 100%;
+}
+
+.chatEditor{
+  position: absolute;
+  justify-content: center;
+  right: 5%;
+  width: 100%;
+  height: 100%;
+  margin-top: 4%;
+}
+
+.editorIframe{
+  position: relative;
+  margin-top: 3%;
+  margin-left: 10%;
+  width: 85%;
+  display: flex;
+  height: 85%;
+  border: 5px solid #bf0a2e;
+  border-radius: 10px;
+  background-color: transparent;
+  text-align: center;
+}
+
+.loader {
+  width: fit-content;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  z-index: 2;
+  height: 8px;
+  width: 40%;
+  font-weight: bold;
+  font-family: 'Satoshi', sans-serif;
+  font-size: 30px;
+  padding-bottom: 8px;
+  background: linear-gradient(currentColor 0 0) 0 100%/0% 3px no-repeat;
+  animation: l2 2s linear infinite;
+  top: 50%;
+  left: 27%;
+}
+
+.loader::before {
+  content:"Abriendo editor...";
+  position: relative;
+  top: -50px;
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.loader.hide{
+  display: none;
+}
+@keyframes l2 {to{background-size: 100% 3px}}
+
+.editIcon {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  background: #f2f2f2;
+  margin: 5%;
+  cursor: pointer;
+}
+
+.editIcon:hover {
+  background: #e6e6e6;
+}
+
+.palette{
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 10%;
+  height: 100%;
+  background: rgb(242, 242, 242); 
+  border-radius: 6px;
+  box-shadow: 0 2px 6px #171a1f, 0 0 2px #171a1f;
+}
+
+.palette.show{
+  position: relative;
+  flex-direction: row;
+  display: flex;
+  left: 47%;
+  bottom: 5%;
+  height: 60px;
+  width: 120px;
+  background: rgb(242, 242, 242); 
+  border-radius: 6px;
+  box-shadow: 0 2px 6px #171a1f, 0 0 2px #171a1f;
+}
+
+.paletteButton {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  background: #f2f2f2;
+  margin: 5%;
+  cursor: pointer;
+}
+
+.paletteButton:hover {
+  background: #e6e6e6;
+}
