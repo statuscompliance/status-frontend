@@ -2,20 +2,34 @@ import React, { useState, useEffect } from "react";
 import { Period } from "./Period";
 import { Form, Button, Card, Row, Col, Carousel } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-import { useMashups } from "../../hooks/useMashups";
 import { useInputControls } from "../../hooks/useInputControls";
 import { editControl } from "../../features/controls/controlSlice";
 import { setInputs, editInput } from "../../features/inputs/inputSlice";
 import { addEmptyControl } from "../../features/controls/controlSlice";
+import { useNode } from "../../hooks/useNode";
 
 const ControlForm = ({ handleRemoveControl }) => {
   const dispatch = useDispatch();
   const controls = useSelector((state) => state.controls.controls);
   const inputs = useSelector((state) => state.inputs);
-  const { mashups, getInputsForMashupFromTheDB } = useMashups();
+
   const { getValuesByInputIdAndControlIdFromTheDB } = useInputControls();
   const [selectedMashupId, setSelectedMashupId] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
+  const [flows, setFlows] = useState([]);
+  const { 
+    getFlows,
+    getMashupById,
+    getMashupParameters 
+  } = useNode();
+
+  useEffect(() => {
+    const fetchFlows = async () => {
+      const fetchedFlows = await getFlows();
+      setFlows(fetchedFlows);
+    };
+    fetchFlows();
+  }, []);
 
   // Handler function for updating control details
   const handleControlChange = async (controlId, field, value) => {
@@ -27,8 +41,11 @@ const ControlForm = ({ handleRemoveControl }) => {
       dispatch(editControl({ controlId, field, value }));
 
       if (value && value !== -1) {
-        // Obtener las entradas para el mashup seleccionado
-        newInputs = await getInputsForMashupFromTheDB(value);
+        const selectedMashup = getMashupById(flows, value);
+        if (selectedMashup) {
+          // Obtener las entradas para el mashup seleccionado
+          newInputs = await getMashupParameters(selectedMashup);
+        } 
         
         newInputs = await Promise.all(
           newInputs.map(async (input) => {
@@ -212,15 +229,15 @@ const ControlForm = ({ handleRemoveControl }) => {
                               handleControlChange(
                                 control.id,
                                 "mashup_id",
-                                parseInt(e.target.value)
+                                e.target.value
                               )
                             }
                             required
                           >
                             <option value="">Seleccionar...</option>
-                            {mashups.map((mashup) => (
-                              <option key={mashup.id} value={mashup.id}>
-                                {mashup.name}
+                            {flows.map((mashup, index) => (
+                              <option key={index} value={mashup.id}>
+                                {mashup.url.match(/\/api\/(.+)/)[1]}
                               </option>
                             ))}
                           </Form.Select>
@@ -230,10 +247,10 @@ const ControlForm = ({ handleRemoveControl }) => {
                     {/* Render the mashup inputs */}
                     {inputs.inputs[control.id] && inputs.inputs[control.id].length > 0 && (
                       <div className="bg-dark p-3 mb-3">
-                        {inputs.inputs[control.id]?.map((input) => (
-                          <Form.Group className="mb-3" key={input.id}>
+                        {inputs.inputs[control.id]?.map((input, index) => (
+                          <Form.Group className="mb-3" key={`${input.id}+${index}`}>
                             <Form.Label>{input.name}:</Form.Label>
-                            {input.type === "STRING" ? (
+                            {input.type === "string" ? (
                               <Form.Control
                                 type="text"
                                 value={input.value || ""}
