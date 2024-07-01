@@ -4,16 +4,15 @@ const toUpperSnakeCase = (name) => {
   return name.toUpperCase().replace(/\s+/g, "_");
 };
 
-const generateTPA = async (controls, catalogId, getMashupByIdFromTheDB, inputs, createTpaInDB, deleteTpaByCatalogId) => {
+const generateTPA = async (controls, catalogId, getFlows, getMashupById, inputs, createTpaInDB) => {
   const tpa = JSON.parse(JSON.stringify(tpaTemplate));
 
   for (const control of controls) {
-    const countingMetricName =
-      "NUMBER_OF_ELEMENTS_FOR_" + toUpperSnakeCase(control.name);
-    const positiveElementsMetricName =
-      "NUMBER_OF_POSITIVE_ELEMENTS_FOR_" + toUpperSnakeCase(control.name);
+    const countingMetricName = "NUMBER_OF_ELEMENTS_FOR_" + toUpperSnakeCase(control.name);
+    const positiveElementsMetricName = "NUMBER_OF_POSITIVE_ELEMENTS_FOR_" + toUpperSnakeCase(control.name);
     const guaranteeName = "RATE_FOR_" + toUpperSnakeCase(control.name);
-    const mashup = await getMashupByIdFromTheDB(control.mashup_id);
+    const flows = await getFlows();
+    const mashup = await getMashupById(flows, control.mashup_id);
 
     let config = {};
     for (const input of inputs.inputs[control.id]) {
@@ -54,7 +53,7 @@ const addMetricToTPA = async (tpa, metricName, mashup, config) => {
       element: "number",
       event: {
         status: {
-          [mashup.name]: {},
+          [mashup.url.match(/\/api\/(.+)/)[1]]: {},
         },
       },
       config: config,
@@ -139,7 +138,6 @@ const saveTpa = async (tpaContent, catalogId, createTpaInDB) => {
 
 const deleteTpaByCatalogId = async (catalogId, deleteTpaByIdFromTheDatabase) => {
   try {
-    console.log("llego al método de borrar")
     const response = deleteTpaByIdFromTheDatabase(catalogId);
 
     if (response) {

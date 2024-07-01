@@ -138,6 +138,119 @@ export const useNode = () => {
     }
   };
 
+  const getFlows = async () => {
+    let nodeRed;
+    try {
+      await statusApi.get("http://localhost:1880");
+      nodeRed = true;
+    } catch (error) {
+      nodeRed = false;
+    }
+  
+    if (
+      nodeRed &&
+      document.cookie
+        .split("; ")
+        .find((row) => row.startsWith(`nodeRedAccessToken=`))
+    ) {
+      const accessToken = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("nodeRedAccessToken="))
+        .split("nodeRedAccessToken=")[1]
+        .trim();
+  
+      try {
+        const response = await statusApi.get("http://localhost:1880/flows", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+  
+        const apiMashups = response.data.filter(
+          (obj) => obj.url && obj.url.includes("/api")
+        );
+  
+        const parsedMashups = parseMashups(apiMashups);
+        return parsedMashups;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const getAllFlows = async () => {
+    let nodeRed;
+    try {
+      await statusApi.get("http://localhost:1880");
+      nodeRed = true;
+    } catch (error) {
+      nodeRed = false;
+    }
+  
+    if (
+      nodeRed &&
+      document.cookie
+        .split("; ")
+        .find((row) => row.startsWith(`nodeRedAccessToken=`))
+    ) {
+      const accessToken = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("nodeRedAccessToken="))
+        .split("nodeRedAccessToken=")[1]
+        .trim();
+  
+      try {
+        const response = await statusApi.get("http://localhost:1880/flows", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        
+        return response;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const getMashupParameters = async (mashup) => {
+    const parameters = [];
+    const flows = await getAllFlows();
+    let id = 1;
+  
+    const traverseComponents = (componentId) => {
+      const component = flows.data.find((comp) => comp.id === componentId);
+  
+      if (component && component.params) {
+        Object.keys(component.params).forEach((param, index) => {
+          parameters.push({
+            id: id++,
+            name: param,
+            type: component.params[param],
+          });
+        });
+      }
+  
+      if (component && component.wires && component.wires.length > 0) {
+        component.wires.forEach((wireGroup, wireIndex) => {
+          wireGroup.forEach((nextComponentId) => {
+            traverseComponents(nextComponentId);
+          });
+        });
+      }
+    };
+  
+    if (mashup && mashup.id) {
+      traverseComponents(mashup.id);
+    }
+  
+    return parameters;
+  };  
+  
+  const getMashupById = (flows, id) => {
+    return flows.find(flow => flow.id === id);
+  };
+
   function parseMashups(mashups) {
     for (const mashup of mashups) {
       const text = mashup.info;
@@ -317,7 +430,10 @@ export const useNode = () => {
     createInitialMashup,
     deleteMashup,
     temporalMashup,
+    getFlows,
+    getMashupById,
     getFlow,
+    getMashupParameters,
     addFlowInfo,
     nodeRedCookie,
   };

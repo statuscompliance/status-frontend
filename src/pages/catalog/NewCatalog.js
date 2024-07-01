@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { generateTPA } from './TpaUtils';
 import { Form, Card, Row, Col, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +12,7 @@ import {
 } from "../../features/controls/controlSlice";
 import { removeInput } from "../../features/inputs/inputSlice";
 import ControlForm from "./ControlForm";
-import { useMashups } from "../../hooks/useMashups";
+import { useNode } from "../../hooks/useNode";
 
 function NewCatalog() {
   const {
@@ -28,13 +28,18 @@ function NewCatalog() {
   const dispatch = useDispatch();
   const controls = useSelector((state) => state.controls.controls);
   const navigate = useNavigate();
-  const { getMashupByIdFromTheDB } = useMashups();
-  const {
-    createTpaInDB,
-    deleteTpaByIdFromTheDatabase,
-  } = useTpas();
-
+  const { createTpaInDB } = useTpas();
+  const { getFlows, getMashupById } = useNode();
   const { createControlInDB, createControlInputInDB } = useControls();
+  const [flows, setFlows] = useState([]);
+
+  useEffect(() => {
+    const fetchFlows = async () => {
+      const fetchedFlows = await getFlows();
+      setFlows(fetchedFlows);
+    };
+    fetchFlows();
+  }, [getFlows]);
 
   // Handler function for remove a control
   const handleRemoveControl = (controlId) => {
@@ -54,7 +59,7 @@ function NewCatalog() {
       catalogId
     );
 
-    const controlData = await response;
+    const controlData = response;
     const inputControlPromises = Object.entries(inputs.inputs[control.id]).map(
       ([inputId, inputInfo]) =>
         handleCreateControlInput(controlData.id, inputInfo.id, inputInfo.value)
@@ -85,7 +90,7 @@ function NewCatalog() {
         catalogEndDate
       );
 
-      const catalogData = await catalogResponse;
+      const catalogData = catalogResponse;
       const catalogId = catalogData.id;
 
       const controlPromises = controls.map((control) =>
@@ -93,7 +98,7 @@ function NewCatalog() {
       );
       await Promise.all(controlPromises);
 
-      generateTPA(controls, catalogId, getMashupByIdFromTheDB, inputs, createTpaInDB, deleteTpaByIdFromTheDatabase);
+      await generateTPA(controls, catalogId, getFlows, getMashupById, inputs, createTpaInDB);
 
       navigate("/catalogs");
     } catch (error) {
