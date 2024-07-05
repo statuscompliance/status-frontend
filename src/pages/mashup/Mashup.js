@@ -111,14 +111,7 @@ export default function Mashup() {
         if (response.message === "Run not completed yet") {
           if (retryInterval < maxRetryInterval) {
             retryInterval *= 2;
-            console.log(
-              `Generando respuesta, espere ${retryInterval / 1000} segundos...`
-            ); //BORRAR
             setTimeout(retry, retryInterval);
-          } else {
-            console.log(
-              "Se alcanzó el tiempo máximo de espera. No se pudo completar el proceso."
-            ); //BORRAR
           }
         } else {
           if (response && response.data && Array.isArray(response.data)) {

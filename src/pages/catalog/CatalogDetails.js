@@ -6,6 +6,8 @@ import { useCatalogs } from "../../hooks/useCatalogs";
 import { useInputControls } from "../../hooks/useInputControls";
 import { useTpas } from "../../hooks/useTpas";
 import { useBluejay } from "../../hooks/useBluejay";
+import { useNode } from "../../hooks/useNode";
+
 import { useSelector, useDispatch } from "react-redux";
 import {
   addEmptyControl,
@@ -18,7 +20,6 @@ import {
   clearInputs,
 } from "../../features/inputs/inputSlice";
 import ControlForm from "./ControlForm";
-import { useMashups } from "../../hooks/useMashups";
 
 const CatalogDetails = ({ selectedCatalog }) => {
   const [specificCatalog, setSpecificCatalog] = useState(selectedCatalog);
@@ -59,7 +60,10 @@ const CatalogDetails = ({ selectedCatalog }) => {
     deleteAgreement,
     createPoints,
   } = useBluejay();
-  const { getMashupByIdFromTheDB } = useMashups();
+  const { 
+    getFlows,
+    getMashupById
+  } = useNode();
 
   const handleNameChange = (event) => {
     setSpecificCatalog((prevCatalog) => ({
@@ -178,7 +182,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
         }
       }
       await deleteTpaByCatalogId(catalogId, deleteTpaByIdFromTheDatabase);
-      await generateTPA(controls, catalogId, getMashupByIdFromTheDB, inputs, createTpaInDB);
+      await generateTPA(controls, catalogId, getFlows, getMashupById, inputs, createTpaInDB);
 
       console.log("Catálogo y controles actualizados con éxito.");
       window.location.reload();
