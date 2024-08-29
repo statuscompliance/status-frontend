@@ -121,8 +121,7 @@ function Catalog() {
         <div className="alert">
           <div className="signin-alert">
             <p>
-              Para acceder a esta sección debes iniciar sesión y tener
-              desplegado Node-Red
+              To access this section you must be logged in and have Node-Red deployed.
             </p>
           </div>
         </div>

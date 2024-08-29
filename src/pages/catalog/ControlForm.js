@@ -116,7 +116,7 @@ const ControlForm = ({ handleRemoveControl }) => {
                       className="mb-3"
                       controlId={`controlName_${control.id}`}
                     >
-                      <Form.Label>Nombre del Control:</Form.Label>
+                      <Form.Label>Control name:</Form.Label>
                       <Form.Control
                         maxLength={100}
                         onChange={(e) =>
@@ -135,7 +135,7 @@ const ControlForm = ({ handleRemoveControl }) => {
                       className="mb-3"
                       controlId={`controlDescription_${control.id}`}
                     >
-                      <Form.Label>Descripción:</Form.Label>
+                      <Form.Label>Description:</Form.Label>
                       <Form.Control
                         as="textarea"
                         maxLength={300}
@@ -156,7 +156,7 @@ const ControlForm = ({ handleRemoveControl }) => {
                           className="mb-3"
                           controlId={`controlStartDate_${control.id}`}
                         >
-                          <Form.Label>Fecha de inicio:</Form.Label>
+                          <Form.Label>Start date:</Form.Label>
                           <Form.Control
                             type="date"
                             value={control.startDate}
@@ -175,7 +175,7 @@ const ControlForm = ({ handleRemoveControl }) => {
                           className="mb-3"
                           controlId={`controlEndDate_${control.id}`}
                         >
-                          <Form.Label>Fecha de fin:</Form.Label>
+                          <Form.Label>End date:</Form.Label>
                           <Form.Control
                             type="date"
                             value={control.endDate}
@@ -196,7 +196,7 @@ const ControlForm = ({ handleRemoveControl }) => {
                           className="mb-3"
                           controlId={`controlPeriod_${control.id}`}
                         >
-                          <Form.Label>Periodicidad:</Form.Label>
+                          <Form.Label>Periodicity:</Form.Label>
                           <Form.Select
                             value={control.period}
                             onChange={(e) =>
@@ -208,7 +208,7 @@ const ControlForm = ({ handleRemoveControl }) => {
                             }
                             required
                           >
-                            <option value="">Seleccionar...</option>
+                            <option value="">Select...</option>
                             {Object.entries(Period).map(([key, value]) => (
                               <option key={key} value={key}>
                                 {value}
@@ -222,7 +222,7 @@ const ControlForm = ({ handleRemoveControl }) => {
                           className="mb-3"
                           controlId={`controlMashup_${control.id}`}
                         >
-                          <Form.Label>Verificación:</Form.Label>
+                          <Form.Label>Check:</Form.Label>
                           <Form.Select
                             value={control.mashup_id}
                             onChange={(e) =>
@@ -234,7 +234,7 @@ const ControlForm = ({ handleRemoveControl }) => {
                             }
                             required
                           >
-                            <option value="">Seleccionar...</option>
+                            <option value="">Select...</option>
                             {flows.map((mashup, index) => (
                               <option key={index} value={mashup.id}>
                                 {mashup.url.match(/\/api\/(.+)/)[1]}
@@ -284,7 +284,7 @@ const ControlForm = ({ handleRemoveControl }) => {
                     <Row className="justify-content-between">
                       <Col xs="auto">
                         <Button onClick={addControl} variant="primary">
-                          Agregar Control
+                          Add control
                         </Button>
                       </Col>
                       <Col xs="auto">
@@ -293,7 +293,7 @@ const ControlForm = ({ handleRemoveControl }) => {
                           variant="danger"
                           className="ms-2"
                         >
-                          Eliminar Control
+                          Delete control
                         </Button>
                       </Col>
                     </Row>

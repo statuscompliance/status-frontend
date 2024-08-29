@@ -159,13 +159,13 @@ const App = () => {
               {authority === "ADMIN" ? (
                 <li className="nav-item">
                   <Link className="nav-link pt-serif-regular" to="/admin">
-                    Administración de OpenAI
+                    OpenAI administration
                   </Link>
                 </li>
               ) : null}
               <li className="nav-item">
                 <Link className="nav-link pt-serif-regular" to="/catalogs">
-                  Catálogos
+                  Catalogs
                 </Link>
               </li>
               <li className="nav-item">
@@ -196,11 +196,11 @@ const App = () => {
                     className="nav-link pt-serif-regular"
                     onClick={openLogoutModal}
                   >
-                    Cerrar sesión
+                    Log out
                   </p>
                 ) : (
                   <Link className="nav-link pt-serif-regular" to="/login">
-                    Iniciar sesión
+                    Log in
                   </Link>
                 )}
               </li>

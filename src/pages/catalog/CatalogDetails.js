@@ -368,7 +368,7 @@ return (
             {/* Basic catalog information */}
             <Row>
               <Form.Group className="mb-3" controlId="catalogName">
-                <Form.Label>Nombre del Catálogo:</Form.Label>
+                <Form.Label>Catalog name:</Form.Label>
                 <Form.Control
                   maxLength={100}
                   onChange={handleNameChange}
@@ -381,7 +381,7 @@ return (
             <Row>
               <Col>
                 <Form.Group className="mb-3" controlId="catalogStartDate">
-                  <Form.Label>Fecha de inicio:</Form.Label>
+                  <Form.Label>Start date:</Form.Label>
                   <Form.Control
                     type="date"
                     value={specificCatalog.startDate || ""}
@@ -391,7 +391,7 @@ return (
               </Col>
               <Col>
                 <Form.Group className="mb-3" controlId="catalogEndDate">
-                  <Form.Label>Fecha de fin:</Form.Label>
+                  <Form.Label>End date:</Form.Label>
                   <Form.Control
                     type="date"
                     value={specificCatalog.endDate || ""}
@@ -417,16 +417,16 @@ return (
                     className="btn-primary"
                     onClick={handleCalculateClick}
                   >
-                    Calcular
+                    Calculate
                   </Button>
                   <Button type="submit" className="ms-3 btn btn-success">
-                    Actualizar
+                    Update
                   </Button>
                   <Button
                     className="ms-3 btn btn-danger"
                     onClick={handleDeleteClick}
                   >
-                    Eliminar
+                    Delete
                   </Button>
                 </div>
               </Col>

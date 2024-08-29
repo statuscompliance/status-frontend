@@ -116,12 +116,12 @@ function NewCatalog() {
       <Col md={10}>
         <Card style={{ backgroundColor: "#bf0a2e", color: "#ffff" }}>
           <Card.Body>
-            <h2 className="text-center mt-5 mb-4">Nuevo Catálogo</h2>
+            <h2 className="text-center mt-5 mb-4">New Catalog</h2>
             {/* Form for creating a new catalog */}
             <Form onSubmit={handleSubmit}>
               <Row>
                 <Form.Group className="mb-3" controlId="catalogName">
-                  <Form.Label>Nombre del Catálogo:</Form.Label>
+                  <Form.Label>Catalog name:</Form.Label>
                   <Form.Control
                     maxLength={100}
                     onChange={handleNameChange}
@@ -134,7 +134,7 @@ function NewCatalog() {
               <Row>
                 <Col>
                   <Form.Group className="mb-3" controlId="catalogStartDate">
-                    <Form.Label>Fecha de inicio:</Form.Label>
+                    <Form.Label>Start date:</Form.Label>
                     <Form.Control
                       type="date"
                       value={catalogStartDate}
@@ -144,7 +144,7 @@ function NewCatalog() {
                 </Col>
                 <Col>
                   <Form.Group className="mb-3" controlId="catalogEndDate">
-                    <Form.Label>Fecha de fin:</Form.Label>
+                    <Form.Label>End date:</Form.Label>
                     <Form.Control
                       type="date"
                       value={catalogEndDate}
@@ -162,7 +162,7 @@ function NewCatalog() {
                     onClick={addControl}
                     variant="primary"
                   >
-                    Crear Control
+                    Create control
                   </Button>
                 )}
                 <Button
@@ -170,7 +170,7 @@ function NewCatalog() {
                   type="submit"
                   variant="success"
                 >
-                  Crear Catálogo
+                  Create catalog
                 </Button>
               </div>
             </Form>

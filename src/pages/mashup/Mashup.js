@@ -207,7 +207,7 @@ export default function Mashup() {
         <i className="pi pi-search" />
         <InputText
           onInput={onGlobalFilterChange}
-          placeholder="Buscar..."
+          placeholder="Search..."
           type="search"
         />
       </span>
@@ -264,20 +264,20 @@ export default function Mashup() {
             <Column
               className="column"
               field="label"
-              header="Nombre"
+              header="Name"
               style={{ width: "25%" }}
             ></Column>
             <Column
               className="column"
               field="mashupDescription"
-              header="Descripción"
+              header="Description"
               style={{ width: "35%" }}
             ></Column>
             <Column
               body={actionTemplate}
               className="column"
               field="action"
-              header="Acciones"
+              header="Actions"
               style={{ width: "15%" }}
             ></Column>
           </DataTable>

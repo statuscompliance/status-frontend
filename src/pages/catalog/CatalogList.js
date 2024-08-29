@@ -49,7 +49,7 @@ function CatalogList({ onCatalogSelect }) {
             onClick={handleNewCatalogClick}
           >
               <img src={addSvg} alt="Add" className="add-svg" />
-              <p className="ml-3 mb-1">Nuevo catálogo</p>
+              <p className="ml-3 mb-1">New catalog</p>
           </Button>
         </Card.Body>
       </Card>
