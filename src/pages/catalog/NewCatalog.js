@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { generateTPA } from './TpaUtils';
+import { generateTPA } from "./TpaUtils";
 import { Form, Card, Row, Col, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useCatalogs } from "../../hooks/useCatalogs";
@@ -98,7 +98,14 @@ function NewCatalog() {
       );
       await Promise.all(controlPromises);
 
-      await generateTPA(controls, catalogId, getFlows, getMashupById, inputs, createTpaInDB);
+      await generateTPA(
+        controls,
+        catalogId,
+        getFlows,
+        getMashupById,
+        inputs,
+        createTpaInDB
+      );
 
       navigate("/catalogs");
     } catch (error) {
@@ -112,71 +119,88 @@ function NewCatalog() {
 
   // JSX representing the component's UI
   return (
-    <div className="container">
-      <Col md={10}>
-        <Card style={{ backgroundColor: "#bf0a2e", color: "#ffff" }}>
-          <Card.Body>
-            <h2 className="text-center mt-5 mb-4">New Catalog</h2>
-            {/* Form for creating a new catalog */}
-            <Form onSubmit={handleSubmit}>
-              <Row>
-                <Form.Group className="mb-3" controlId="catalogName">
-                  <Form.Label>Catalog name:</Form.Label>
-                  <Form.Control
-                    maxLength={100}
-                    onChange={handleNameChange}
-                    required
-                    type="text"
-                    value={catalogName}
-                  />
-                </Form.Group>
-              </Row>
-              <Row>
-                <Col>
-                  <Form.Group className="mb-3" controlId="catalogStartDate">
-                    <Form.Label>Start date:</Form.Label>
-                    <Form.Control
-                      type="date"
-                      value={catalogStartDate}
-                      onChange={handleStartDateChange}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col>
-                  <Form.Group className="mb-3" controlId="catalogEndDate">
-                    <Form.Label>End date:</Form.Label>
-                    <Form.Control
-                      type="date"
-                      value={catalogEndDate}
-                      onChange={handleEndDateChange}
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
-              <ControlForm handleRemoveControl={handleRemoveControl} />
-              {/* Action buttons */}
-              <div className="actions text-center">
-                {controls.length === 0 && (
+    <div className="container py-4">
+      <Row className="justify-content-center">
+        <Col md={10}>
+          <Card className="shadow-sm border-0">
+            <Card.Header
+              style={{ backgroundColor: "#bf0a2e", color: "#ffffff" }}
+            >
+              <h2 className="text-center mb-0">New Catalog</h2>
+            </Card.Header>
+            <Card.Body className="bg-light">
+              {/* Form for creating a new catalog */}
+              <Form onSubmit={handleSubmit}>
+                <Row className="mb-4">
+                  <Col>
+                    <Form.Group controlId="catalogName">
+                      <Form.Label className="fw-bold">Catalog name:</Form.Label>
+                      <Form.Control
+                        maxLength={100}
+                        onChange={handleNameChange}
+                        required
+                        type="text"
+                        value={catalogName}
+                        className="form-control-lg"
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <Row className="mb-4">
+                  <Col md={6}>
+                    <Form.Group controlId="catalogStartDate">
+                      <Form.Label className="fw-bold">Start date:</Form.Label>
+                      <Form.Control
+                        type="date"
+                        value={catalogStartDate}
+                        onChange={handleStartDateChange}
+                        className="form-control-lg"
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Group controlId="catalogEndDate">
+                      <Form.Label className="fw-bold">End date:</Form.Label>
+                      <Form.Control
+                        type="date"
+                        value={catalogEndDate}
+                        onChange={handleEndDateChange}
+                        className="form-control-lg"
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+                <ControlForm handleRemoveControl={handleRemoveControl} />
+                {/* Action buttons */}
+                <div className="actions text-center mt-4">
+                  {controls.length === 0 && (
+                    <Button
+                      onClick={addControl}
+                      variant="outline-primary"
+                      size="lg"
+                      className="me-2"
+                      style={{ borderColor: "#bf0a2e", color: "#bf0a2e" }}
+                    >
+                      Create control
+                    </Button>
+                  )}
                   <Button
-                    className="mt-2"
-                    onClick={addControl}
+                    type="submit"
                     variant="primary"
+                    size="lg"
+                    style={{
+                      backgroundColor: "#bf0a2e",
+                      borderColor: "#bf0a2e",
+                    }}
                   >
-                    Create control
+                    Create catalog
                   </Button>
-                )}
-                <Button
-                  className="text-center ms-2 mt-2"
-                  type="submit"
-                  variant="success"
-                >
-                  Create catalog
-                </Button>
-              </div>
-            </Form>
-          </Card.Body>
-        </Card>
-      </Col>
+                </div>
+              </Form>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 }

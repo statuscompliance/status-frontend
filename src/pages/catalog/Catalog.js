@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col } from "react-bootstrap";
+import { Container, Row, Col, Alert } from "react-bootstrap";
 import CatalogList from "./CatalogList";
 import CatalogDetails from "./CatalogDetails";
 import { useCatalogs } from "../../hooks/useCatalogs";
@@ -99,32 +99,35 @@ function Catalog() {
 
   // JSX representing the component's UI
   return (
-    <Container fluid>
+    <Container fluid className="py-4">
       {isNodeRedDeployed && nodeRedToken ? (
-      <Row>
-        {/* List of catalogs */}
-        <Col md={3}>
-          <CatalogList
-            onCatalogSelect={(catalog) => {
-              setSelectedCatalog(catalog);
-            }}
-          />
-        </Col>
-        {/* Rendering catalog details if a catalog is selected */}
-        <Col md={9}>
-          {selectedCatalog && (
-            <CatalogDetails selectedCatalog={selectedCatalog} />
-          )}
-        </Col>
-      </Row>
+        <Row>
+          {/* List of catalogs */}
+          <Col md={3} className="mb-4 mb-md-0">
+            <CatalogList
+              onCatalogSelect={(catalog) => {
+                setSelectedCatalog(catalog);
+              }}
+            />
+          </Col>
+          {/* Rendering catalog details if a catalog is selected */}
+          <Col md={9}>
+            {selectedCatalog ? (
+              <CatalogDetails selectedCatalog={selectedCatalog} />
+            ) : (
+              <Alert variant="info" className="text-center">
+                Please select a catalog from the list to view details.
+              </Alert>
+            )}
+          </Col>
+        </Row>
       ) : (
-        <div className="alert">
-          <div className="signin-alert">
-            <p>
-              To access this section you must be logged in and have Node-Red deployed.
-            </p>
-          </div>
-        </div>
+        <Alert variant="warning" className="text-center">
+          <Alert.Heading>Access Restricted</Alert.Heading>
+          <p>
+            To access this section you must be logged in and have Node-Red deployed.
+          </p>
+        </Alert>
       )}
     </Container>
   );
