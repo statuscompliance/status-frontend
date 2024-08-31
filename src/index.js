@@ -146,7 +146,12 @@ const App = () => {
           <div></div>
         )}
         {/* Sidebar */}
-        <div className="sidebar">
+        <div
+          className="sidebar"
+          style={{
+            position: "fixed",
+          }}
+        >
           <Link
             className="navbar-brand navbar-dark pt-serif-bold d-flex align-items-center"
             to="/"
