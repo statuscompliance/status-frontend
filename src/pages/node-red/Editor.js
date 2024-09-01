@@ -59,7 +59,7 @@ export default function Editor() {
       ) : (
         <div className="node-red-off">
           <p className="disclaimer">
-            Despliega Node-RED de forma local para abrir el editor.
+            Deploy Node-RED locally to open the editor.
           </p>
           <button
             className="btnReload pt-serif-regular"

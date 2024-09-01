@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { generateTPA, deleteTpaByCatalogId } from './TpaUtils';
+import { generateTPA, deleteTpaByCatalogId } from "./TpaUtils";
 import { Button, Card, Form, Row, Col } from "react-bootstrap";
 import { useControls } from "../../hooks/useControls";
 import { useCatalogs } from "../../hooks/useCatalogs";
@@ -46,24 +46,15 @@ const CatalogDetails = ({ selectedCatalog }) => {
     updateCatalogInDB,
     deleteCatalogByIdFromTheDatabase,
   } = useCatalogs();
-  const {
-    getInputControlsByControlIdFromTheDB,
-    deleteInputControlsFromTheDB,
-  } = useInputControls();
+  const { getInputControlsByControlIdFromTheDB, deleteInputControlsFromTheDB } =
+    useInputControls();
   const {
     getTpaByCatalogIdFromTheDatabase,
     createTpaInDB,
     deleteTpaByIdFromTheDatabase,
   } = useTpas();
-  const {
-    postAgreement,
-    deleteAgreement,
-    createPoints,
-  } = useBluejay();
-  const { 
-    getFlows,
-    getMashupById
-  } = useNode();
+  const { postAgreement, deleteAgreement, createPoints } = useBluejay();
+  const { getFlows, getMashupById } = useNode();
 
   const handleNameChange = (event) => {
     setSpecificCatalog((prevCatalog) => ({
@@ -123,7 +114,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
   // Triggers catalog deletion or updates
   useEffect(() => {
     if (catalogToDelete !== null) {
-      deleteTpaByCatalogId(selectedCatalog.id, deleteTpaByIdFromTheDatabase)
+      deleteTpaByCatalogId(selectedCatalog.id, deleteTpaByIdFromTheDatabase);
       deleteCatalog(catalogToDelete);
     }
     if (catalogToUpdate !== null) {
@@ -140,16 +131,22 @@ const CatalogDetails = ({ selectedCatalog }) => {
   const deleteCatalog = async (catalogId) => {
     try {
       const controls = await getCatalogControlsInDB(catalogId);
-      if (!controls) throw new Error("Error al obtener los controles del catálogo");      
+      if (!controls)
+        throw new Error("Error al obtener los controles del catálogo");
 
       for (const control of controls) {
-        const inputControls = await getInputControlsByControlIdFromTheDB(control.id);
-        if (!inputControls) throw new Error(`Error al obtener input_controls del control ${control.id}`);
-        
+        const inputControls = await getInputControlsByControlIdFromTheDB(
+          control.id
+        );
+        if (!inputControls)
+          throw new Error(
+            `Error al obtener input_controls del control ${control.id}`
+          );
+
         for (const inputControl of inputControls) {
           await deleteInputControlsFromTheDB(inputControl.id);
         }
-        
+
         await deleteControlByIdInDb(control.id);
       }
 
@@ -182,7 +179,14 @@ const CatalogDetails = ({ selectedCatalog }) => {
         }
       }
       await deleteTpaByCatalogId(catalogId, deleteTpaByIdFromTheDatabase);
-      await generateTPA(controls, catalogId, getFlows, getMashupById, inputs, createTpaInDB);
+      await generateTPA(
+        controls,
+        catalogId,
+        getFlows,
+        getMashupById,
+        inputs,
+        createTpaInDB
+      );
 
       console.log("Catálogo y controles actualizados con éxito.");
       window.location.reload();
@@ -193,7 +197,10 @@ const CatalogDetails = ({ selectedCatalog }) => {
 
   const updateCatalogInfo = async (id, catalogData) => {
     const response = await updateCatalogInDB(
-      id, catalogData.name, catalogData.startDate, catalogData.endDate
+      id,
+      catalogData.name,
+      catalogData.startDate,
+      catalogData.endDate
     ).finally(() => {
       setCatalogToUpdate(null);
     });
@@ -213,8 +220,16 @@ const CatalogDetails = ({ selectedCatalog }) => {
     const currentControl = await getCurrentControlState(control.id);
     const mashupIdChanged = currentControl.mashup_id !== control.mashup_id;
 
-    const response = await updateControlInDb(control.id, control.name, control.description, control.period, 
-      control.startDate, control.endDate, control.mashup_id, control.catalog_id);
+    const response = await updateControlInDb(
+      control.id,
+      control.name,
+      control.description,
+      control.period,
+      control.startDate,
+      control.endDate,
+      control.mashup_id,
+      control.catalog_id
+    );
 
     if (!response) {
       throw new Error(`Error al actualizar el control con ID ${control.id}`);
@@ -229,7 +244,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
     }
   };
 
-  /** Returns the current database status of a control, to know if the 
+  /** Returns the current database status of a control, to know if the
    * mashup has been changed */
   const getCurrentControlState = async (controlId) => {
     const response = await getControlByIdFromDB(controlId);
@@ -261,7 +276,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
     return response.ok;
   };
 
-  /** Creates all input_controls of a new control that was created when 
+  /** Creates all input_controls of a new control that was created when
    * the catalog was updated */
   const createInputControlsForControl = async (controlId) => {
     for (const input of inputs.inputs[controlId]) {
@@ -282,7 +297,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
     return inputControlResponse;
   };
 
-  /** Updates all input_controls of a control that has been updated 
+  /** Updates all input_controls of a control that has been updated
    *  when the catalog was updated */
   const updateInputControlsForControl = async (controlId) => {
     const inputControls = await getInputControlsByControlIdFromDB(controlId);
@@ -304,7 +319,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
     await updateControlInputInDb(id, value);
   };
 
-  /** Deletes all input_controls of a control that was deleted when 
+  /** Deletes all input_controls of a control that was deleted when
    * the catalog was updated */
   const deleteInputControlsForControl = async (controlId) => {
     const inputControls = await getInputControlsByControlIdFromDB(controlId);
@@ -348,7 +363,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
 
       await deleteAgreement();
       await postAgreement(tpaData);
-      await createPoints(contractData)
+      await createPoints(contractData);
 
       window.open(
         "http://localhost:5600/dashboard/script/dashboardLoader.js?dashboardURL=http:%2F%2Flocalhost:5300%2Fapi%2Fv4%2Fdashboards%2Ftpa-example-project%2Fmain&orgId=1",
@@ -359,76 +374,119 @@ const CatalogDetails = ({ selectedCatalog }) => {
     }
   };
 
-// ---------------------------------------------------- JSX ---------------------------------------------------- //
-return (
+  // ---------------------------------------------------- JSX ---------------------------------------------------- //
+  return (
     <div className="detail-panel">
-      <Card style={{ backgroundColor: "#bf0a2e", color: "#ffff" }}>
+      <Card className="shadow">
+        <Card.Header style={{ backgroundColor: "#bf0a2e", color: "#ffffff" }}>
+          <h2 className="mb-0">Catalog Details</h2>
+        </Card.Header>
         <form onSubmit={handleSubmit}>
           <Card.Body>
             {/* Basic catalog information */}
-            <Row>
-              <Form.Group className="mb-3" controlId="catalogName">
-                <Form.Label>Nombre del Catálogo:</Form.Label>
+            <Row className="mb-4">
+              <Form.Group controlId="catalogName">
+                <Form.Label className="fw-bold">Catalog name:</Form.Label>
                 <Form.Control
                   maxLength={100}
                   onChange={handleNameChange}
                   required
                   type="text"
                   value={specificCatalog.name}
+                  className="form-control-lg"
                 />
               </Form.Group>
             </Row>
-            <Row>
+            <Row className="mb-4">
               <Col>
-                <Form.Group className="mb-3" controlId="catalogStartDate">
-                  <Form.Label>Fecha de inicio:</Form.Label>
+                <Form.Group controlId="catalogStartDate">
+                  <Form.Label className="fw-bold">Start date:</Form.Label>
                   <Form.Control
                     type="date"
                     value={specificCatalog.startDate || ""}
                     onChange={handleStartDateChange}
+                    className="form-control-lg"
                   />
                 </Form.Group>
               </Col>
               <Col>
-                <Form.Group className="mb-3" controlId="catalogEndDate">
-                  <Form.Label>Fecha de fin:</Form.Label>
+                <Form.Group controlId="catalogEndDate">
+                  <Form.Label className="fw-bold">End date:</Form.Label>
                   <Form.Control
                     type="date"
                     value={specificCatalog.endDate || ""}
                     onChange={handleEndDateChange}
+                    className="form-control-lg"
                   />
                 </Form.Group>
               </Col>
             </Row>
 
             <ControlForm handleRemoveControl={handleRemoveControl} />
+
             {/* Action buttons */}
-            <Row className="mt-3 mb-3 d-flex justify-content-center">
+            <Row className="mt-5">
+              <Col xs={12} md={controls.length === 0 ? 3 : 4}>
+                <Button
+                  onClick={handleCalculateClick}
+                  variant="primary"
+                  size="lg"
+                  className={
+                    "d-flex align-items-center justify-content-center w-100 mb-2 mb-md-0"
+                  }
+                >
+                  <i className="bi bi-calculator me-2"></i>
+                  Calculate
+                </Button>
+              </Col>
               {controls.length === 0 && (
-                <Col xs="auto">
-                  <Button onClick={addControl} variant="primary">
-                    Agregar control
+                <Col xs={12} md={3} className="mb-2 mb-md-0">
+                  <Button
+                    onClick={addControl}
+                    variant="success"
+                    size="lg"
+                    className={
+                      "d-flex align-items-center justify-content-center w-100 mb-2 mb-md-0"
+                    }
+                  >
+                    <i className="bi bi-plus-circle me-2"></i>
+                    Add control
                   </Button>
                 </Col>
               )}
-              <Col xs="auto">
-                <div className="d-flex">
-                  <Button
-                    className="btn-primary"
-                    onClick={handleCalculateClick}
-                  >
-                    Calcular
-                  </Button>
-                  <Button type="submit" className="ms-3 btn btn-success">
-                    Actualizar
-                  </Button>
-                  <Button
-                    className="ms-3 btn btn-danger"
-                    onClick={handleDeleteClick}
-                  >
-                    Eliminar
-                  </Button>
-                </div>
+              <Col
+                xs={12}
+                md={controls.length === 0 ? 3 : 4}
+                className="mb-2 mb-md-0"
+              >
+                <Button
+                  type="submit"
+                  variant="warning"
+                  size="lg"
+                  className={
+                    "d-flex align-items-center justify-content-center w-100 mb-2 mb-md-0"
+                  }
+                >
+                  <i className="bi bi-check-circle me-2"></i>
+                  Update
+                </Button>
+              </Col>
+              <Col
+                xs={12}
+                md={controls.length === 0 ? 3 : 4}
+                className="mb-2 mb-md-0"
+              >
+                <Button
+                  variant="danger"
+                  size="lg"
+                  onClick={handleDeleteClick}
+                  className={
+                    "d-flex align-items-center justify-content-center w-100 mb-2 mb-md-0"
+                  }
+                >
+                  <i className="bi bi-trash me-2"></i>
+                  Delete
+                </Button>
               </Col>
             </Row>
           </Card.Body>
