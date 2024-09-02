@@ -114,7 +114,9 @@ const ControlForm = ({ handleRemoveControl }) => {
                   >
                     <h3 className="mb-0">Control Details</h3>
                   </Card.Header>
-                  <Card.Body className="bg-secondary">
+                  <Card.Body
+                    style={{ backgroundColor: "#fff", fontSize: "20px" }}
+                  >
                     <Form.Group
                       className="mb-3"
                       controlId={`controlName_${control.id}`}
@@ -252,10 +254,24 @@ const ControlForm = ({ handleRemoveControl }) => {
                     {inputs.inputs[control.id] &&
                       inputs.inputs[control.id].length > 0 && (
                         <Card className="mb-3 border-0 shadow-sm">
-                          <Card.Header className="bg-info text-black">
-                            <h4 className="mb-0">Mashup Inputs</h4>
+                          <Card.Header
+                            className="text-black"
+                            style={{
+                              backgroundColor: "#bf0a2e",
+                              color: "#ffffff",
+                            }}
+                          >
+                            <h4
+                              className="mb-0"
+                              style={{
+                                backgroundColor: "#bf0a2e",
+                                color: "#ffffff",
+                              }}
+                            >
+                              Mashup Inputs
+                            </h4>
                           </Card.Header>
-                          <Card.Body>
+                          <Card.Body style={{ backgroundColor: "#fff" }}>
                             {inputs.inputs[control.id]?.map((input, index) => (
                               <Form.Group
                                 className="mb-3"

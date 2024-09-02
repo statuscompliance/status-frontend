@@ -128,7 +128,7 @@ function NewCatalog() {
             >
               <h2 className="text-center mb-0">New Catalog</h2>
             </Card.Header>
-            <Card.Body className="bg-light">
+            <Card.Body className="bg-light" style={{ fontSize: "20px" }}>
               {/* Form for creating a new catalog */}
               <Form onSubmit={handleSubmit}>
                 <Row className="mb-4">
