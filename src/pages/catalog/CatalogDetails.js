@@ -77,6 +77,14 @@ const CatalogDetails = ({ selectedCatalog }) => {
     }));
   };
 
+  const formattedStartDate =
+    specificCatalog.startDate &&
+    new Date(specificCatalog.startDate).toISOString().split("T")[0];
+
+  const formattedEndDate =
+    specificCatalog.endDate &&
+    new Date(specificCatalog.endDate).toISOString().split("T")[0];
+
   // Change the selected catalog and mashup
   useEffect(() => {
     setSpecificCatalog(selectedCatalog);
@@ -403,7 +411,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
                   <Form.Label className="fw-bold">Start date:</Form.Label>
                   <Form.Control
                     type="date"
-                    value={specificCatalog.startDate || ""}
+                    value={formattedStartDate || ""}
                     onChange={handleStartDateChange}
                     className="form-control-lg"
                   />
@@ -414,7 +422,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
                   <Form.Label className="fw-bold">End date:</Form.Label>
                   <Form.Control
                     type="date"
-                    value={specificCatalog.endDate || ""}
+                    value={formattedEndDate || ""}
                     onChange={handleEndDateChange}
                     className="form-control-lg"
                   />
