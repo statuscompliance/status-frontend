@@ -105,226 +105,262 @@ const ControlForm = ({ handleRemoveControl }) => {
           prevIcon={<ChevronLeft size={30} />}
           nextIcon={<ChevronRight size={30} />}
         >
-          {controls.map((control, index) => (
-            <Carousel.Item key={index}>
-              <div className="col-12">
-                <Card className="shadow-sm border-0">
-                  <Card.Header
-                    style={{ backgroundColor: "#bf0a2e", color: "#ffffff" }}
-                  >
-                    <h3 className="mb-0">Control Details</h3>
-                  </Card.Header>
-                  <Card.Body className="bg-secondary">
-                    <Form.Group
-                      className="mb-3"
-                      controlId={`controlName_${control.id}`}
+          {controls.map((control, index) => {
+            const formattedStartDate =
+              control.startDate &&
+              new Date(control.startDate).toISOString().split("T")[0];
+
+            const formattedEndDate =
+              control.endDate &&
+              new Date(control.endDate).toISOString().split("T")[0];
+
+            return (
+              <Carousel.Item key={index}>
+                <div className="col-12">
+                  <Card className="shadow-sm border-0">
+                    <Card.Header
+                      style={{ backgroundColor: "#bf0a2e", color: "#ffffff" }}
                     >
-                      <Form.Label className="fw-bold">Control name:</Form.Label>
-                      <Form.Control
-                        maxLength={100}
-                        onChange={(e) =>
-                          handleControlChange(
-                            control.id,
-                            "name",
-                            e.target.value
-                          )
-                        }
-                        required
-                        type="text"
-                        value={control.name}
-                        className="form-control-lg"
-                      />
-                    </Form.Group>
-                    <Form.Group
-                      className="mb-3"
-                      controlId={`controlDescription_${control.id}`}
+                      <h3 className="mb-0">Control Details</h3>
+                    </Card.Header>
+                    <Card.Body
+                      style={{ backgroundColor: "#fff", fontSize: "20px" }}
                     >
-                      <Form.Label className="fw-bold">Description:</Form.Label>
-                      <Form.Control
-                        as="textarea"
-                        maxLength={300}
-                        onChange={(e) =>
-                          handleControlChange(
-                            control.id,
-                            "description",
-                            e.target.value
-                          )
-                        }
-                        required
-                        value={control.description}
-                        className="form-control-lg"
-                        rows={3}
-                      />
-                    </Form.Group>
-                    <Row className="mb-3">
-                      <Col>
-                        <Form.Group
-                          controlId={`controlStartDate_${control.id}`}
-                        >
-                          <Form.Label className="fw-bold">
-                            Start date:
-                          </Form.Label>
-                          <Form.Control
-                            type="date"
-                            value={control.startDate}
-                            onChange={(e) =>
-                              handleControlChange(
-                                control.id,
-                                "startDate",
-                                e.target.value
-                              )
-                            }
-                            className="form-control-lg"
-                          />
-                        </Form.Group>
-                      </Col>
-                      <Col>
-                        <Form.Group controlId={`controlEndDate_${control.id}`}>
-                          <Form.Label className="fw-bold">End date:</Form.Label>
-                          <Form.Control
-                            type="date"
-                            value={control.endDate}
-                            onChange={(e) =>
-                              handleControlChange(
-                                control.id,
-                                "endDate",
-                                e.target.value
-                              )
-                            }
-                            className="form-control-lg"
-                          />
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                    <Row className="mb-3">
-                      <Col>
-                        <Form.Group controlId={`controlPeriod_${control.id}`}>
-                          <Form.Label className="fw-bold">
-                            Periodicity:
-                          </Form.Label>
-                          <Form.Select
-                            value={control.period}
-                            onChange={(e) =>
-                              handleControlChange(
-                                control.id,
-                                "period",
-                                e.target.value
-                              )
-                            }
-                            required
-                            className="form-control-lg"
+                      <Form.Group
+                        className="mb-3"
+                        controlId={`controlName_${control.id}`}
+                      >
+                        <Form.Label className="fw-bold">
+                          Control name:
+                        </Form.Label>
+                        <Form.Control
+                          maxLength={100}
+                          onChange={(e) =>
+                            handleControlChange(
+                              control.id,
+                              "name",
+                              e.target.value
+                            )
+                          }
+                          required
+                          type="text"
+                          value={control.name}
+                          className="form-control-lg"
+                        />
+                      </Form.Group>
+                      <Form.Group
+                        className="mb-3"
+                        controlId={`controlDescription_${control.id}`}
+                      >
+                        <Form.Label className="fw-bold">
+                          Description:
+                        </Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          maxLength={300}
+                          onChange={(e) =>
+                            handleControlChange(
+                              control.id,
+                              "description",
+                              e.target.value
+                            )
+                          }
+                          required
+                          value={control.description}
+                          className="form-control-lg"
+                          rows={3}
+                        />
+                      </Form.Group>
+                      <Row className="mb-3">
+                        <Col>
+                          <Form.Group
+                            controlId={`controlStartDate_${control.id}`}
                           >
-                            <option value="">Select...</option>
-                            {Object.entries(Period).map(([key, value]) => (
-                              <option key={key} value={key}>
-                                {value}
-                              </option>
-                            ))}
-                          </Form.Select>
-                        </Form.Group>
-                      </Col>
-                      <Col>
-                        <Form.Group controlId={`controlMashup_${control.id}`}>
-                          <Form.Label className="fw-bold">Check:</Form.Label>
-                          <Form.Select
-                            value={control.mashup_id}
-                            onChange={(e) =>
-                              handleControlChange(
-                                control.id,
-                                "mashup_id",
-                                e.target.value
-                              )
-                            }
-                            required
-                            className="form-control-lg"
+                            <Form.Label className="fw-bold">
+                              Start date:
+                            </Form.Label>
+                            <Form.Control
+                              type="date"
+                              value={formattedStartDate}
+                              onChange={(e) =>
+                                handleControlChange(
+                                  control.id,
+                                  "startDate",
+                                  e.target.value
+                                )
+                              }
+                              className="form-control-lg"
+                            />
+                          </Form.Group>
+                        </Col>
+                        <Col>
+                          <Form.Group
+                            controlId={`controlEndDate_${control.id}`}
                           >
-                            <option value="">Select...</option>
-                            {flows.map((mashup, index) => (
-                              <option key={index} value={mashup.id}>
-                                {mashup.url.match(/\/api\/(.+)/)[1]}
-                              </option>
-                            ))}
-                          </Form.Select>
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                    {/* Render the mashup inputs */}
-                    {inputs.inputs[control.id] &&
-                      inputs.inputs[control.id].length > 0 && (
-                        <Card className="mb-3 border-0 shadow-sm">
-                          <Card.Header className="bg-info text-black">
-                            <h4 className="mb-0">Mashup Inputs</h4>
-                          </Card.Header>
-                          <Card.Body>
-                            {inputs.inputs[control.id]?.map((input, index) => (
-                              <Form.Group
-                                className="mb-3"
-                                key={`${input.id}+${index}`}
+                            <Form.Label className="fw-bold">
+                              End date:
+                            </Form.Label>
+                            <Form.Control
+                              type="date"
+                              value={formattedEndDate}
+                              onChange={(e) =>
+                                handleControlChange(
+                                  control.id,
+                                  "endDate",
+                                  e.target.value
+                                )
+                              }
+                              className="form-control-lg"
+                            />
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                      <Row className="mb-3">
+                        <Col>
+                          <Form.Group controlId={`controlPeriod_${control.id}`}>
+                            <Form.Label className="fw-bold">
+                              Periodicity:
+                            </Form.Label>
+                            <Form.Select
+                              value={control.period}
+                              onChange={(e) =>
+                                handleControlChange(
+                                  control.id,
+                                  "period",
+                                  e.target.value
+                                )
+                              }
+                              required
+                              className="form-control-lg"
+                            >
+                              <option value="">Select...</option>
+                              {Object.entries(Period).map(([key, value]) => (
+                                <option key={key} value={key}>
+                                  {value}
+                                </option>
+                              ))}
+                            </Form.Select>
+                          </Form.Group>
+                        </Col>
+                        <Col>
+                          <Form.Group controlId={`controlMashup_${control.id}`}>
+                            <Form.Label className="fw-bold">Check:</Form.Label>
+                            <Form.Select
+                              value={control.mashup_id}
+                              onChange={(e) =>
+                                handleControlChange(
+                                  control.id,
+                                  "mashup_id",
+                                  e.target.value
+                                )
+                              }
+                              required
+                              className="form-control-lg"
+                            >
+                              <option value="">Select...</option>
+                              {flows.map((mashup, index) => (
+                                <option key={index} value={mashup.id}>
+                                  {mashup.url.match(/\/api\/(.+)/)[1]}
+                                </option>
+                              ))}
+                            </Form.Select>
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                      {/* Render the mashup inputs */}
+                      {inputs.inputs[control.id] &&
+                        inputs.inputs[control.id].length > 0 && (
+                          <Card className="mb-3 border-0 shadow-sm">
+                            <Card.Header
+                              className="text-black"
+                              style={{
+                                backgroundColor: "#bf0a2e",
+                                color: "#ffffff",
+                              }}
+                            >
+                              <h4
+                                className="mb-0"
+                                style={{
+                                  backgroundColor: "#bf0a2e",
+                                  color: "#ffffff",
+                                }}
                               >
-                                <Form.Label className="fw-bold">
-                                  {input.name}:
-                                </Form.Label>
-                                {input.type === "string" ? (
-                                  <Form.Control
-                                    type="text"
-                                    value={input.value || ""}
-                                    onChange={(e) =>
-                                      handleInputChange(
-                                        control.id,
-                                        input.id,
-                                        e.target.value
-                                      )
-                                    }
-                                    required
-                                    className="form-control-lg"
-                                  />
-                                ) : (
-                                  <Form.Control
-                                    type="number"
-                                    value={parseInt(input.value, 10) || ""}
-                                    onChange={(e) =>
-                                      handleInputChange(
-                                        control.id,
-                                        input.id,
-                                        parseInt(e.target.value, 10)
-                                      )
-                                    }
-                                    required
-                                    className="form-control-lg"
-                                  />
-                                )}
-                              </Form.Group>
-                            ))}
-                          </Card.Body>
-                        </Card>
-                      )}
-                    <Row className="justify-content-between mt-4">
-                      <Col xs="auto">
-                        <Button
-                          onClick={addControl}
-                          variant="success"
-                          size="lg"
-                          className="ms-2"
-                        >
-                          Add control
-                        </Button>
-                      </Col>
-                      <Col xs="auto">
-                        <Button
-                          onClick={() => handleRemoveControl(control.id)}
-                          variant="danger"
-                          size="lg"
-                          className="ms-2"
-                        >
-                          Delete control
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Card>
-              </div>
-            </Carousel.Item>
-          ))}
+                                Mashup Inputs
+                              </h4>
+                            </Card.Header>
+                            <Card.Body style={{ backgroundColor: "#fff" }}>
+                              {inputs.inputs[control.id]?.map(
+                                (input, index) => (
+                                  <Form.Group
+                                    className="mb-3"
+                                    key={`${input.id}+${index}`}
+                                  >
+                                    <Form.Label className="fw-bold">
+                                      {input.name}:
+                                    </Form.Label>
+                                    {input.type === "string" ? (
+                                      <Form.Control
+                                        type="text"
+                                        value={input.value || ""}
+                                        onChange={(e) =>
+                                          handleInputChange(
+                                            control.id,
+                                            input.id,
+                                            e.target.value
+                                          )
+                                        }
+                                        required
+                                        className="form-control-lg"
+                                      />
+                                    ) : (
+                                      <Form.Control
+                                        type="number"
+                                        value={parseInt(input.value, 10) || ""}
+                                        onChange={(e) =>
+                                          handleInputChange(
+                                            control.id,
+                                            input.id,
+                                            parseInt(e.target.value, 10)
+                                          )
+                                        }
+                                        required
+                                        className="form-control-lg"
+                                      />
+                                    )}
+                                  </Form.Group>
+                                )
+                              )}
+                            </Card.Body>
+                          </Card>
+                        )}
+                      <Row className="justify-content-between mt-4">
+                        <Col xs="auto">
+                          <Button
+                            onClick={addControl}
+                            variant="success"
+                            size="lg"
+                            className="ms-2"
+                          >
+                            Add control
+                          </Button>
+                        </Col>
+                        <Col xs="auto">
+                          <Button
+                            onClick={() => handleRemoveControl(control.id)}
+                            variant="danger"
+                            size="lg"
+                            className="ms-2"
+                          >
+                            Delete control
+                          </Button>
+                        </Col>
+                      </Row>
+                    </Card.Body>
+                  </Card>
+                </div>
+              </Carousel.Item>
+            );
+          })}
         </Carousel>
       )}
     </>

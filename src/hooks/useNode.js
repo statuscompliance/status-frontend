@@ -90,7 +90,7 @@ export const useNode = () => {
         .then((response) => {
           const now = new Date();
           const oneWeekLater = new Date(
-            now.getTime() + response.data.expires_in
+            now.getTime() + response.data.expires_in * 1000
           );
           const accessExpires = oneWeekLater.toUTCString();
           document.cookie = `nodeRedAccessToken=${response.data.access_token}; expires=${accessExpires}`;
@@ -146,7 +146,7 @@ export const useNode = () => {
     } catch (error) {
       nodeRed = false;
     }
-  
+
     if (
       nodeRed &&
       document.cookie
@@ -158,18 +158,18 @@ export const useNode = () => {
         .find((row) => row.startsWith("nodeRedAccessToken="))
         .split("nodeRedAccessToken=")[1]
         .trim();
-  
+
       try {
         const response = await statusApi.get("http://localhost:1880/flows", {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         });
-  
+
         const apiMashups = response.data.filter(
           (obj) => obj.url && obj.url.includes("/api")
         );
-  
+
         const parsedMashups = parseMashups(apiMashups);
         return parsedMashups;
       } catch (error) {
@@ -186,7 +186,7 @@ export const useNode = () => {
     } catch (error) {
       nodeRed = false;
     }
-  
+
     if (
       nodeRed &&
       document.cookie
@@ -198,14 +198,14 @@ export const useNode = () => {
         .find((row) => row.startsWith("nodeRedAccessToken="))
         .split("nodeRedAccessToken=")[1]
         .trim();
-  
+
       try {
         const response = await statusApi.get("http://localhost:1880/flows", {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         });
-        
+
         return response;
       } catch (error) {
         console.error(error);
@@ -217,10 +217,10 @@ export const useNode = () => {
     const parameters = [];
     const flows = await getAllFlows();
     let id = 1;
-  
+
     const traverseComponents = (componentId) => {
       const component = flows.data.find((comp) => comp.id === componentId);
-  
+
       if (component && component.params) {
         Object.keys(component.params).forEach((param, index) => {
           parameters.push({
@@ -230,7 +230,7 @@ export const useNode = () => {
           });
         });
       }
-  
+
       if (component && component.wires && component.wires.length > 0) {
         component.wires.forEach((wireGroup, wireIndex) => {
           wireGroup.forEach((nextComponentId) => {
@@ -239,16 +239,16 @@ export const useNode = () => {
         });
       }
     };
-  
+
     if (mashup && mashup.id) {
       traverseComponents(mashup.id);
     }
-  
+
     return parameters;
-  };  
-  
+  };
+
   const getMashupById = (flows, id) => {
-    return flows.find(flow => flow.id === id);
+    return flows.find((flow) => flow.id === id);
   };
 
   function parseMashups(mashups) {
