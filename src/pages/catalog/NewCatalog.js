@@ -16,6 +16,7 @@ import { useNode } from "../../hooks/useNode";
 
 function NewCatalog() {
   const {
+    getCatalogsFromTheDatabase,
     createCatalogInDB,
     catalogName,
     catalogStartDate,
@@ -84,13 +85,12 @@ function NewCatalog() {
     e.preventDefault();
 
     try {
-      const catalogResponse = await createCatalogInDB(
+      const catalogData = await createCatalogInDB(
         catalogName,
         catalogStartDate,
         catalogEndDate
       );
 
-      const catalogData = catalogResponse;
       const catalogId = catalogData.id;
 
       const controlPromises = controls.map((control) =>
@@ -107,6 +107,7 @@ function NewCatalog() {
         createTpaInDB
       );
 
+      await getCatalogsFromTheDatabase();
       navigate("/catalogs");
     } catch (error) {
       console.error("Error al realizar la solicitud:", error);

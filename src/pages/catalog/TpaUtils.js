@@ -124,7 +124,7 @@ const addGuaranteeToTPA = async (
 
 const saveTpa = async (tpaContent, catalogId, createTpaInDB) => {
   try {
-    const response = createTpaInDB(tpaContent, catalogId)
+    const response = await createTpaInDB(tpaContent, catalogId)
 
     if (response) {
       console.log("TPA guardado en el servidor");
@@ -138,7 +138,7 @@ const saveTpa = async (tpaContent, catalogId, createTpaInDB) => {
 
 const deleteTpaByCatalogId = async (catalogId, deleteTpaByIdFromTheDatabase) => {
   try {
-    const response = deleteTpaByIdFromTheDatabase(catalogId);
+    const response = await deleteTpaByIdFromTheDatabase(catalogId);
 
     if (response) {
       console.log("TPA eliminado del servidor");

@@ -42,6 +42,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
     createControlInputInDB,
   } = useControls();
   const {
+    getCatalogsFromTheDatabase,
     getCatalogControlsInDB,
     updateCatalogInDB,
     deleteCatalogByIdFromTheDatabase,
@@ -160,10 +161,10 @@ const CatalogDetails = ({ selectedCatalog }) => {
 
       await deleteCatalogByIdFromTheDatabase(catalogId);
 
-      console.log("Catálogo eliminado exitosamente.");
       dispatch(clearControls());
       dispatch(clearInputs());
       window.location.reload();
+
     } catch (error) {
       console.error("Error al eliminar el catálogo y sus dependencias:", error);
     } finally {
@@ -196,7 +197,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
         createTpaInDB
       );
 
-      console.log("Catálogo y controles actualizados con éxito.");
+      await getCatalogsFromTheDatabase();
       window.location.reload();
     } catch (error) {
       console.error(error.message);
