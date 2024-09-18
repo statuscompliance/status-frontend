@@ -12,8 +12,6 @@ export const useControls = () => {
       {
         name: "",
         description: "",
-        startDate: "",
-        endDate: "",
         period: "",
         mashup_id: "",
         catalog_id: "",
@@ -40,8 +38,6 @@ export const useControls = () => {
   const createControlInDB = async (
     name,
     description,
-    startDate,
-    endDate,
     period,
     mashupId,
     catalogId
@@ -49,8 +45,6 @@ export const useControls = () => {
     const resp = await statusApi.post("http://localhost:3001/api/controls", {
       name: name,
       description: description,
-      startDate: startDate,
-      endDate: endDate,
       period: period,
       mashup_id: mashupId,
       catalog_id: catalogId,
@@ -64,15 +58,13 @@ export const useControls = () => {
     setControls(updatedControls);
   };
 
-  const updateControlInDb = async (id, name, description, period, startDate, endDate, mashup_id, catalog_id) => {
+  const updateControlInDb = async (id, name, description, period, mashup_id, catalog_id) => {
     const resp = await statusApi.patch(
       `http://localhost:3001/api/controls/${id}`,
       {
         name: name,
         description: description,
         period: period,
-        startDate: startDate,
-        endDate: endDate,
         mashup_id: mashup_id,
         catalog_id: catalog_id,
       }

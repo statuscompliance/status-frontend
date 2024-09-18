@@ -106,14 +106,6 @@ const ControlForm = ({ handleRemoveControl }) => {
           nextIcon={<ChevronRight size={30} />}
         >
           {controls.map((control, index) => {
-            const formattedStartDate =
-              control.startDate &&
-              new Date(control.startDate).toISOString().split("T")[0];
-
-            const formattedEndDate =
-              control.endDate &&
-              new Date(control.endDate).toISOString().split("T")[0];
-
             return (
               <Carousel.Item key={index}>
                 <div className="col-12">
@@ -171,50 +163,6 @@ const ControlForm = ({ handleRemoveControl }) => {
                           rows={3}
                         />
                       </Form.Group>
-                      <Row className="mb-3">
-                        <Col>
-                          <Form.Group
-                            controlId={`controlStartDate_${control.id}`}
-                          >
-                            <Form.Label className="fw-bold">
-                              Start date:
-                            </Form.Label>
-                            <Form.Control
-                              type="date"
-                              value={formattedStartDate}
-                              onChange={(e) =>
-                                handleControlChange(
-                                  control.id,
-                                  "startDate",
-                                  e.target.value
-                                )
-                              }
-                              className="form-control-lg"
-                            />
-                          </Form.Group>
-                        </Col>
-                        <Col>
-                          <Form.Group
-                            controlId={`controlEndDate_${control.id}`}
-                          >
-                            <Form.Label className="fw-bold">
-                              End date:
-                            </Form.Label>
-                            <Form.Control
-                              type="date"
-                              value={formattedEndDate}
-                              onChange={(e) =>
-                                handleControlChange(
-                                  control.id,
-                                  "endDate",
-                                  e.target.value
-                                )
-                              }
-                              className="form-control-lg"
-                            />
-                          </Form.Group>
-                        </Col>
-                      </Row>
                       <Row className="mb-3">
                         <Col>
                           <Form.Group controlId={`controlPeriod_${control.id}`}>

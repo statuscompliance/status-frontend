@@ -6,7 +6,8 @@
     "context": {
         "infrastructure": {},
         "validity": {
-            "initial": "2017-10-15",
+            "initial": "",
+            "end": "",
             "timeZone": "America/Los_Angeles"
         },
         "definitions": {

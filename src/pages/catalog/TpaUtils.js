@@ -4,8 +4,13 @@ const toUpperSnakeCase = (name) => {
   return name.toUpperCase().replace(/\s+/g, "_");
 };
 
-const generateTPA = async (controls, catalogId, getFlows, getMashupById, inputs, createTpaInDB) => {
+const generateTPA = async (controls, catalogId, catalogData, getFlows, getMashupById, inputs, createTpaInDB) => {
   const tpa = JSON.parse(JSON.stringify(tpaTemplate));
+
+  if (catalogData.startDate && catalogData.endDate) {
+    tpa.context.validity.initial = catalogData.startDate;
+    tpa.context.validity.end = catalogData.endDate;
+  }
 
   for (const control of controls) {
     const countingMetricName = "NUMBER_OF_ELEMENTS_FOR_" + toUpperSnakeCase(control.name);
@@ -113,9 +118,7 @@ const addGuaranteeToTPA = async (
         },
         window: {
           type: "static",
-          period: control.period.toLowerCase(),
-          initial: control.startDate,
-          end: control.endDate,
+          period: control.period.toLowerCase()
         },
       },
     ],

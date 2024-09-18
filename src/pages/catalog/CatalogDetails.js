@@ -191,6 +191,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
       await generateTPA(
         controls,
         catalogId,
+        catalogData,
         getFlows,
         getMashupById,
         inputs,
@@ -234,8 +235,6 @@ const CatalogDetails = ({ selectedCatalog }) => {
       control.name,
       control.description,
       control.period,
-      control.startDate,
-      control.endDate,
       control.mashup_id,
       control.catalog_id
     );
@@ -268,8 +267,6 @@ const CatalogDetails = ({ selectedCatalog }) => {
     const response = await createControlInDB(
       control.name,
       control.description,
-      control.startDate,
-      control.endDate,
       control.period,
       control.mashup_id,
       catalogId
