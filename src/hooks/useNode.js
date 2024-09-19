@@ -421,6 +421,26 @@ export const useNode = () => {
     }
   };
 
+  const getFlowResponse = async (endpoint, parameters) => {
+    const accessToken = await getCookie();
+    if (accessToken !== "") {
+      try {
+        const response = await statusApi.get(
+          `http://localhost:1880/${endpoint}`,
+          parameters,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+        return response.data;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   return {
     isNodeRedDeployed,
     mashups,
@@ -435,6 +455,7 @@ export const useNode = () => {
     getFlow,
     getMashupParameters,
     addFlowInfo,
+    getFlowResponse,
     nodeRedCookie,
   };
 };

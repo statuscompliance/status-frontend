@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { statusApi } from "../api/statusApi";
+import { getCookie } from "./useCookie";
 
 export const useControls = () => {
   const [controls, setControls] = useState([]);
   const [inputs, setInputs] = useState([]);
+  const accessToken = getCookie("accessToken");
   const [lastItemRemoved, setLastItemRemoved] = useState(0);
 
   const addEmptyControl = () => {
@@ -25,14 +27,24 @@ export const useControls = () => {
 
   const getControlByIdFromDB = async (id) => {
     const resp = await statusApi.get(
-      `http://localhost:3001/api/controls/${id}`
+      `http://localhost:3001/api/controls/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
     );
     return resp.data;
   };
 
   const getInputControlsByControlIdFromDB = async (id) => {
     const resp = await statusApi.get(
-      `http://localhost:3001/api/controls/${id}/input_controls`
+      `http://localhost:3001/api/controls/${id}/input_controls`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
     );
     return resp.data;
   };
@@ -46,15 +58,23 @@ export const useControls = () => {
     mashupId,
     catalogId
   ) => {
-    const resp = await statusApi.post("http://localhost:3001/api/controls", {
-      name: name,
-      description: description,
-      startDate: startDate,
-      endDate: endDate,
-      period: period,
-      mashup_id: mashupId,
-      catalog_id: catalogId,
-    });
+    const resp = await statusApi.post(
+      "http://localhost:3001/api/controls",
+      {
+        name: name,
+        description: description,
+        startDate: startDate,
+        endDate: endDate,
+        period: period,
+        mashup_id: mashupId,
+        catalog_id: catalogId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
     return resp.data;
   };
 
@@ -64,7 +84,16 @@ export const useControls = () => {
     setControls(updatedControls);
   };
 
-  const updateControlInDb = async (id, name, description, period, startDate, endDate, mashup_id, catalog_id) => {
+  const updateControlInDb = async (
+    id,
+    name,
+    description,
+    period,
+    startDate,
+    endDate,
+    mashup_id,
+    catalog_id
+  ) => {
     const resp = await statusApi.patch(
       `http://localhost:3001/api/controls/${id}`,
       {
@@ -75,6 +104,11 @@ export const useControls = () => {
         endDate: endDate,
         mashup_id: mashup_id,
         catalog_id: catalog_id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       }
     );
     return resp.data;
@@ -96,6 +130,11 @@ export const useControls = () => {
         control_id: control_id,
         input_id: input_id,
         value: value,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       }
     );
     return resp.data;
@@ -106,6 +145,11 @@ export const useControls = () => {
       `http://localhost:3001/api/input_controls/${id}`,
       {
         value: value,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       }
     );
     return resp.data;
@@ -113,14 +157,24 @@ export const useControls = () => {
 
   const deleteControlByIdInDb = async (id) => {
     const resp = await statusApi.delete(
-      `http://localhost:3001/api/controls/${id}`
+      `http://localhost:3001/api/controls/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
     );
     return resp.data;
   };
 
   const deleteInputControlsByControlIdInDb = async (id) => {
     const resp = await statusApi.delete(
-      `http://localhost:3001/api/controls/${id}/input_controls`
+      `http://localhost:3001/api/controls/${id}/input_controls`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
     );
     return resp.data;
   };
