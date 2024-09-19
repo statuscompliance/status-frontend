@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "../../static/css/controlForm.css";
 import { Period } from "./Period";
 import { Form, Button, Card, Row, Col, Carousel } from "react-bootstrap";
 import { ChevronLeft, ChevronRight } from "react-bootstrap-icons";
