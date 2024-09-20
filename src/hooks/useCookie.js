@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 export function useCookie(cookieName) {
   const [cookieExists, setCookieExists] = useState(false);
@@ -10,11 +10,11 @@ export function useCookie(cookieName) {
 
   const checkCookie = (name) => {
     const cookieString = document.cookie;
-    const cookies = cookieString.split(';');
-    
+    const cookies = cookieString.split(";");
+
     for (const cookie of cookies) {
       const cookieTrimmed = cookie.trim();
-      if (cookieTrimmed.startsWith(name + '=')) {
+      if (cookieTrimmed.startsWith(name + "=")) {
         return true;
       }
     }
@@ -25,14 +25,18 @@ export function useCookie(cookieName) {
 }
 
 export function getCookie(name) {
-  const cookieString = document.cookie;
-  const cookies = cookieString.split(';');
-  
-  for (const cookie of cookies) {
-    const cookieTrimmed = cookie.trim();
-    if (cookieTrimmed.startsWith(name + '=')) {
-      return cookieTrimmed.split('=')[1];
+  try {
+    const cookieString = document.cookie;
+    const cookies = cookieString.split(";");
+
+    for (const cookie of cookies) {
+      const cookieTrimmed = cookie.trim();
+      if (cookieTrimmed.startsWith(name + "=")) {
+        return cookieTrimmed.split("=")[1];
+      }
     }
+    return "";
+  } catch (e) {
+    console.error("Error getting cookie:", e);
   }
-  return '';
 }
