@@ -27,9 +27,11 @@ export default function Editor() {
   }, [isNodeRedDeployed, nodeRedCookie]);
 
   const handleLogin = async () => {
-    await signIn(name, password);
     checkNodeRedDeployment();
     nodeRedCookie();
+    if (!nodeRedToken) {
+      await signIn(name, password);
+    }
     closeLoginModal();
   };
 
