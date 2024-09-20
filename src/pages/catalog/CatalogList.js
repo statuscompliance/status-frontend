@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Card } from "react-bootstrap";
+import { Button, Card, Spinner } from "react-bootstrap";
 import { useCatalogs } from "../../hooks/useCatalogs";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -9,7 +9,12 @@ import { clearInputs } from "../../features/inputs/inputSlice";
 function CatalogList({ onCatalogSelect }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { catalogs } = useCatalogs();
+  const { 
+    catalogs, 
+    loading,
+    error,
+    getCatalogsFromTheDatabase 
+  } = useCatalogs();
 
   const handleCatalogClick = (catalog) => {
     onCatalogSelect(catalog);
@@ -21,30 +26,52 @@ function CatalogList({ onCatalogSelect }) {
     navigate("/new_catalog");
   };
 
-  // JSX representing the component's UI
   return (
-    <div className="container" style={{ height: "100vh" }}>
+    <div className="container" style={{ height: "80vh" }}>
       <Card className="shadow-sm h-100 d-flex flex-column">
         <Card.Header style={{ backgroundColor: "#bf0a2e", color: "#ffffff" }}>
           <h2 className="text-center mb-0">Catalogs</h2>
         </Card.Header>
         <Card.Body className="d-flex flex-column overflow-hidden">
           <div className="flex-grow-1 overflow-auto mb-4">
-            <ul className="list-unstyled">
-              {/* Render each catalog item */}
-              {catalogs.map((catalog) => (
-                <li key={catalog.id} className="mb-2">
-                  <Button
-                    variant="outline-danger"
-                    className="w-100 text-left catalog-item"
-                    onClick={() => handleCatalogClick(catalog)}
-                    style={{ borderColor: "#bf0a2e", color: "#bf0a2e" }}
-                  >
-                    {catalog.name}
-                  </Button>
-                </li>
-              ))}
-            </ul>
+            {loading ? (
+              <div className="d-flex justify-content-center align-items-center h-100">
+                <Spinner animation="border" role="status" variant="danger">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </div>
+            ) : catalogs.length === 0 ? (
+              <div className="text-center text-muted mt-3">
+                <p>No catalogs available.</p>
+              </div>
+            ) : (
+              <ul className="list-unstyled">
+                {catalogs.map((catalog) => (
+                  <li key={catalog.id} className="mb-2">
+                    <Button
+                      variant="outline-danger"
+                      className="w-100 text-left catalog-item"
+                      onClick={() => handleCatalogClick(catalog)}
+                      style={{ borderColor: "#bf0a2e", color: "#bf0a2e" }}
+                    >
+                      {catalog.name}
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {error && (
+              <div className="text-center text-danger mt-3">
+                <p>{error}</p>
+                <Button
+                  variant="outline-danger"
+                  onClick={() => getCatalogsFromTheDatabase()}
+                  style={{ borderColor: "#bf0a2e", color: "#bf0a2e" }}
+                >
+                  Retry
+                </Button>
+              </div>
+            )}
           </div>
           <Button
             style={{ backgroundColor: "#bf0a2e", borderColor: "#bf0a2e" }}

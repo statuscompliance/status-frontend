@@ -16,8 +16,6 @@ export const controlSlice = createSlice({
         name: "",
         description: "",
         period: "DAILY",
-        startDate: null,
-        endDate: null,
         mashup_id: null,
         catalog_id: null,
       };

@@ -42,6 +42,7 @@ const CatalogDetails = ({ selectedCatalog }) => {
     createControlInputInDB,
   } = useControls();
   const {
+    getCatalogsFromTheDatabase,
     getCatalogControlsInDB,
     updateCatalogInDB,
     deleteCatalogByIdFromTheDatabase,
@@ -160,10 +161,10 @@ const CatalogDetails = ({ selectedCatalog }) => {
 
       await deleteCatalogByIdFromTheDatabase(catalogId);
 
-      console.log("Catálogo eliminado exitosamente.");
       dispatch(clearControls());
       dispatch(clearInputs());
       window.location.reload();
+
     } catch (error) {
       console.error("Error al eliminar el catálogo y sus dependencias:", error);
     } finally {
@@ -190,13 +191,14 @@ const CatalogDetails = ({ selectedCatalog }) => {
       await generateTPA(
         controls,
         catalogId,
+        catalogData,
         getFlows,
         getMashupById,
         inputs,
         createTpaInDB
       );
 
-      console.log("Catálogo y controles actualizados con éxito.");
+      await getCatalogsFromTheDatabase();
       window.location.reload();
     } catch (error) {
       console.error(error.message);
@@ -233,8 +235,6 @@ const CatalogDetails = ({ selectedCatalog }) => {
       control.name,
       control.description,
       control.period,
-      control.startDate,
-      control.endDate,
       control.mashup_id,
       control.catalog_id
     );
@@ -267,8 +267,6 @@ const CatalogDetails = ({ selectedCatalog }) => {
     const response = await createControlInDB(
       control.name,
       control.description,
-      control.startDate,
-      control.endDate,
       control.period,
       control.mashup_id,
       catalogId

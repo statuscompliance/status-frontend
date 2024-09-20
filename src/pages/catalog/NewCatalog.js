@@ -16,6 +16,7 @@ import { useNode } from "../../hooks/useNode";
 
 function NewCatalog() {
   const {
+    getCatalogsFromTheDatabase,
     createCatalogInDB,
     catalogName,
     catalogStartDate,
@@ -52,8 +53,6 @@ function NewCatalog() {
     const response = await createControlInDB(
       control.name,
       control.description,
-      control.startDate,
-      control.endDate,
       control.period,
       control.mashup_id,
       catalogId
@@ -84,13 +83,12 @@ function NewCatalog() {
     e.preventDefault();
 
     try {
-      const catalogResponse = await createCatalogInDB(
+      const catalogData = await createCatalogInDB(
         catalogName,
         catalogStartDate,
         catalogEndDate
       );
 
-      const catalogData = catalogResponse;
       const catalogId = catalogData.id;
 
       const controlPromises = controls.map((control) =>
@@ -101,12 +99,14 @@ function NewCatalog() {
       await generateTPA(
         controls,
         catalogId,
+        catalogData,
         getFlows,
         getMashupById,
         inputs,
         createTpaInDB
       );
 
+      await getCatalogsFromTheDatabase();
       navigate("/catalogs");
     } catch (error) {
       console.error("Error al realizar la solicitud:", error);
