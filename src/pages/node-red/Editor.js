@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNode } from "../../hooks/useNode";
 import "../../static/css/iframe.css";
 import ai from "../../static/images/ai.svg";
-import { Modal } from "react-bootstrap";
+import NodeRedLogin from './NodeRedLogin';
 
 export default function Editor() {
   const {
@@ -13,8 +13,6 @@ export default function Editor() {
     nodeRedCookie,
   } = useNode();
   const [loginModal, setLoginModal] = useState(false);
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
 
   const closeLoginModal = () => {
     setLoginModal(false);
@@ -26,17 +24,11 @@ export default function Editor() {
     }
   }, [isNodeRedDeployed, nodeRedCookie]);
 
-  const handleLogin = async () => {
+  const handleLogin = async (name, password) => {
     await signIn(name, password);
     checkNodeRedDeployment();
     nodeRedCookie();
     closeLoginModal();
-  };
-
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      handleLogin();
-    }
   };
 
   return (
@@ -70,48 +62,11 @@ export default function Editor() {
         </div>
       )}
 
-      <div
-        className="modal-content"
-        style={isNodeRedDeployed ? {} : { display: "none" }}
-      >
-        <Modal onHide={closeLoginModal} show={loginModal}>
-          <Modal.Header closeButton>
-            <Modal.Title>Iniciar sesión en Node-RED</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <form>
-              <div className="form-group">
-                <label htmlFor="name">Nombre:</label>
-                <input
-                  type="text"
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="password">Contraseña:</label>
-                <br></br>
-                <input
-                  type="password"
-                  id="pswd"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                />
-              </div>
-            </form>
-          </Modal.Body>
-          <Modal.Footer>
-            <button className="decline" onClick={closeLoginModal}>
-              Cancelar
-            </button>
-            <button className="accept" onClick={() => handleLogin()}>
-              Iniciar sesión
-            </button>
-          </Modal.Footer>
-        </Modal>
-      </div>
+      <NodeRedLogin
+        show={loginModal}
+        onHide={closeLoginModal}
+        onLogin={handleLogin}
+      />
     </div>
   );
 }

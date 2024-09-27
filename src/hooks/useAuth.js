@@ -5,6 +5,7 @@ export const useAuth = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [authority, setAuthority] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     function getCookie(){
         if(document.cookie.split('; ').find(row => row.startsWith(`accessToken=`))) {
@@ -41,17 +42,15 @@ export const useAuth = () => {
 
             document.cookie = `accessToken=${response.data.accessToken}; expires=${accessExpires}`;
             document.cookie = `refreshToken=${response.data.refreshToken}; expires=${refreshExpires}`;
-            // await checkNodeRedDeployment();
-            // await signIn(username, password);
             window.location.href = window.location.origin;
         })
         .catch((error) => {
             if (error.response && error.response.status === 404) {
-                document.getElementById('error-message').innerText = 'El usuario introducido no está registrado en el sistema';
+                setErrorMessage('The user is not registered in the system');
             } else if (error.response && error.response.status === 401){
-                document.getElementById('error-message').innerText = 'La contraseña introducida no es correcta';
+                setErrorMessage('The password is not correct');
             } else {
-                document.getElementById('error-message').innerText = 'Error al iniciar sesión. Por favor, inténtelo de nuevo o contacte con el administrador del sistema';
+                setErrorMessage('Error logging in. Please try again or contact your system administrator.');
             }
         });
     };
@@ -91,7 +90,5 @@ export const useAuth = () => {
         }
     }
 
-    
-
-    return { username, password, handleUsernameChange, handlePasswordChange, handleSubmit, handleRefresh,getAuthority, authority };
+    return { username, password, handleUsernameChange, handlePasswordChange, handleSubmit, handleRefresh, getAuthority, authority, errorMessage, setErrorMessage };
 };
