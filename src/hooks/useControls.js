@@ -84,7 +84,7 @@ export const useControls = () => {
     setControls(updatedControls);
   };
 
-  const updateControlInDb = async (
+  const updateControlInDB = async (
     id,
     name,
     description,
@@ -194,7 +194,7 @@ export const useControls = () => {
     createControlInDB,
     updateControlInputInDb,
     updateControl,
-    updateControlInDb,
+    updateControlInDB,
     removeControl,
     deleteControlByIdInDb,
     deleteInputControlsByControlIdInDb,

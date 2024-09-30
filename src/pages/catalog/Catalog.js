@@ -1,136 +1,143 @@
-import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Alert } from "react-bootstrap";
-import CatalogList from "./CatalogList";
-import CatalogDetails from "./CatalogDetails";
+import React, { useState } from "react";
+import "../../static/css/catalog.css";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { InputText } from "primereact/inputtext";
+import { useNavigate } from "react-router-dom";
 import { useCatalogs } from "../../hooks/useCatalogs";
+import { useControls } from "../../hooks/useControls";
 import { useInputControls } from "../../hooks/useInputControls";
-import { useNode } from "../../hooks/useNode";
-import { useDispatch } from "react-redux";
-import {
-  setControls,
-  clearControls,
-} from "../../features/controls/controlSlice";
-import { setInputs, clearInputs } from "../../features/inputs/inputSlice";
+import info from "../../static/images/info.svg";
+import edit from "../../static/images/edit.svg";
+import deleteSvg from "../../static/images/delete.svg";
 
-function Catalog() {
-  const [selectedCatalog, setSelectedCatalog] = useState(null);
-  const { getCatalogControlsInDB } = useCatalogs();
-  const { getInputControlsByControlIdFromTheDB } = useInputControls();
-  const { nodeRedToken, isNodeRedDeployed, nodeRedCookie, getFlows, getMashupById, getMashupParameters } = useNode();
-  const [flows, setFlows] = useState([]);
+export default function Catalog() {
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [catalogToDelete, setCatalogToDelete] = useState(null);
+  const { catalogs, getCatalogControlsInDB, deleteCatalogByIdFromTheDatabase } = useCatalogs();
+  const { deleteControlByIdInDb } = useControls();
+  const { getInputControlsByControlIdFromTheDB, deleteInputControlsFromTheDB } = useInputControls();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (isNodeRedDeployed) {
-      nodeRedCookie();
-    }
-  }, [isNodeRedDeployed, nodeRedCookie]);
+  const onGlobalFilterChange = (e) => {
+    setGlobalFilter(e.target.value);
+  };
 
-  useEffect(() => {
-    const fetchFlows = async () => {
-      const fetchedFlows = await getFlows();
-      setFlows(fetchedFlows);
-    };
-    fetchFlows();
-  }, []);
+  const handleView = (rowData) => {
+    navigate(`/catalog/${rowData.id}/controls`);
+  };
 
-  const dispatch = useDispatch();
+  const handleCreate = () => {
+    navigate("/catalog/new");
+  };
+  
+  const handleEdit = (rowData) => {
+    navigate(`/catalog/${rowData.id}/edit`);
+  };
 
-  // Function to fetch controls for a selected catalog
-  const fetchSelectedControls = async (catalogId) => {
-    try {
-      dispatch(clearControls());
-      dispatch(clearInputs());
+  const handleDelete = async (rowData) => {
+    const confirmDelete = window.confirm(`Are you sure you want to delete catalog "${rowData.name}"?`);
 
-      const data = await getCatalogControlsInDB(catalogId);
+    if (confirmDelete) {
+      setCatalogToDelete(rowData.id);
 
-      if (data) {
-        dispatch(setControls(data));
+      try {
+        const controls = await getCatalogControlsInDB(rowData.id);
+        if (!controls) throw new Error("Error when obtaining catalog controls");
 
-        if (data.length === 0) {
-          return;
+        for (const control of controls) {
+          const inputControls = await getInputControlsByControlIdFromTheDB(control.id);
+          if (!inputControls) throw new Error(`Error getting input_controls from control ${control.id}`);
+
+          for (const inputControl of inputControls) {
+            await deleteInputControlsFromTheDB(inputControl.id);
+          }
+
+          await deleteControlByIdInDb(control.id);
         }
 
-        // Use Promise.all to fetch input controls for all catalog controls in parallel
-        const inputControlPromises = data.map((control, index) =>
-          getInputControlsByControlIdFromTheDB(control.id).then((response) =>
-            response
-              ? response
-              : Promise.reject("Error fetching input controls")
-          )
-        );
-        const inputControls = await Promise.all(inputControlPromises);
+        await deleteCatalogByIdFromTheDatabase(rowData.id);
 
-        inputControls.forEach(async (inputData, index) => {
-          const control = data[index];
-
-          const inputsWithValues = await Promise.all(
-            inputData.map(async (input) => {
-              const selectedMashup = getMashupById(flows, control.mashup_id);
-              const mashupParameters = await getMashupParameters(selectedMashup);
-              const parametersArray = Array.isArray(mashupParameters) ? mashupParameters : [];
-              const inputDetail = parametersArray.find(param => param.id === input.input_id);
-              return {
-                ...inputDetail,
-                value:
-                  inputDetail.type === "NUMBER"
-                    ? parseInt(input.value, 10)
-                    : input.value,
-              };
-            })
-          );
-          dispatch(
-            setInputs({ controlId: control.id, inputs: inputsWithValues })
-          );
-        });
-      } else {
-        console.error("Error fetching catalog controls");
+        console.log("Catalog successfully deleted.");
+        window.location.reload();
+      } catch (error) {
+        console.error("Error when deleting the catalog and its dependencies:", error);
+      } finally {
+        setCatalogToDelete(null);
       }
-    } catch (error) {
-      console.error("Error making request:", error);
     }
   };
 
-  // Fetch controls when selectedCatalog changes
-  useEffect(() => {
-    if (selectedCatalog) {
-      fetchSelectedControls(selectedCatalog.id);
-    }
-  }, [selectedCatalog, dispatch]);
+  const header = (
+    <div className="filter-header">
+      <span className="p-input-icon-left">
+        <i className="pi pi-search" />
+        <InputText
+          type="search"
+          onInput={onGlobalFilterChange}
+          placeholder="Search..."
+        />
+      </span>
+      <button className="create-button" onClick={handleCreate}>
+        +
+      </button>
+    </div>
+  );
 
-  // JSX representing the component's UI
+  const actionTemplate = (rowData) => {
+    return (
+      <div className="actions">
+        <button className="actionButton" onClick={() => handleView(rowData)}>
+          <img alt="info" className="actionImg" src={info} />
+        </button>
+        <button className="actionButton" onClick={() => handleEdit(rowData)}>
+          <img alt="edit" className="actionImg" src={edit} />
+        </button>
+        <button className="actionButton" onClick={() => handleDelete(rowData)}>
+          <img alt="delete" className="actionImg" src={deleteSvg} />
+        </button>
+      </div>
+    );
+  };
+
   return (
-    <Container fluid className="py-4">
-      {isNodeRedDeployed && nodeRedToken ? (
-        <Row>
-          {/* List of catalogs */}
-          <Col md={3} className="mb-4 mb-md-0">
-            <CatalogList
-              onCatalogSelect={(catalog) => {
-                setSelectedCatalog(catalog);
-              }}
-            />
-          </Col>
-          {/* Rendering catalog details if a catalog is selected */}
-          <Col md={9}>
-            {selectedCatalog ? (
-              <CatalogDetails selectedCatalog={selectedCatalog} />
-            ) : (
-              <Alert variant="info" className="text-center">
-                Please select a catalog from the list to view details.
-              </Alert>
-            )}
-          </Col>
-        </Row>
-      ) : (
-        <Alert variant="warning" className="text-center">
-          <Alert.Heading>Access Restricted</Alert.Heading>
-          <p>
-            To access this section you must be logged in and have Node-Red deployed.
-          </p>
-        </Alert>
-      )}
-    </Container>
+    <div className="body">
+      <div className="datatable-header">{header}</div>
+      <div className="catalog">
+        <DataTable
+          className="dataTable"
+          globalFilter={globalFilter}
+          paginator
+          rows={5}
+          rowsPerPageOptions={[5, 10, 25]}
+          value={catalogs}
+        >
+          <Column 
+            className="column"
+            field="name"
+            header="Name"
+            style={{ width: "30%" }}>
+          </Column>
+          <Column
+            className="column"
+            field="startDate"
+            header="Start Date"
+            style={{ width: "25%" }}>
+          </Column>
+          <Column
+            className="column"
+            field="endDate"
+            header="End Date"
+            style={{ width: "25%" }}>
+          </Column>
+          <Column
+            className="column"
+            body={actionTemplate}
+            header="Actions"
+            style={{ width: "20%" }}>
+          </Column>
+        </DataTable>
+      </div>
+    </div>
   );
 }
-
-export default Catalog;

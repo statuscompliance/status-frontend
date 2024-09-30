@@ -22,6 +22,15 @@ export const useCatalogs = () => {
     setCatalogs(resp.data);
   };
 
+  const getCatalogByIdFromTheDB = async (id) => {
+    const resp = await statusApi.get(`http://localhost:3001/api/catalogs/${id}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return resp.data;
+  };
+
   const createCatalogInDB = async (catalogName, startDate, endDate) => {
     const resp = await statusApi.post(
       "http://localhost:3001/api/catalogs",
@@ -104,12 +113,16 @@ export const useCatalogs = () => {
 
   return {
     catalogs,
+    getCatalogByIdFromTheDB,
     createCatalogInDB,
     updateCatalogInDB,
     updateCatalog,
     catalogName,
+    setCatalogName,
     catalogStartDate,
+    setCatalogStartDate,
     catalogEndDate,
+    setCatalogEndDate,
     handleNameChange,
     handleStartDateChange,
     handleEndDateChange,
