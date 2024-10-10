@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import "../../static/css/control.css";
 import { useParams } from "react-router-dom";
 import { DataTable } from "primereact/datatable";
@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { useCatalogs } from "../../hooks/useCatalogs";
 import { useControls } from "../../hooks/useControls";
 import { useInputControls } from "../../hooks/useInputControls";
+import { useGrafana } from "../../hooks/useGrafana";
+import info from "../../static/images/info.svg";
 import edit from "../../static/images/edit.svg";
 import deleteSvg from "../../static/images/delete.svg";
 
@@ -15,26 +17,41 @@ export default function Control() {
   const { catalogId } = useParams();
   const [controls, setControls] = useState([]);
   const [catalogDetails, setCatalogDetails] = useState(null);
+  const [grafanaUrl, setGrafanaUrl] = useState(null);
   const { getCatalogControlsInDB, getCatalogByIdFromTheDB } = useCatalogs();
   const { deleteControlByIdInDb } = useControls();
   const { getInputControlsByControlIdFromTheDB, deleteInputControlsFromTheDB } = useInputControls();
+  const { getGrafanaUrl } = useGrafana();
   const [globalFilter, setGlobalFilter] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = useCallback(async () => {
+    try {
       const catalog = await getCatalogByIdFromTheDB(catalogId);
       setCatalogDetails(catalog);
 
       const controlsData = await getCatalogControlsInDB(catalogId);
       setControls(controlsData);
-    };
 
+      if (catalog.dashboard_id) {
+        const url = await getGrafanaUrl(catalog.dashboard_id);
+        setGrafanaUrl(url);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }, [catalogId, getCatalogByIdFromTheDB, getCatalogControlsInDB, getGrafanaUrl]);
+
+  useEffect(() => {
     fetchData();
-  }, [catalogId, getCatalogByIdFromTheDB, getCatalogControlsInDB]);
+  }, [catalogId]);
 
   const onGlobalFilterChange = (e) => {
     setGlobalFilter(e.target.value);
+  };
+
+  const handleView = (rowData) => {
+    navigate(`/catalog/${catalogId}/controls/${rowData.id}/metrics`);
   };
 
   const handleCreate = () => {
@@ -86,6 +103,9 @@ export default function Control() {
   const actionTemplate = (rowData) => {
     return (
       <div className="actions">
+        <button className="actionButton" onClick={() => handleView(rowData)}>
+          <img alt="info" className="actionImg" src={info} />
+        </button>
         <button className="actionButton" onClick={() => handleEdit(rowData)}>
           <img alt="edit" className="actionImg" src={edit} />
         </button>
@@ -94,6 +114,14 @@ export default function Control() {
         </button>
       </div>
     );
+  };
+
+  const openGrafanaUrl = () => {
+    if (grafanaUrl) {
+      window.open(`http://localhost:3100${grafanaUrl}`);
+    } else {
+      console.error("Grafana URL not available");
+    }
   };
 
   return (
@@ -115,6 +143,16 @@ export default function Control() {
               <span className="info-value">{catalogDetails.endDate}</span>
             </div>
           </div>
+
+          {grafanaUrl ? (
+            <div className="grafana-url">
+              <button onClick={openGrafanaUrl} className="grafana-button">
+                Open Grafana Dashboard
+              </button>
+            </div>
+          ) : (
+            <div>Loading Grafana dashboard...</div>
+          )}
         </div>
       )}
       <div className="datatable-header">{header}</div>

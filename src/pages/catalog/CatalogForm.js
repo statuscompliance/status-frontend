@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Form, Card, Row, Col, Button } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCatalogs } from "../../hooks/useCatalogs";
-import { statusApi } from "../../api/statusApi";
 import { getCookie } from "../../hooks/useCookie";
 
 function CatalogForm() {

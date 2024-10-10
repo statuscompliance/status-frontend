@@ -10,6 +10,8 @@ import Catalog from "./pages/catalog/Catalog";
 import CatalogForm from "./pages/catalog/CatalogForm";
 import Control from "./pages/catalog/Control";
 import ControlForm from "./pages/catalog/ControlForm";
+import Metric from "./pages/metric/Metric";
+import MetricForm from "./pages/metric/MetricForm";
 import Mashup from "./pages/mashup/Mashup";
 import Profile from "./pages/profile/Profile";
 import Login from "./pages/auth/Login";
@@ -230,11 +232,14 @@ const App = () => {
             <Route exact element={<Home />} path="/" />
             <Route element={<Catalog />} path="/catalogs" />
             <Route path="/catalog/:catalogId/controls" element={<Control />} />
+            <Route path="/catalog/:catalogId/controls/:controlId/metrics" element={<Metric />} />
             <Route element={<Mashup />} path="/mashups" />
             <Route element={<CatalogForm />} path="/catalog/new" />
             <Route element={<CatalogForm />} path="/catalog/:catalogId/edit" />
             <Route element={<ControlForm />} path="/catalog/:catalogId/new_control" />
             <Route element={<ControlForm />} path="/catalog/:catalogId/edit_control/:controlId" />
+            <Route element={<MetricForm />} path="/catalog/:catalogId/control/:controlId/new_metric" />
+            <Route element={<MetricForm />} path="/catalog/:catalogId/control/:controlId/edit_metric/:metricId" />
             <Route element={<Profile />} path="/profile" />
             <Route element={<Login />} path="/login" />
             <Route element={<Editor />} path="/editor" />

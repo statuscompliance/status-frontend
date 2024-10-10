@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useCatalogs } from "../../hooks/useCatalogs";
 import { useControls } from "../../hooks/useControls";
 import { useInputControls } from "../../hooks/useInputControls";
+import { useGrafana } from "../../hooks/useGrafana";
 import info from "../../static/images/info.svg";
 import edit from "../../static/images/edit.svg";
 import deleteSvg from "../../static/images/delete.svg";
@@ -17,6 +18,7 @@ export default function Catalog() {
   const { catalogs, getCatalogControlsInDB, deleteCatalogByIdFromTheDatabase } = useCatalogs();
   const { deleteControlByIdInDb } = useControls();
   const { getInputControlsByControlIdFromTheDB, deleteInputControlsFromTheDB } = useInputControls();
+  const { deleteDashboardById } = useGrafana();
   const navigate = useNavigate();
 
   const onGlobalFilterChange = (e) => {
@@ -54,6 +56,10 @@ export default function Catalog() {
           }
 
           await deleteControlByIdInDb(control.id);
+        }
+
+        if (rowData.dashboard_id) {
+          await deleteDashboardById(rowData.dashboard_id);
         }
 
         await deleteCatalogByIdFromTheDatabase(rowData.id);

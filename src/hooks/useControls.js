@@ -14,9 +14,9 @@ export const useControls = () => {
       {
         name: "",
         description: "",
+        period: "",
         startDate: "",
         endDate: "",
-        period: "",
         mashup_id: "",
         catalog_id: "",
         inputs: [],
@@ -52,9 +52,9 @@ export const useControls = () => {
   const createControlInDB = async (
     name,
     description,
+    period,
     startDate,
     endDate,
-    period,
     mashupId,
     catalogId
   ) => {
@@ -63,9 +63,9 @@ export const useControls = () => {
       {
         name: name,
         description: description,
-        startDate: startDate,
-        endDate: endDate,
         period: period,
+        startDate: startDate || null,
+        endDate: endDate || null,
         mashup_id: mashupId,
         catalog_id: catalogId,
       },
@@ -100,8 +100,8 @@ export const useControls = () => {
         name: name,
         description: description,
         period: period,
-        startDate: startDate,
-        endDate: endDate,
+        startDate: startDate || null,
+        endDate: endDate || null,
         mashup_id: mashup_id,
         catalog_id: catalog_id,
       },

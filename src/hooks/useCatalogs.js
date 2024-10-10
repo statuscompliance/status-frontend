@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { statusApi } from "../api/statusApi";
 import { getCookie } from "./useCookie";
+import { useGrafana } from "./useGrafana";
 
 export const useCatalogs = () => {
   const [catalogs, setCatalogs] = useState([]);
   const [catalogName, setCatalogName] = useState("");
   const [catalogStartDate, setCatalogStartDate] = useState("");
   const [catalogEndDate, setCatalogEndDate] = useState("");
+  const { createDashboard } = useGrafana();
   const accessToken = getCookie("accessToken");
 
   useEffect(() => {
@@ -32,12 +34,12 @@ export const useCatalogs = () => {
   };
 
   const createCatalogInDB = async (catalogName, startDate, endDate) => {
-    const resp = await statusApi.post(
+    const catalogResp = await statusApi.post(
       "http://localhost:3001/api/catalogs",
       {
         name: catalogName,
-        startDate: startDate,
-        endDate: endDate,
+        startDate: startDate || null,
+        endDate: endDate || null,
       },
       {
         headers: {
@@ -45,7 +47,24 @@ export const useCatalogs = () => {
         },
       }
     );
-    return resp.data;
+    const newCatalog = catalogResp.data;
+
+    const dashboardResp = await createDashboard(newCatalog);
+    const dashboardId = dashboardResp.uid;
+
+    const updatedCatalogResp = await statusApi.patch(
+      `http://localhost:3001/api/catalogs/${newCatalog.id}`,
+      {
+        dashboard_id: dashboardId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    return updatedCatalogResp.data;
   };
 
   const updateCatalog = (index, id, value) => {
@@ -59,8 +78,8 @@ export const useCatalogs = () => {
       `http://localhost:3001/api/catalogs/${id}`,
       {
         name: catalogName,
-        startDate: startDate,
-        endDate: endDate,
+        startDate: startDate || null,
+        endDate: endDate || null,
       },
       {
         headers: {

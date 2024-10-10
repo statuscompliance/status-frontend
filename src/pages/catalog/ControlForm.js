@@ -21,9 +21,9 @@ const ControlForm = () => {
   const [control, setControl] = useState({
     name: "",
     description: "",
+    period: "",
     startDate: "",
     endDate: "",
-    period: "",
     mashup_id: "",
   });
   const [flows, setFlows] = useState([]);
@@ -53,9 +53,9 @@ const ControlForm = () => {
       setControl({
         name: controlData.name,
         description: controlData.description,
-        startDate: controlData.startDate,
-        endDate: controlData.endDate,
         period: controlData.period,
+        startDate: new Date(controlData.startDate).toISOString().split("T")[0],
+        endDate: new Date(controlData.endDate).toISOString().split("T")[0],
         mashup_id: controlData.mashup_id,
       });
 
@@ -119,9 +119,9 @@ const ControlForm = () => {
         controlId,
         control.name,
         control.description,
+        control.period,
         control.startDate,
         control.endDate,
-        control.period,
         control.mashup_id,
         catalogId
       );
@@ -138,9 +138,9 @@ const ControlForm = () => {
       const controlResponse = await createControlInDB(
         control.name,
         control.description,
+        control.period,
         control.startDate,
         control.endDate,
-        control.period,
         control.mashup_id,
         catalogId
       );
@@ -192,6 +192,32 @@ const ControlForm = () => {
                     rows={3}
                   />
                 </Form.Group>
+                <Row className="mb-4">
+                  <Col md={6}>
+                    <Form.Group controlId="controlStartDate">
+                      <Form.Label className="fw-bold">Start date:</Form.Label>
+                      <Form.Control
+                        name="startDate"
+                        type="date"
+                        value={control.startDate}
+                        onChange={handleInputChange}
+                        className="form-control-lg"
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Group controlId="controlEndDate">
+                      <Form.Label className="fw-bold">End date:</Form.Label>
+                      <Form.Control
+                        name="endDate"
+                        type="date"
+                        value={control.endDate}
+                        onChange={handleInputChange}
+                        className="form-control-lg"
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
                 <Row className="mb-3">
                   <Col>
                     <Form.Group controlId="controlPeriod">
