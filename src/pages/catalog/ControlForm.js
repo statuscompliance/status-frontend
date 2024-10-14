@@ -8,7 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const ControlForm = () => {
   const { controlId, catalogId } = useParams();
-  const { getMashupById, getMashupParameters, getFlows } = useNode();
+  const { getMashupById, getMashupParameters, getFlows, sendMashupRequest } = useNode();
   const {
     createControlInDB,
     updateControlInDB,
@@ -36,10 +36,10 @@ const ControlForm = () => {
       const fetchedFlows = await getFlows();
       setFlows(fetchedFlows);
     };
-  
+
     fetchFlows();
   }, []);
-  
+
   useEffect(() => {
     if (controlId && flows.length > 0) {
       setIsEditMode(true);
@@ -63,7 +63,9 @@ const ControlForm = () => {
         const selectedMashup = getMashupById(flows, controlData.mashup_id);
         if (selectedMashup) {
           const parameters = await getMashupParameters(selectedMashup);
-          const inputValues = await getInputControlsByControlIdFromDB(controlId);
+          const inputValues = await getInputControlsByControlIdFromDB(
+            controlId
+          );
           const inputsWithValues = parameters.map((param) => {
             const foundInput = inputValues.find(
               (input) => input.input_id === param.id
@@ -98,7 +100,13 @@ const ControlForm = () => {
       const selectedMashup = getMashupById(flows, mashupId);
       if (selectedMashup) {
         const parameters = await getMashupParameters(selectedMashup);
-        setInputs(parameters.map((param) => ({ ...param, value: "", controlInputId: null })));
+        setInputs(
+          parameters.map((param) => ({
+            ...param,
+            value: "",
+            controlInputId: null,
+          }))
+        );
       }
     }
   };
@@ -109,7 +117,7 @@ const ControlForm = () => {
         input.id === inputId ? { ...input, value: value } : input
       )
     );
-  };
+  };  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -152,6 +160,13 @@ const ControlForm = () => {
       await Promise.all(inputPromises);
     }
 
+    if (control.mashup_id) {
+      const mashupUrl = `http://node-red-status:1880/api/${
+        getMashupById(flows, control.mashup_id).url.match(/\/api\/(.+)/)[1]
+      }`;
+      await sendMashupRequest(mashupUrl, inputs);
+    }
+
     navigate(`/catalog/${catalogId}/controls`);
   };
 
@@ -160,7 +175,9 @@ const ControlForm = () => {
       <Row className="justify-content-center">
         <Col md={10}>
           <Card className="shadow-sm border-0">
-            <Card.Header style={{ backgroundColor: "#bf0a2e", color: "#ffffff" }}>
+            <Card.Header
+              style={{ backgroundColor: "#bf0a2e", color: "#ffffff" }}
+            >
               <h2 className="text-center mb-0">
                 {isEditMode ? "Update Control" : "New Control"}
               </h2>
@@ -262,13 +279,17 @@ const ControlForm = () => {
                 {/* Render the mashup inputs */}
                 {inputs.length > 0 && (
                   <Card className="mb-3 border-0 shadow-sm">
-                    <Card.Header style={{ backgroundColor: "#bf0a2e", color: "#ffffff" }}>
+                    <Card.Header
+                      style={{ backgroundColor: "#bf0a2e", color: "#ffffff" }}
+                    >
                       <h4 className="mb-0">Mashup Inputs</h4>
                     </Card.Header>
                     <Card.Body>
                       {inputs.map((input) => (
                         <Form.Group className="mb-3" key={input.id}>
-                          <Form.Label className="fw-bold">{input.name}:</Form.Label>
+                          <Form.Label className="fw-bold">
+                            {input.name}:
+                          </Form.Label>
                           <Form.Control
                             type={input.type === "string" ? "text" : "number"}
                             value={input.value || ""}
@@ -289,7 +310,10 @@ const ControlForm = () => {
                     type="submit"
                     variant="primary"
                     size="lg"
-                    style={{ backgroundColor: "#bf0a2e", borderColor: "#bf0a2e" }}
+                    style={{
+                      backgroundColor: "#bf0a2e",
+                      borderColor: "#bf0a2e",
+                    }}
                   >
                     {isEditMode ? "Update control" : "Create control"}
                   </Button>

@@ -441,6 +441,36 @@ export const useNode = () => {
     }
   };
 
+  const sendMashupRequest = async (mashupUrl, inputs) => {
+    try {
+      const basicAuth = btoa(`${process.env.USER_STATUS}:${process.env.PASS_STATUS}`);
+      const headers = {
+        Authorization: `Basic ${basicAuth}`,
+        "Content-Type": "application/json",
+      };
+  
+      const resp = await statusApi.post(mashupUrl, {
+        headers: headers,
+        body: JSON.stringify(
+          inputs.reduce((acc, input) => {
+            acc[input.name] = input.value;
+            return acc;
+          }, {})
+        ),
+      });
+  
+      if (!resp.ok) {
+        throw new Error("Error in the mashup request");
+      }
+  
+      const data = await resp.json();
+      console.log("Mashup response data:", data);
+      return data;
+    } catch (error) {
+      console.error("Error making mashup request:", error);
+    }
+  };
+
   return {
     isNodeRedDeployed,
     mashups,
@@ -457,5 +487,6 @@ export const useNode = () => {
     addFlowInfo,
     getFlowResponse,
     nodeRedCookie,
+    sendMashupRequest,
   };
 };

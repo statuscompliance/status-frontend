@@ -185,6 +185,33 @@ export const useControls = () => {
     setControls(updatedControls);
   };
 
+  const getControlPanels = async (controlId) => {
+    try {
+      const response = await statusApi.get(`http://localhost:3001/api/controls/${controlId}/panels`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching control panels:", error);
+      return [];
+    }
+  };
+
+  const createControlPanel = async (controlId, panelId) => {
+    try {
+      const resp = await statusApi.post(`http://localhost:3001/api/controls/${controlId}/panel/${panelId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      return resp.data;
+    } catch (error) {
+      console.error("Error creating ControlPanel:", error);
+    }
+  };
+
   return {
     controls,
     setControls,
@@ -201,6 +228,8 @@ export const useControls = () => {
     lastItemRemoved,
     createControlInputInDB,
     updateControlInputs,
+    getControlPanels,
+    createControlPanel,
     inputs,
     setInputs,
   };

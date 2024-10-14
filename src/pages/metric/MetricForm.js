@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Form, Button, Card, Row, Col } from "react-bootstrap";
 import { useCatalogs } from "../../hooks/useCatalogs";
+import { useControls } from "../../hooks/useControls";
 import { useGrafana } from "../../hooks/useGrafana";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -9,6 +10,8 @@ const MetricForm = () => {
   const isEditMode = Boolean(metricId);
   const navigate = useNavigate();
   const { getCatalogByIdFromTheDB } = useCatalogs();
+  const { createControlPanel } = useControls();
+
   const {
     createMetric,
     updateMetric,
@@ -18,7 +21,7 @@ const MetricForm = () => {
     title: "",
     type: "gauge",
     displayName: "",
-    dataset: "Configurations", // For test
+    dataset: "Computations",
     metricType: "COUNT",
     metricField: "",
     filterField: "",
@@ -87,7 +90,8 @@ const MetricForm = () => {
       if (isEditMode) {
         await updateMetric(dashboardUid, metricId, formattedMetric);
       } else {
-        await createMetric(dashboardUid, formattedMetric);
+        const newMetric = await createMetric(dashboardUid, formattedMetric);
+        await createControlPanel(controlId, newMetric.panelId);
       }
       navigate(`/catalog/${catalogId}/controls/${controlId}/metrics`);
     } catch (error) {

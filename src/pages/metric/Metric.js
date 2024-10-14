@@ -16,7 +16,7 @@ export default function Metric() {
   const [metrics, setMetrics] = useState([]);
   const [controlDetails, setControlDetails] = useState(null);
   const { getCatalogByIdFromTheDB } = useCatalogs();
-  const { getControlByIdFromDB } = useControls();
+  const { getControlByIdFromDB, getControlPanels } = useControls();
   const { getDashboardMetrics, deleteMetric } = useGrafana();
   const [globalFilter, setGlobalFilter] = useState("");
   const navigate = useNavigate();
@@ -31,11 +31,8 @@ export default function Metric() {
 
       setControlDetails(control);
 
-      if (dashboardIdRef.current !== catalogData.dashboard_id) {
-        dashboardIdRef.current = catalogData.dashboard_id;
-        const metricsData = await getDashboardMetrics(catalogData.dashboard_id);
-        setMetrics(metricsData);
-      }
+      const metrics = await getControlPanels(controlId);
+      setMetrics(metrics);
     } catch (error) {
       if (error.response && error.response.status === 404) {
         setMetrics([]);
