@@ -443,29 +443,29 @@ export const useNode = () => {
 
   const sendMashupRequest = async (mashupUrl, inputs) => {
     try {
-      const basicAuth = btoa(`${process.env.USER_STATUS}:${process.env.PASS_STATUS}`);
-      const headers = {
-        Authorization: `Basic ${basicAuth}`,
-        "Content-Type": "application/json",
-      };
-  
-      const resp = await statusApi.post(mashupUrl, {
-        headers: headers,
-        body: JSON.stringify(
-          inputs.reduce((acc, input) => {
-            acc[input.name] = input.value;
-            return acc;
-          }, {})
-        ),
-      });
-  
-      if (!resp.ok) {
-        throw new Error("Error in the mashup request");
+      const USER_STATUS = process.env.REACT_APP_USER_STATUS;
+      const PASS_STATUS = process.env.REACT_APP_PASS_STATUS;
+
+      if (!USER_STATUS || !PASS_STATUS) {
+        throw new Error("Credentials not configured");
       }
+
+      const basicAuth = btoa(`${USER_STATUS}:${PASS_STATUS}`);
+      const headers = {
+        'Authorization': `Basic ${basicAuth}`,
+        'Content-Type': 'application/json',
+      };
+
+      const body = JSON.stringify(
+        inputs.reduce((acc, input) => {
+          acc[input.name] = input.value;
+          return acc;
+        }, {})
+      );
+
+      const resp = await statusApi.post(mashupUrl, body, { headers });
   
-      const data = await resp.json();
-      console.log("Mashup response data:", data);
-      return data;
+      return resp.data;
     } catch (error) {
       console.error("Error making mashup request:", error);
     }

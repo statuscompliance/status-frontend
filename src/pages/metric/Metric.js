@@ -131,8 +131,8 @@ export default function Metric() {
           rowsPerPageOptions={[5, 10, 25]}
           emptyMessage="No metrics found"
         >
-          <Column field="displayName" header="Name" style={{ width: "20%" }} />
-          <Column field="rawSql" header="Query" style={{ width: "60%" }} />
+          <Column field="title" header="Name" style={{ width: "20%" }} />
+          <Column field="sqlQuery" header="Query" style={{ width: "60%" }} />
           <Column body={actionTemplate} header="Actions" style={{ width: "20%" }} />
         </DataTable>
       </div>

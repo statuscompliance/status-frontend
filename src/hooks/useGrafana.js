@@ -87,7 +87,7 @@ export const useGrafana = () => {
     const whereRegex = /WHERE\s*\(\s*(\w+)\s*(>|>=|<|<=|=|!=)\s*['"]?(\w+)['"]?\s*\)/i;
   
     let metric = {
-      dataset: "Computations",
+      dataset: "computation",
       metricType: "",
       metricField: "",
       filterField: "",

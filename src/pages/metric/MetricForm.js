@@ -21,7 +21,7 @@ const MetricForm = () => {
     title: "",
     type: "gauge",
     displayName: "",
-    dataset: "Computations",
+    dataset: "computation",
     metricType: "COUNT",
     metricField: "",
     filterField: "",
@@ -91,7 +91,7 @@ const MetricForm = () => {
         await updateMetric(dashboardUid, metricId, formattedMetric);
       } else {
         const newMetric = await createMetric(dashboardUid, formattedMetric);
-        await createControlPanel(controlId, newMetric.panelId);
+        await createControlPanel(controlId, newMetric.panelId, dashboardUid);
       }
       navigate(`/catalog/${catalogId}/controls/${controlId}/metrics`);
     } catch (error) {

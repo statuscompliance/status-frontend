@@ -199,12 +199,12 @@ export const useControls = () => {
     }
   };
 
-  const createControlPanel = async (controlId, panelId) => {
+  const createControlPanel = async (controlId, panelId, dashboardUid) => {
     try {
-      const resp = await statusApi.post(`http://localhost:3001/api/controls/${controlId}/panel/${panelId}`, {}, {
+      const resp = await statusApi.post(`http://localhost:3001/api/controls/${controlId}/panel/${panelId}`, {"dashboardUid": dashboardUid}, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-        },
+        }
       });
       return resp.data;
     } catch (error) {
