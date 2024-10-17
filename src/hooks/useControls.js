@@ -14,9 +14,9 @@ export const useControls = () => {
       {
         name: "",
         description: "",
+        period: "",
         startDate: "",
         endDate: "",
-        period: "",
         mashup_id: "",
         catalog_id: "",
         inputs: [],
@@ -52,9 +52,9 @@ export const useControls = () => {
   const createControlInDB = async (
     name,
     description,
+    period,
     startDate,
     endDate,
-    period,
     mashupId,
     catalogId
   ) => {
@@ -63,9 +63,9 @@ export const useControls = () => {
       {
         name: name,
         description: description,
-        startDate: startDate,
-        endDate: endDate,
         period: period,
+        startDate: startDate || null,
+        endDate: endDate || null,
         mashup_id: mashupId,
         catalog_id: catalogId,
       },
@@ -84,7 +84,7 @@ export const useControls = () => {
     setControls(updatedControls);
   };
 
-  const updateControlInDb = async (
+  const updateControlInDB = async (
     id,
     name,
     description,
@@ -100,8 +100,8 @@ export const useControls = () => {
         name: name,
         description: description,
         period: period,
-        startDate: startDate,
-        endDate: endDate,
+        startDate: startDate || null,
+        endDate: endDate || null,
         mashup_id: mashup_id,
         catalog_id: catalog_id,
       },
@@ -185,6 +185,33 @@ export const useControls = () => {
     setControls(updatedControls);
   };
 
+  const getControlPanels = async (controlId) => {
+    try {
+      const response = await statusApi.get(`http://localhost:3001/api/controls/${controlId}/panels`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching control panels:", error);
+      return [];
+    }
+  };
+
+  const createControlPanel = async (controlId, panelId, dashboardUid) => {
+    try {
+      const resp = await statusApi.post(`http://localhost:3001/api/controls/${controlId}/panel/${panelId}`, {"dashboardUid": dashboardUid}, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        }
+      });
+      return resp.data;
+    } catch (error) {
+      console.error("Error creating ControlPanel:", error);
+    }
+  };
+
   return {
     controls,
     setControls,
@@ -194,13 +221,15 @@ export const useControls = () => {
     createControlInDB,
     updateControlInputInDb,
     updateControl,
-    updateControlInDb,
+    updateControlInDB,
     removeControl,
     deleteControlByIdInDb,
     deleteInputControlsByControlIdInDb,
     lastItemRemoved,
     createControlInputInDB,
     updateControlInputs,
+    getControlPanels,
+    createControlPanel,
     inputs,
     setInputs,
   };

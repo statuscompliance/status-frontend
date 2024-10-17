@@ -441,6 +441,36 @@ export const useNode = () => {
     }
   };
 
+  const sendMashupRequest = async (mashupUrl, inputs) => {
+    try {
+      const USER_STATUS = process.env.REACT_APP_USER_STATUS;
+      const PASS_STATUS = process.env.REACT_APP_PASS_STATUS;
+
+      if (!USER_STATUS || !PASS_STATUS) {
+        throw new Error("Credentials not configured");
+      }
+
+      const basicAuth = btoa(`${USER_STATUS}:${PASS_STATUS}`);
+      const headers = {
+        'Authorization': `Basic ${basicAuth}`,
+        'Content-Type': 'application/json',
+      };
+
+      const body = JSON.stringify(
+        inputs.reduce((acc, input) => {
+          acc[input.name] = input.value;
+          return acc;
+        }, {})
+      );
+
+      const resp = await statusApi.post(mashupUrl, body, { headers });
+  
+      return resp.data;
+    } catch (error) {
+      console.error("Error making mashup request:", error);
+    }
+  };
+
   return {
     isNodeRedDeployed,
     mashups,
@@ -457,5 +487,6 @@ export const useNode = () => {
     addFlowInfo,
     getFlowResponse,
     nodeRedCookie,
+    sendMashupRequest,
   };
 };
