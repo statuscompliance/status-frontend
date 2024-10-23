@@ -8,7 +8,8 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const ControlForm = () => {
   const { controlId, catalogId } = useParams();
-  const { getMashupById, getMashupParameters, getFlows, sendMashupRequest } = useNode();
+  const { getMashupById, getMashupParameters, getFlows, sendMashupRequest } =
+    useNode();
   const {
     createControlInDB,
     updateControlInDB,
@@ -117,7 +118,7 @@ const ControlForm = () => {
         input.id === inputId ? { ...input, value: value } : input
       )
     );
-  };  
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -279,28 +280,46 @@ const ControlForm = () => {
                 {/* Render the mashup inputs */}
                 {inputs.length > 0 && (
                   <Card className="mb-3 border-0 shadow-sm">
-                    <Card.Header
-                      style={{ backgroundColor: "#bf0a2e", color: "#ffffff" }}
-                    >
+                    <Card.Header className="bg-secondary text-white">
                       <h4 className="mb-0">Mashup Inputs</h4>
                     </Card.Header>
                     <Card.Body>
-                      {inputs.map((input) => (
-                        <Form.Group className="mb-3" key={input.id}>
-                          <Form.Label className="fw-bold">
-                            {input.name}:
-                          </Form.Label>
-                          <Form.Control
-                            type={input.type === "string" ? "text" : "number"}
-                            value={input.value || ""}
-                            onChange={(e) =>
-                              handleMashupInputChange(input.id, e.target.value)
-                            }
-                            required
-                            className="form-control-lg"
-                          />
-                        </Form.Group>
-                      ))}
+                      <Row>
+                        {inputs.map((input) => (
+                          <Col md={6} key={input.id}>
+                            <Form.Group className="mb-3">
+                              <Form.Label className="fw-bold">
+                                {input.name}:
+                              </Form.Label>
+                              {input.type === "boolean" ? (
+                                <Form.Check
+                                  type="switch"
+                                  id={`switch-${input.id}`}
+                                  checked={input.value === "true"}
+                                  onChange={(e) =>
+                                    handleMashupInputChange(input.id, e.target.checked.toString())
+                                  }
+                                  className="form-control-lg"
+                                />
+                              ) : (
+                                <Form.Control
+                                  type={
+                                    input.type === "string" ? "text" : "number"
+                                  }
+                                  value={input.value || ""}
+                                  onChange={(e) =>
+                                    handleMashupInputChange(
+                                      input.id,
+                                      e.target.value
+                                    )
+                                  }
+                                  required
+                                />
+                              )}
+                            </Form.Group>
+                          </Col>
+                        ))}
+                      </Row>
                     </Card.Body>
                   </Card>
                 )}
