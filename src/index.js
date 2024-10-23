@@ -8,6 +8,7 @@ import logoSvg from "./static/images/logo.svg";
 import githubLogo from "./static/images/githubLogo.svg";
 import Catalog from "./pages/catalog/Catalog";
 import Mashup from "./pages/mashup/Mashup";
+import Dashboards from "./pages/dashboard/Dashboards";
 import NewCatalog from "./pages/catalog/NewCatalog";
 import Profile from "./pages/profile/Profile";
 import Login from "./pages/auth/Login";
@@ -179,6 +180,11 @@ const App = () => {
                 </Link>
               </li>
               <li className="nav-item">
+                <Link className="nav-link pt-serif-regular" to="/dashboards">
+                  Dashboards
+                </Link>
+              </li>
+              <li className="nav-item">
                 <Link className="nav-link pt-serif-regular" to="/editor">
                   Node-RED
                 </Link>
@@ -229,6 +235,7 @@ const App = () => {
             <Route element={<Catalog />} path="/catalogs" />
             <Route element={<Mashup />} path="/mashups" />
             <Route element={<NewCatalog />} path="/new_catalog" />
+            <Route element={<Dashboards />} path="/dashboards" />
             <Route element={<Profile />} path="/profile" />
             <Route element={<Login />} path="/login" />
             <Route element={<Editor />} path="/editor" />

@@ -1,0 +1,91 @@
+.custom-accordion .card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  transition: box-shadow 0.3s ease;
+}
+
+.custom-accordion .card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.custom-accordion .card-header {
+  background-color: #ffffff;
+  border-bottom: none;
+  padding: 0;
+}
+
+.custom-accordion .btn-link {
+  color: #333;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 1rem 1.25rem;
+  width: 100%;
+  text-align: left;
+  position: relative;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.custom-accordion .btn-link:hover,
+.custom-accordion .btn-link:focus {
+  color: #007bff;
+  text-decoration: none;
+  background-color: #f8f9fa;
+}
+
+.custom-accordion .btn-link.active {
+  background-color: #e9ecef;
+  color: #007bff;
+}
+
+.custom-accordion .btn-link:focus {
+  box-shadow: none;
+}
+
+.custom-accordion .accordion-icon {
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: transform 0.3s ease;
+}
+
+.custom-accordion .btn-link:not(.collapsed) .accordion-icon::after {
+  content: "\2212";
+}
+
+.custom-accordion .btn-link.collapsed .accordion-icon::after {
+  content: "\002B";
+}
+
+.custom-accordion .card-body {
+  background-color: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  padding: 1rem;
+}
+
+.custom-accordion .dashboard-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  transition: background-color 0.3s ease;
+}
+
+.custom-accordion .dashboard-item:hover {
+  background-color: #e9ecef;
+  border-radius: 4px;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
