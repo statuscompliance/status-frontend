@@ -446,10 +446,6 @@ export const useNode = () => {
       const USER_STATUS = process.env.REACT_APP_USER_STATUS;
       const PASS_STATUS = process.env.REACT_APP_PASS_STATUS;
 
-      if (!USER_STATUS || !PASS_STATUS) {
-        throw new Error("Credentials not configured");
-      }
-
       const basicAuth = btoa(`${USER_STATUS}:${PASS_STATUS}`);
       const headers = {
         'Authorization': `Basic ${basicAuth}`,
@@ -463,11 +459,11 @@ export const useNode = () => {
         }, {})
       );
 
-      const resp = await statusApi.post(mashupUrl, body, { headers });
-  
+      const resp = await statusApi.post(mashupUrl, body, { headers, timeout: 10000 });  
       return resp.data;
     } catch (error) {
       console.error("Error making mashup request:", error);
+      return null;
     }
   };
 

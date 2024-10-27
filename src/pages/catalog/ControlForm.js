@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import "../../static/css/controlForm.css";
 import { Period } from "./Period";
-import { Form, Button, Card, Row, Col, Spinner } from "react-bootstrap";
+import { Form, Button, Card, Row, Col, Spinner, Alert } from "react-bootstrap";
 import { useNode } from "../../hooks/useNode";
 import { useControls } from "../../hooks/useControls";
 import { useNavigate, useParams } from "react-router-dom";
 
 const ControlForm = () => {
   const { controlId, catalogId } = useParams();
-  const { getMashupById, getMashupParameters, getFlows, sendMashupRequest } =
-    useNode();
+  const { getMashupById, getMashupParameters, getFlows, sendMashupRequest } = useNode();
   const {
     createControlInDB,
     updateControlInDB,
@@ -17,6 +16,8 @@ const ControlForm = () => {
     getInputControlsByControlIdFromDB,
     createControlInputInDB,
     updateControlInputInDb,
+    deleteControlByIdInDb,
+    deleteInputControlsByControlIdInDb,
   } = useControls();
 
   const [control, setControl] = useState({
@@ -31,12 +32,18 @@ const ControlForm = () => {
   const [inputs, setInputs] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFlows = async () => {
-      const fetchedFlows = await getFlows();
-      setFlows(fetchedFlows);
+      try {
+        const fetchedFlows = await getFlows();
+        setFlows(fetchedFlows);
+      } catch (error) {
+        console.error("Error fetching flows:", error);
+        setError("Unable to load flows. Please try again later.");
+      }
     };
 
     fetchFlows();
@@ -65,13 +72,9 @@ const ControlForm = () => {
         const selectedMashup = getMashupById(flows, controlData.mashup_id);
         if (selectedMashup) {
           const parameters = await getMashupParameters(selectedMashup);
-          const inputValues = await getInputControlsByControlIdFromDB(
-            controlId
-          );
+          const inputValues = await getInputControlsByControlIdFromDB(controlId);
           const inputsWithValues = parameters.map((param) => {
-            const foundInput = inputValues.find(
-              (input) => input.input_id === param.id
-            );
+            const foundInput = inputValues.find((input) => input.input_id === param.id);
             return {
               ...param,
               value: foundInput ? foundInput.value : "",
@@ -83,6 +86,7 @@ const ControlForm = () => {
       }
     } catch (error) {
       console.error("Error loading control data:", error);
+      setError("Unable to load control information. Please try again later.");
     }
   };
 
@@ -101,14 +105,19 @@ const ControlForm = () => {
     } else {
       const selectedMashup = getMashupById(flows, mashupId);
       if (selectedMashup) {
-        const parameters = await getMashupParameters(selectedMashup);
-        setInputs(
-          parameters.map((param) => ({
-            ...param,
-            value: "",
-            controlInputId: null,
-          }))
-        );
+        try {
+          const parameters = await getMashupParameters(selectedMashup);
+          setInputs(
+            parameters.map((param) => ({
+              ...param,
+              value: "",
+              controlInputId: null,
+            }))
+          );
+        } catch (error) {
+          console.error("Error fetching mashup parameters:", error);
+          setError("Unable to load mashup parameters. Please try again later.");
+        }
       }
     }
   };
@@ -124,53 +133,79 @@ const ControlForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError("");
 
-    if (isEditMode) {
-      await updateControlInDB(
-        controlId,
-        control.name,
-        control.description,
-        control.period,
-        control.startDate,
-        control.endDate,
-        control.mashup_id,
-        catalogId
-      );
+    let newControlId;
+    let createdInputs = [];
 
-      const inputPromises = inputs.map((input) => {
-        if (input.controlInputId) {
-          return updateControlInputInDb(input.controlInputId, input.value);
-        } else {
-          return createControlInputInDB(controlId, input.id, input.value);
+    try {
+      if (isEditMode) {
+        await updateControlInDB(
+          controlId,
+          control.name,
+          control.description,
+          control.period,
+          control.startDate,
+          control.endDate,
+          control.mashup_id,
+          catalogId
+        );
+
+        const inputPromises = inputs.map((input) => {
+          if (input.controlInputId) {
+            return updateControlInputInDb(input.controlInputId, input.value);
+          } else {
+            return createControlInputInDB(controlId, input.id, input.value);
+          }
+        });
+        await Promise.all(inputPromises);
+      } else {
+        const controlResponse = await createControlInDB(
+          control.name,
+          control.description,
+          control.period,
+          control.startDate,
+          control.endDate,
+          control.mashup_id,
+          catalogId
+        );
+        newControlId = controlResponse.id;
+
+        const inputPromises = inputs.map((input) =>
+          createControlInputInDB(newControlId, input.id, input.value)
+        );
+        createdInputs = await Promise.all(inputPromises);
+      }
+
+      if (control.mashup_id) {
+        const mashupUrl = `http://node-red-status:1880/api/${
+          getMashupById(flows, control.mashup_id).url.match(/\/api\/(.+)/)[1]
+        }`;
+        const mashupResponse = await sendMashupRequest(mashupUrl, inputs);
+        if (!mashupResponse) {
+          setError("Mashup request failed.");
         }
-      });
-      await Promise.all(inputPromises);
-    } else {
-      const controlResponse = await createControlInDB(
-        control.name,
-        control.description,
-        control.period,
-        control.startDate,
-        control.endDate,
-        control.mashup_id,
-        catalogId
-      );
-      const newControlId = controlResponse.id;
+      }
 
-      const inputPromises = inputs.map((input) =>
-        createControlInputInDB(newControlId, input.id, input.value)
-      );
-      await Promise.all(inputPromises);
+      navigate(`/catalog/${catalogId}/controls`);
+    } catch (error) {
+      console.error("Error creating/updating control:", error);
+      setError("An error occurred while processing your request.");
+
+      if (!isEditMode && newControlId) {
+        try {
+          await deleteControlByIdInDb(newControlId);
+          if (createdInputs.length > 0) {
+            await deleteInputControlsByControlIdInDb(newControlId);
+          }
+        } catch (rollbackError) {
+          console.error("Error during rollback:", rollbackError);
+          setError("An error occurred during rollback. Please contact the system administrator.");
+        }
+      }
+    } finally {
+      setIsLoading(false);
     }
-
-    if (control.mashup_id) {
-      const mashupUrl = `http://node-red-status:1880/api/${
-        getMashupById(flows, control.mashup_id).url.match(/\/api\/(.+)/)[1]
-      }`;
-      await sendMashupRequest(mashupUrl, inputs);
-    }
-
-    navigate(`/catalog/${catalogId}/controls`);
   };
 
   return (
@@ -178,14 +213,13 @@ const ControlForm = () => {
       <Row className="justify-content-center">
         <Col md={10}>
           <Card className="shadow-sm border-0">
-            <Card.Header
-              style={{ backgroundColor: "#bf0a2e", color: "#ffffff" }}
-            >
+            <Card.Header style={{ backgroundColor: "#bf0a2e", color: "#ffffff" }}>
               <h2 className="text-center mb-0">
                 {isEditMode ? "Update Control" : "New Control"}
               </h2>
             </Card.Header>
             <Card.Body className="bg-light" style={{ fontSize: "20px" }}>
+              {error && <Alert variant="danger" className="text-center mx-auto">{error}</Alert>}
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3" controlId="controlName">
                   <Form.Label className="fw-bold">Control name:</Form.Label>
@@ -279,7 +313,6 @@ const ControlForm = () => {
                   </Col>
                 </Row>
 
-                {/* Render the mashup inputs */}
                 {inputs.length > 0 && (
                   <Card className="mb-3 border-0 shadow-sm">
                     <Card.Header className="bg-secondary text-white">
@@ -308,9 +341,7 @@ const ControlForm = () => {
                                 />
                               ) : (
                                 <Form.Control
-                                  type={
-                                    input.type === "string" ? "text" : "number"
-                                  }
+                                  type={input.type === "string" ? "text" : "number"}
                                   value={input.value || ""}
                                   onChange={(e) =>
                                     handleMashupInputChange(
@@ -338,6 +369,7 @@ const ControlForm = () => {
                       backgroundColor: "#bf0a2e",
                       borderColor: "#bf0a2e",
                     }}
+                    disabled={isLoading}
                   >
                     {isLoading ? (
                       <>
