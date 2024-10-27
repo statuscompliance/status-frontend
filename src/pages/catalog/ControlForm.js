@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../../static/css/controlForm.css";
 import { Period } from "./Period";
-import { Form, Button, Card, Row, Col } from "react-bootstrap";
+import { Form, Button, Card, Row, Col, Spinner } from "react-bootstrap";
 import { useNode } from "../../hooks/useNode";
 import { useControls } from "../../hooks/useControls";
 import { useNavigate, useParams } from "react-router-dom";
@@ -30,6 +30,7 @@ const ControlForm = () => {
   const [flows, setFlows] = useState([]);
   const [inputs, setInputs] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -122,6 +123,7 @@ const ControlForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     if (isEditMode) {
       await updateControlInDB(
@@ -297,7 +299,10 @@ const ControlForm = () => {
                                   id={`switch-${input.id}`}
                                   checked={input.value === "true"}
                                   onChange={(e) =>
-                                    handleMashupInputChange(input.id, e.target.checked.toString())
+                                    handleMashupInputChange(
+                                      input.id,
+                                      e.target.checked.toString()
+                                    )
                                   }
                                   className="form-control-lg"
                                 />
@@ -334,7 +339,23 @@ const ControlForm = () => {
                       borderColor: "#bf0a2e",
                     }}
                   >
-                    {isEditMode ? "Update control" : "Create control"}
+                    {isLoading ? (
+                      <>
+                        <Spinner
+                          as="span"
+                          animation="border"
+                          size="sm"
+                          role="status"
+                          aria-hidden="true"
+                          className="me-2"
+                        />
+                        Processing...
+                      </>
+                    ) : isEditMode ? (
+                      "Update control"
+                    ) : (
+                      "Create control"
+                    )}
                   </Button>
                 </div>
               </Form>
