@@ -11,7 +11,7 @@ export const useInputControls = () => {
     control_id
   ) => {
     const resp = await statusApi.get(
-      `http://localhost:3001/api/input_controls/${input_id}/controls/${control_id}/values`,
+      `http://status-backend:3001/api/input_controls/${input_id}/controls/${control_id}/values`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -23,7 +23,7 @@ export const useInputControls = () => {
 
   const getInputControlsByControlIdFromTheDB = async (control_id) => {
     const resp = await statusApi.get(
-      `http://localhost:3001/api/controls/${control_id}/input_controls`,
+      `http://status-backend:3001/api/controls/${control_id}/input_controls`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -35,7 +35,7 @@ export const useInputControls = () => {
 
   const deleteInputControlsFromTheDB = async (id) => {
     const resp = await statusApi.delete(
-      `http://localhost:3001/api/input_controls/${id}`,
+      `http://status-backend:3001/api/input_controls/${id}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

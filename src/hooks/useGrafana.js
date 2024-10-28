@@ -5,7 +5,7 @@ import { getCookie } from "./useCookie";
 export const useGrafana = () => {
   const [metrics, setMetrics] = useState([]);
   const accessToken = getCookie("accessToken");
-  const baseUrl = "http://localhost:3001/api/grafana";
+  const baseUrl = "http://status-backend:3001/api/grafana";
 
   const headers = {
     Authorization: `Bearer ${accessToken}`,

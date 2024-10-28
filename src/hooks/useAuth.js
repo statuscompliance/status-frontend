@@ -32,7 +32,7 @@ export const useAuth = () => {
     event.preventDefault();
     statusApi
       .post(
-        "http://localhost:3001/api/user/signIn",
+        "http://status-backend:3001/api/user/signIn",
         {
           username: username,
           password: password,
@@ -83,7 +83,7 @@ export const useAuth = () => {
         .split("=")[1];
       try {
         const response = await statusApi.get(
-          "http://localhost:3001/api/refresh",
+          "http://status-backend:3001/api/refresh",
           {
             headers: {
               Authorization: `Bearer ${refreshToken}`,
@@ -105,7 +105,7 @@ export const useAuth = () => {
     if (accessToken) {
       try {
         const response = await statusApi.get(
-          `http://localhost:3001/api/user/auth/`,
+          `http://status-backend:3001/api/user/auth/`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,

@@ -16,7 +16,7 @@ export const useCatalogs = () => {
   }, []);
 
   const getCatalogsFromTheDatabase = async () => {
-    const resp = await statusApi.get("http://localhost:3001/api/catalogs", {
+    const resp = await statusApi.get("http://status-backend:3001/api/catalogs", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -25,7 +25,7 @@ export const useCatalogs = () => {
   };
 
   const getCatalogByIdFromTheDB = async (id) => {
-    const resp = await statusApi.get(`http://localhost:3001/api/catalogs/${id}`, {
+    const resp = await statusApi.get(`http://status-backend:3001/api/catalogs/${id}`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -35,7 +35,7 @@ export const useCatalogs = () => {
 
   const createCatalogInDB = async (catalogName, startDate, endDate) => {
     const catalogResp = await statusApi.post(
-      "http://localhost:3001/api/catalogs",
+      "http://status-backend:3001/api/catalogs",
       {
         name: catalogName,
         startDate: startDate || null,
@@ -53,7 +53,7 @@ export const useCatalogs = () => {
     const dashboardId = dashboardResp.uid;
 
     const updatedCatalogResp = await statusApi.patch(
-      `http://localhost:3001/api/catalogs/${newCatalog.id}`,
+      `http://status-backend:3001/api/catalogs/${newCatalog.id}`,
       {
         dashboard_id: dashboardId,
       },
@@ -75,7 +75,7 @@ export const useCatalogs = () => {
 
   const updateCatalogInDB = async (id, catalogName, startDate, endDate) => {
     const resp = await statusApi.patch(
-      `http://localhost:3001/api/catalogs/${id}`,
+      `http://status-backend:3001/api/catalogs/${id}`,
       {
         name: catalogName,
         startDate: startDate || null,
@@ -92,7 +92,7 @@ export const useCatalogs = () => {
 
   const getCatalogControlsInDB = async (catalogId) => {
     const resp = await statusApi.get(
-      `http://localhost:3001/api/catalogs/${catalogId}/controls`,
+      `http://status-backend:3001/api/catalogs/${catalogId}/controls`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -104,7 +104,7 @@ export const useCatalogs = () => {
 
   const deleteCatalogByIdFromTheDatabase = async (catalogId) => {
     const resp = await statusApi.delete(
-      `http://localhost:3001/api/catalogs/${catalogId}`,
+      `http://status-backend:3001/api/catalogs/${catalogId}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

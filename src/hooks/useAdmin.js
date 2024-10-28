@@ -23,7 +23,7 @@ export const useAdmin = () => {
   const getConfigurationByEndpoint = async (endpoint) => {
     try {
       const response = await statusApi.post(
-        `http://localhost:3001/api/config`,
+        `http://status-backend:3001/api/config`,
         {
           endpoint: endpoint,
         },
@@ -48,7 +48,7 @@ export const useAdmin = () => {
   const getLimit = async () => {
     try {
       const response = await statusApi.get(
-        `http://localhost:3001/api/config/assistant/limit`,
+        `http://status-backend:3001/api/config/assistant/limit`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -64,7 +64,7 @@ export const useAdmin = () => {
   const updateConfiguration = async (endpoint, available) => {
     try {
       const response = await statusApi.put(
-        `http://localhost:3001/api/config`,
+        `http://status-backend:3001/api/config`,
         {
           endpoint: endpoint,
           available: available,
@@ -84,7 +84,7 @@ export const useAdmin = () => {
   const updateLimit = async (limit) => {
     try {
       await statusApi.put(
-        `http://localhost:3001/api/config/assistant/limit/${limit}`,
+        `http://status-backend:3001/api/config/assistant/limit/${limit}`,
         {},
         {
           headers: {
@@ -105,7 +105,7 @@ export const useAdmin = () => {
   const getAssistantInstById = async (assistantId) => {
     try {
       const response = await statusApi.get(
-        `http://localhost:3001/api/assistant/${assistantId}/instructions`,
+        `http://status-backend:3001/api/assistant/${assistantId}/instructions`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -121,7 +121,7 @@ export const useAdmin = () => {
   const updateAssistantInst = async (assistantId, instructions) => {
     try {
       await statusApi.put(
-        `http://localhost:3001/api/assistant/${assistantId}/instructions`,
+        `http://status-backend:3001/api/assistant/${assistantId}/instructions`,
         {
           instructions: instructions,
         },
@@ -139,7 +139,7 @@ export const useAdmin = () => {
   const getAssistants = async () => {
     try {
       const response = await statusApi.get(
-        `http://localhost:3001/api/assistant`,
+        `http://status-backend:3001/api/assistant`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -155,7 +155,7 @@ export const useAdmin = () => {
 
   const deleteAssistant = async (id) => {
     try {
-      await statusApi.delete(`http://localhost:3001/api/assistant/${id}`, {
+      await statusApi.delete(`http://status-backend:3001/api/assistant/${id}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -167,7 +167,7 @@ export const useAdmin = () => {
 
   const deleteAllAssistants = async () => {
     try {
-      await statusApi.delete(`http://localhost:3001/api/assistant`, {
+      await statusApi.delete(`http://status-backend:3001/api/assistant`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

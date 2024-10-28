@@ -14,7 +14,7 @@ export const useOpenAI= () => {
         if(document.cookie.split('; ').find(row => row.startsWith(`accessToken=`))) {
             const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1];
             try {
-                const response = await statusApi.get('http://localhost:3001/api/thread', {
+                const response = await statusApi.get('http://status-backend:3001/api/thread', {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }
@@ -30,7 +30,7 @@ export const useOpenAI= () => {
         if(document.cookie.split('; ').find(row => row.startsWith(`accessToken=`))) {
             const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1];
             try {
-                const response = await statusApi.get(`http://localhost:3001/api/thread/${threadId}`,{
+                const response = await statusApi.get(`http://status-backend:3001/api/thread/${threadId}`,{
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }
@@ -46,7 +46,7 @@ export const useOpenAI= () => {
         if(document.cookie.split('; ').find(row => row.startsWith(`accessToken=`))) {
             const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1];
             try {
-                const response= await statusApi.post('http://localhost:3001/api/assistant/admin', {
+                const response= await statusApi.post('http://status-backend:3001/api/assistant/admin', {
                     name: name,
                     instructions: instructions,
                     tools: tools,
@@ -68,7 +68,7 @@ export const useOpenAI= () => {
         if(document.cookie.split('; ').find(row => row.startsWith(`accessToken=`))) {
             const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1];
             try {
-                const response = await statusApi.get('http://localhost:3001/api/assistant/', {
+                const response = await statusApi.get('http://status-backend:3001/api/assistant/', {
                     headers: {
                         Authorization: `Bearer ${accessToken}`
                     }
@@ -92,7 +92,7 @@ export const useOpenAI= () => {
         if(document.cookie.split('; ').find(row => row.startsWith(`accessToken=`))) {
             const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1];
             try {
-                const response = await statusApi.post('http://localhost:3001/api/thread', {
+                const response = await statusApi.post('http://status-backend:3001/api/thread', {
                     assistantId: assistant,
                     content: content
                 }, {
@@ -118,7 +118,7 @@ export const useOpenAI= () => {
         if(document.cookie.split('; ').find(row => row.startsWith(`accessToken=`))) {
             const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1];
             try {
-                const response = await statusApi.post(`http://localhost:3001/api/thread/${threadId}`, {
+                const response = await statusApi.post(`http://status-backend:3001/api/thread/${threadId}`, {
                     assistantId: assistant,
                     content: content
                 }, {
@@ -143,7 +143,7 @@ export const useOpenAI= () => {
         if(document.cookie.split('; ').find(row => row.startsWith(`accessToken=`))) {
             const accessToken = document.cookie.split('; ').find(row => row.startsWith('accessToken=')).split('=')[1];
             try {
-                const response = await statusApi.put(`http://localhost:3001/api/thread/${threadId}`, {
+                const response = await statusApi.put(`http://status-backend:3001/api/thread/${threadId}`, {
                     name: name
                 }, {
                     headers: {

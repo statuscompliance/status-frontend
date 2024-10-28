@@ -27,7 +27,7 @@ export const useControls = () => {
 
   const getControlByIdFromDB = async (id) => {
     const resp = await statusApi.get(
-      `http://localhost:3001/api/controls/${id}`,
+      `http://status-backend:3001/api/controls/${id}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -39,7 +39,7 @@ export const useControls = () => {
 
   const getInputControlsByControlIdFromDB = async (id) => {
     const resp = await statusApi.get(
-      `http://localhost:3001/api/controls/${id}/input_controls`,
+      `http://status-backend:3001/api/controls/${id}/input_controls`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -59,7 +59,7 @@ export const useControls = () => {
     catalogId
   ) => {
     const resp = await statusApi.post(
-      "http://localhost:3001/api/controls",
+      "http://status-backend:3001/api/controls",
       {
         name: name,
         description: description,
@@ -95,7 +95,7 @@ export const useControls = () => {
     catalog_id
   ) => {
     const resp = await statusApi.patch(
-      `http://localhost:3001/api/controls/${id}`,
+      `http://status-backend:3001/api/controls/${id}`,
       {
         name: name,
         description: description,
@@ -125,7 +125,7 @@ export const useControls = () => {
 
   const createControlInputInDB = async (control_id, input_id, value) => {
     const resp = await statusApi.post(
-      "http://localhost:3001/api/input_controls",
+      "http://status-backend:3001/api/input_controls",
       {
         control_id: control_id,
         input_id: input_id,
@@ -142,7 +142,7 @@ export const useControls = () => {
 
   const updateControlInputInDb = async (id, value) => {
     const resp = await statusApi.patch(
-      `http://localhost:3001/api/input_controls/${id}`,
+      `http://status-backend:3001/api/input_controls/${id}`,
       {
         value: value,
       },
@@ -157,7 +157,7 @@ export const useControls = () => {
 
   const deleteControlByIdInDb = async (id) => {
     const resp = await statusApi.delete(
-      `http://localhost:3001/api/controls/${id}`,
+      `http://status-backend:3001/api/controls/${id}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -169,7 +169,7 @@ export const useControls = () => {
 
   const deleteInputControlsByControlIdInDb = async (id) => {
     const resp = await statusApi.delete(
-      `http://localhost:3001/api/controls/${id}/input_controls`,
+      `http://status-backend:3001/api/controls/${id}/input_controls`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -187,7 +187,7 @@ export const useControls = () => {
 
   const getControlPanels = async (controlId) => {
     try {
-      const response = await statusApi.get(`http://localhost:3001/api/controls/${controlId}/panels`, {
+      const response = await statusApi.get(`http://status-backend:3001/api/controls/${controlId}/panels`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -201,7 +201,7 @@ export const useControls = () => {
 
   const createControlPanel = async (controlId, panelId, dashboardUid) => {
     try {
-      const resp = await statusApi.post(`http://localhost:3001/api/controls/${controlId}/panel/${panelId}`, {"dashboardUid": dashboardUid}, {
+      const resp = await statusApi.post(`http://status-backend:3001/api/controls/${controlId}/panel/${panelId}`, {"dashboardUid": dashboardUid}, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         }

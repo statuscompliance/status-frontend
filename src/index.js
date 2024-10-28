@@ -58,7 +58,7 @@ const App = () => {
 
   const handleLogout = () => {
     statusApi
-      .get("http://localhost:3001/api/user/signOut")
+      .get("http://status-backend:3001/api/user/signOut")
       .then(() => {
         document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
         document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
@@ -86,7 +86,7 @@ const App = () => {
   async function getGhToken(codeParam) {
     try {
       const response = await statusApi.get(
-        `http://localhost:3001/api/ghAccessToken?code=${codeParam}`
+        `http://status-backend:3001/api/ghAccessToken?code=${codeParam}`
       );
       const data = response.data;
       if (data.access_token) {

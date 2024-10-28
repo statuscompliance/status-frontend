@@ -38,7 +38,7 @@ export const useNode = () => {
 
   async function checkStatus() {
     try {
-      await statusApi.get("http://localhost:1880");
+      await statusApi.get("http://node-red-status:1880");
       return true;
     } catch (error) {
       if (error.code === "ERR_NETWORK") {
@@ -73,7 +73,7 @@ export const useNode = () => {
     if (isNodeRedDeployed) {
       statusApi
         .post(
-          "http://localhost:1880/auth/token",
+          "http://node-red-status:1880/auth/token",
           {
             client_id: "node-red-admin",
             grant_type: "password",
@@ -105,7 +105,7 @@ export const useNode = () => {
   const getMashups = async () => {
     let nodeRed;
     try {
-      await statusApi.get("http://localhost:1880");
+      await statusApi.get("http://node-red-status:1880");
       nodeRed = true;
     } catch (error) {
       nodeRed = false;
@@ -122,7 +122,7 @@ export const useNode = () => {
         .split("nodeRedAccessToken=")[1]
         .trim();
       try {
-        const response = await statusApi.get("http://localhost:1880/flows", {
+        const response = await statusApi.get("http://node-red-status:1880/flows", {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -141,7 +141,7 @@ export const useNode = () => {
   const getFlows = async () => {
     let nodeRed;
     try {
-      await statusApi.get("http://localhost:1880");
+      await statusApi.get("http://node-red-status:1880");
       nodeRed = true;
     } catch (error) {
       nodeRed = false;
@@ -160,7 +160,7 @@ export const useNode = () => {
         .trim();
 
       try {
-        const response = await statusApi.get("http://localhost:1880/flows", {
+        const response = await statusApi.get("http://node-red-status:1880/flows", {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -181,7 +181,7 @@ export const useNode = () => {
   const getAllFlows = async () => {
     let nodeRed;
     try {
-      await statusApi.get("http://localhost:1880");
+      await statusApi.get("http://node-red-status:1880");
       nodeRed = true;
     } catch (error) {
       nodeRed = false;
@@ -200,7 +200,7 @@ export const useNode = () => {
         .trim();
 
       try {
-        const response = await statusApi.get("http://localhost:1880/flows", {
+        const response = await statusApi.get("http://node-red-status:1880/flows", {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -281,7 +281,7 @@ export const useNode = () => {
     if (accessToken !== "") {
       try {
         const response = await statusApi.post(
-          "http://localhost:1880/flow",
+          "http://node-red-status:1880/flow",
           {
             label: name,
             nodes: [],
@@ -305,7 +305,7 @@ export const useNode = () => {
     const accessToken = await getCookie();
     if (accessToken !== "") {
       try {
-        await statusApi.delete(`http://localhost:1880/flow/${id}`, {
+        await statusApi.delete(`http://node-red-status:1880/flow/${id}`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
@@ -319,7 +319,7 @@ export const useNode = () => {
 
   const checkIfExist = async (accessToken, jsonString) => {
     try {
-      const response = await statusApi.get("http://localhost:1880/flows", {
+      const response = await statusApi.get("http://node-red-status:1880/flows", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -346,7 +346,7 @@ export const useNode = () => {
         } else {
           try {
             const response = await statusApi.post(
-              "http://localhost:1880/flow",
+              "http://node-red-status:1880/flow",
               {
                 id: id,
                 label: label,
@@ -377,7 +377,7 @@ export const useNode = () => {
     if (accessToken !== "") {
       try {
         const response = await statusApi.get(
-          `http://localhost:1880/flow/${id}`,
+          `http://node-red-status:1880/flow/${id}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -398,7 +398,7 @@ export const useNode = () => {
       const nodes = flow.nodes;
       try {
         const response = await statusApi.put(
-          `http://localhost:1880/flow/${id}`,
+          `http://node-red-status:1880/flow/${id}`,
           {
             id: id,
             label: label,
@@ -426,7 +426,7 @@ export const useNode = () => {
     if (accessToken !== "") {
       try {
         const response = await statusApi.get(
-          `http://localhost:1880/${endpoint}`,
+          `http://node-red-status:1880/${endpoint}`,
           parameters,
           {
             headers: {
