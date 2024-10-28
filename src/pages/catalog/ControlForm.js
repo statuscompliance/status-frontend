@@ -183,7 +183,7 @@ const ControlForm = () => {
         }`;
         const mashupResponse = await sendMashupRequest(mashupUrl, inputs);
         if (!mashupResponse) {
-          setError("Mashup request failed.");
+          throw new Error("Mashup request failed.");
         }
       }
 
