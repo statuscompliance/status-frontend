@@ -5,6 +5,7 @@ import { Form, Button, Card, Row, Col, Spinner, Alert } from "react-bootstrap";
 import { useNode } from "../../hooks/useNode";
 import { useControls } from "../../hooks/useControls";
 import { useNavigate, useParams } from "react-router-dom";
+import { useCatalogs } from "../../hooks/useCatalogs";
 
 const ControlForm = () => {
   const { controlId, catalogId } = useParams();
@@ -19,6 +20,7 @@ const ControlForm = () => {
     deleteControlByIdInDb,
     deleteInputControlsByControlIdInDb,
   } = useControls();
+  const { getCatalogByIdFromTheDB } = useCatalogs();
 
   const [control, setControl] = useState({
     name: "",
@@ -28,12 +30,30 @@ const ControlForm = () => {
     endDate: "",
     mashup_id: "",
   });
+  const [catalogDates, setCatalogDates] = useState({ startDate: "", endDate: "" });
   const [flows, setFlows] = useState([]);
   const [inputs, setInputs] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCatalogDates = async () => {
+      try {
+        const catalog = await getCatalogByIdFromTheDB(catalogId);
+        setCatalogDates({
+          startDate: new Date(catalog.startDate).toISOString().split("T")[0],
+          endDate: new Date(catalog.endDate).toISOString().split("T")[0],
+        });
+      } catch (error) {
+        console.error("Error fetching catalog dates:", error);
+        setError("Unable to load catalog dates. Please try again later.");
+      }
+    };
+
+    fetchCatalogDates();
+  }, [catalogId]);
 
   useEffect(() => {
     const fetchFlows = async () => {
@@ -134,6 +154,12 @@ const ControlForm = () => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+
+    if (new Date(control.endDate) < new Date(control.startDate)) {
+      setError("End date cannot be earlier than start date.");
+      setIsLoading(false);
+      return;
+    }
 
     let newControlId;
     let createdInputs = [];
@@ -255,7 +281,10 @@ const ControlForm = () => {
                         type="date"
                         value={control.startDate}
                         onChange={handleInputChange}
+                        required
                         className="form-control-lg"
+                        min={catalogDates.startDate}
+                        max={catalogDates.endDate}
                       />
                     </Form.Group>
                   </Col>
@@ -267,7 +296,10 @@ const ControlForm = () => {
                         type="date"
                         value={control.endDate}
                         onChange={handleInputChange}
+                        required
                         className="form-control-lg"
+                        min={catalogDates.startDate}
+                        max={catalogDates.endDate}
                       />
                     </Form.Group>
                   </Col>
