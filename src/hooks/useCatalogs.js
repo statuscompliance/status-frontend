@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { statusApi } from "../api/statusApi";
-import { getCookie } from "./useCookie";
 import { useGrafana } from "./useGrafana";
+import statusBackendClient from '../api/statusBackendClient';
 
 export const useCatalogs = () => {
   const [catalogs, setCatalogs] = useState([]);
@@ -9,63 +8,43 @@ export const useCatalogs = () => {
   const [catalogStartDate, setCatalogStartDate] = useState("");
   const [catalogEndDate, setCatalogEndDate] = useState("");
   const { createDashboard } = useGrafana();
-  const accessToken = getCookie("accessToken");
 
   useEffect(() => {
     getCatalogsFromTheDatabase();
   }, []);
 
   const getCatalogsFromTheDatabase = async () => {
-    const resp = await statusApi.get("http://status-backend:3001/api/catalogs", {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const resp = await statusBackendClient.get('/api/catalogs');
     setCatalogs(resp.data);
   };
 
   const getCatalogByIdFromTheDB = async (id) => {
-    const resp = await statusApi.get(`http://status-backend:3001/api/catalogs/${id}`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const resp = await statusBackendClient.get(`/api/catalogs/${id}`);
     return resp.data;
   };
 
   const createCatalogInDB = async (catalogName, startDate, endDate) => {
-    const catalogResp = await statusApi.post(
-      "http://status-backend:3001/api/catalogs",
-      {
+    try {
+      const catalogResp = await statusBackendClient.post('/api/catalogs', {
         name: catalogName,
         startDate: startDate || null,
         endDate: endDate || null,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-    const newCatalog = catalogResp.data;
-
-    const dashboardResp = await createDashboard(newCatalog);
-    const dashboardId = dashboardResp.uid;
-
-    const updatedCatalogResp = await statusApi.patch(
-      `http://status-backend:3001/api/catalogs/${newCatalog.id}`,
-      {
+      });
+      const newCatalog = catalogResp.data;
+  
+      const dashboardResp = await createDashboard(newCatalog);
+      const dashboardId = dashboardResp.uid;
+  
+      const updatedCatalogResp = await statusBackendClient.patch(`/api/catalogs/${newCatalog.id}`, {
         dashboard_id: dashboardId,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-
-    return updatedCatalogResp.data;
-  };
+      });
+  
+      return updatedCatalogResp.data;
+    } catch (error) {
+      console.error('Error creating catalog:', error);
+      throw error;
+    }
+  };  
 
   const updateCatalog = (index, id, value) => {
     const updatedCatalogs = [...catalogs];
@@ -74,44 +53,22 @@ export const useCatalogs = () => {
   };
 
   const updateCatalogInDB = async (id, catalogName, startDate, endDate) => {
-    const resp = await statusApi.patch(
-      `http://status-backend:3001/api/catalogs/${id}`,
-      {
-        name: catalogName,
-        startDate: startDate || null,
-        endDate: endDate || null,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-    return resp.data;
+    const response = await statusBackendClient.patch(`/api/catalogs/${id}`, {
+      name: catalogName,
+      startDate: startDate || null,
+      endDate: endDate || null,
+    });
+    return response.data;
   };
 
   const getCatalogControlsInDB = async (catalogId) => {
-    const resp = await statusApi.get(
-      `http://status-backend:3001/api/catalogs/${catalogId}/controls`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-    return resp.data;
+    const response = await statusBackendClient.get(`/api/catalogs/${catalogId}/controls`);
+    return response.data;
   };
 
   const deleteCatalogByIdFromTheDatabase = async (catalogId) => {
-    const resp = await statusApi.delete(
-      `http://status-backend:3001/api/catalogs/${catalogId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-    return resp.data;
+    const response = await statusBackendClient.delete(`/api/catalogs/${catalogId}`);
+    return response.data;
   };
 
   const handleNameChange = (e) => {

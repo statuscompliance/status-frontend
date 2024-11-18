@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { statusApi } from "../api/statusApi";
+import statusBackendClient from '../api/statusBackendClient';
 
 export const useAuth = () => {
   const [username, setUsername] = useState("");
@@ -28,72 +28,44 @@ export const useAuth = () => {
     setPassword(event.target.value);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    statusApi
-      .post(
-        "http://status-backend:3001/api/user/signIn",
-        {
-          username: username,
-          password: password,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-      .then(async (response) => {
-        const now = new Date();
-        const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
-        const oneDayLater = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-        const oneWeekLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-        const accessExpires = oneHourLater.toUTCString();
-        const refreshExpires = oneDayLater.toUTCString();
-        const nodeRedExpires = oneWeekLater.toUTCString();
-
-        document.cookie = `accessToken=${response.data.accessToken}; expires=${accessExpires}`;
-        document.cookie = `refreshToken=${response.data.refreshToken}; expires=${refreshExpires}`;
-        document.cookie = `nodeRedAccessToken=${response.data.nodeRedToken}; expires=${nodeRedExpires}`;
-
-        window.location.href = window.location.origin;
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 404) {
-          document.getElementById("error-message").innerText =
-            "El usuario introducido no está registrado en el sistema";
-        } else if (error.response && error.response.status === 401) {
-          document.getElementById("error-message").innerText =
-            "La contraseña introducida no es correcta";
-        } else {
-          document.getElementById("error-message").innerText =
-            "Error al iniciar sesión. Por favor, inténtelo de nuevo o contacte con el administrador del sistema";
-        }
+    try {
+      const response = await statusBackendClient.post('/api/user/signIn', {
+        username,
+        password,
       });
+  
+      const now = new Date();
+      const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
+      const oneDayLater = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+      const oneWeekLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  
+      document.cookie = `accessToken=${response.data.accessToken}; expires=${oneHourLater.toUTCString()}`;
+      document.cookie = `refreshToken=${response.data.refreshToken}; expires=${oneDayLater.toUTCString()}`;
+      document.cookie = `nodeRedAccessToken=${response.data.nodeRedToken}; expires=${oneWeekLater.toUTCString()}`;
+  
+      window.location.href = window.location.origin;
+    } catch (error) {
+      const errorMessage = document.getElementById("error-message");
+      if (error.response?.status === 404) {
+        errorMessage.innerText = "El usuario introducido no está registrado en el sistema";
+      } else if (error.response?.status === 401) {
+        errorMessage.innerText = "La contraseña introducida no es correcta";
+      } else {
+        errorMessage.innerText = "Error al iniciar sesión. Por favor, inténtelo de nuevo o contacte con el administrador del sistema";
+      }
+    }
   };
 
   const handleRefresh = async (event) => {
     event.preventDefault();
-    if (
-      document.cookie.split("; ").find((row) => row.startsWith(`refreshToken=`))
-    ) {
-      const refreshToken = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("refreshToken="))
-        .split("=")[1];
+    const refreshToken = document.cookie.split("; ").find((row) => row.startsWith("refreshToken="))?.split("=")[1];
+    if (refreshToken) {
       try {
-        const response = await statusApi.get(
-          "http://status-backend:3001/api/refresh",
-          {
-            headers: {
-              Authorization: `Bearer ${refreshToken}`,
-            },
-          }
-        );
-        const now = new Date();
-        const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000);
-        const accessExpires = oneHourLater.toUTCString();
-        document.cookie = `accessToken=${response.data.accessToken}; expires=${accessExpires}`;
+        const response = await statusBackendClient.get('/api/refresh');
+        const oneHourLater = new Date(Date.now() + 60 * 60 * 1000);
+        document.cookie = `accessToken=${response.data.accessToken}; expires=${oneHourLater.toUTCString()}`;
       } catch (error) {
         console.error("Error refreshing the token:", error);
       }
@@ -104,14 +76,7 @@ export const useAuth = () => {
     const accessToken = getCookie();
     if (accessToken) {
       try {
-        const response = await statusApi.get(
-          `http://status-backend:3001/api/user/auth/`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
+        const response = await statusBackendClient.get('/api/user/auth/');
         setAuthority(response.data.authority);
       } catch (error) {
         console.error("Error fetching user authority:", error);

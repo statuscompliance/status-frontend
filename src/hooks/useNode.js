@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { statusApi } from "../api/statusApi";
+import nodeRedClient from "../api/nodeRedClient";
 
 export const useNode = () => {
   const [isNodeRedDeployed, setIsNodeRedDeployed] = useState(false);
@@ -38,7 +38,7 @@ export const useNode = () => {
 
   async function checkStatus() {
     try {
-      await statusApi.get("http://node-red-status:1880");
+      await nodeRedClient.get("/");
       return true;
     } catch (error) {
       if (error.code === "ERR_NETWORK") {
@@ -71,22 +71,14 @@ export const useNode = () => {
   const signIn = async (username, password) => {
     checkNodeRedDeployment();
     if (isNodeRedDeployed) {
-      statusApi
-        .post(
-          "http://node-red-status:1880/auth/token",
-          {
-            client_id: "node-red-admin",
-            grant_type: "password",
-            scope: "*",
-            username: username,
-            password: password,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        )
+      nodeRedClient
+        .post("/auth/token", {
+          client_id: "node-red-admin",
+          grant_type: "password",
+          scope: "*",
+          username,
+          password,
+        })
         .then((response) => {
           const now = new Date();
           const oneWeekLater = new Date(
@@ -103,113 +95,52 @@ export const useNode = () => {
   };
 
   const getMashups = async () => {
-    let nodeRed;
     try {
-      await statusApi.get("http://node-red-status:1880");
-      nodeRed = true;
-    } catch (error) {
-      nodeRed = false;
-    }
-    if (
-      nodeRed &&
-      document.cookie
-        .split("; ")
-        .find((row) => row.startsWith(`nodeRedAccessToken=`))
-    ) {
-      const accessToken = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("nodeRedAccessToken="))
-        .split("nodeRedAccessToken=")[1]
-        .trim();
-      try {
-        const response = await statusApi.get("http://node-red-status:1880/flows", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+      await nodeRedClient.get("/");
+      const accessToken = getCookie("nodeRedAccessToken");
+
+      if (accessToken) {
+        const response = await nodeRedClient.get("/flows");
         const filteredMashups = response.data.filter(
           (obj) => obj.type === "tab"
         );
         const parsedMashups = parseMashups(filteredMashups);
         setMashups(parsedMashups);
-      } catch (error) {
-        console.error(error);
       }
+    } catch (error) {
+      console.error(error);
     }
   };
 
   const getFlows = async () => {
-    let nodeRed;
     try {
-      await statusApi.get("http://node-red-status:1880");
-      nodeRed = true;
-    } catch (error) {
-      nodeRed = false;
-    }
+      await nodeRedClient.get("/");
+      const accessToken = getCookie("nodeRedAccessToken");
 
-    if (
-      nodeRed &&
-      document.cookie
-        .split("; ")
-        .find((row) => row.startsWith(`nodeRedAccessToken=`))
-    ) {
-      const accessToken = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("nodeRedAccessToken="))
-        .split("nodeRedAccessToken=")[1]
-        .trim();
-
-      try {
-        const response = await statusApi.get("http://node-red-status:1880/flows", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-
+      if (accessToken) {
+        const response = await nodeRedClient.get("/flows");
         const apiMashups = response.data.filter(
           (obj) => obj.url && obj.url.includes("/api")
         );
-
         const parsedMashups = parseMashups(apiMashups);
         return parsedMashups;
-      } catch (error) {
-        console.error(error);
       }
+    } catch (error) {
+      console.error(error);
     }
   };
 
   const getAllFlows = async () => {
-    let nodeRed;
     try {
-      await statusApi.get("http://node-red-status:1880");
-      nodeRed = true;
-    } catch (error) {
-      nodeRed = false;
-    }
+      await nodeRedClient.get("/");
+      const accessToken = getCookie("nodeRedAccessToken");
 
-    if (
-      nodeRed &&
-      document.cookie
-        .split("; ")
-        .find((row) => row.startsWith(`nodeRedAccessToken=`))
-    ) {
-      const accessToken = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("nodeRedAccessToken="))
-        .split("nodeRedAccessToken=")[1]
-        .trim();
-
-      try {
-        const response = await statusApi.get("http://node-red-status:1880/flows", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-
+      if (accessToken) {
+        const response = await nodeRedClient.get("/flows");
         return response;
-      } catch (error) {
-        console.error(error);
       }
+    } catch (error) {
+      console.error("Error fetching all flows:", error);
     }
   };
 
@@ -277,23 +208,15 @@ export const useNode = () => {
   }
 
   const createInitialMashup = async (name, description) => {
-    const accessToken = await getCookie();
-    if (accessToken !== "") {
+    const accessToken = getCookie("nodeRedAccessToken");
+    if (accessToken) {
       try {
-        const response = await statusApi.post(
-          "http://node-red-status:1880/flow",
-          {
-            label: name,
-            nodes: [],
-            configs: [],
-            info: description,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
+        const response = await nodeRedClient.post("/flow", {
+          label: name,
+          nodes: [],
+          configs: [],
+          info: description,
+        });
         return response.data;
       } catch (error) {
         console.error(error);
@@ -302,14 +225,10 @@ export const useNode = () => {
   };
 
   const deleteMashup = async (id) => {
-    const accessToken = await getCookie();
-    if (accessToken !== "") {
+    const accessToken = getCookie("nodeRedAccessToken");
+    if (accessToken) {
       try {
-        await statusApi.delete(`http://node-red-status:1880/flow/${id}`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        await nodeRedClient.delete(`/flow/${id}`);
         getMashups();
       } catch (error) {
         console.error(error);
@@ -317,13 +236,9 @@ export const useNode = () => {
     }
   };
 
-  const checkIfExist = async (accessToken, jsonString) => {
+  const checkIfExist = async (jsonString) => {
     try {
-      const response = await statusApi.get("http://node-red-status:1880/flows", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await nodeRedClient.get("/flows");
       return response.data.includes(jsonString);
     } catch (error) {
       console.error(error);
@@ -331,59 +246,45 @@ export const useNode = () => {
   };
 
   const temporalMashup = async (content) => {
-    const accessToken = await getCookie();
-    if (accessToken !== "") {
+    const accessToken = getCookie("nodeRedAccessToken");
+    if (accessToken) {
       try {
         const jsonString = content.replace(/^```json+|```$/g, "");
         const parsedNodes = JSON.parse(jsonString);
-        const id = parsedNodes[0].id;
-        const label = parsedNodes[0].label;
-        const info = parsedNodes[0].info;
-        parsedNodes.shift();
-        const existsMashup = await checkIfExist(accessToken, jsonString);
+        const { id, label, info } = parsedNodes.shift();
+
+        const existsMashup = await checkIfExist(jsonString);
         if (existsMashup) {
           return "";
-        } else {
-          try {
-            const response = await statusApi.post(
-              "http://node-red-status:1880/flow",
-              {
-                id: id,
-                label: label,
-                nodes: parsedNodes,
-                configs: [],
-                info: info,
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                },
-              }
-            );
-            getMashups();
-            const mashupId = response.data.id;
-            return mashupId ? mashupId : "";
-          } catch (error) {
-            console.log(error);
-          }
+        }
+
+        try {
+          const response = await nodeRedClient.post("/flow", {
+            id,
+            label,
+            nodes: parsedNodes,
+            configs: [],
+            info,
+          });
+
+          getMashups();
+          return response.data.id || "";
+        } catch (error) {
+          console.error("Error creating temporal mashup:", error);
+          return "";
         }
       } catch (error) {
-        console.error(error);
+        console.error("Error processing content for temporal mashup:", error);
+        return "";
       }
     }
   };
+
   const getFlow = async (id) => {
-    const accessToken = await getCookie();
-    if (accessToken !== "") {
+    const accessToken = getCookie("nodeRedAccessToken");
+    if (accessToken) {
       try {
-        const response = await statusApi.get(
-          `http://node-red-status:1880/flow/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
+        const response = await nodeRedClient.get(`/flow/${id}`);
         return response.data;
       } catch (error) {
         console.error(error);
@@ -392,29 +293,19 @@ export const useNode = () => {
   };
 
   const addFlowInfo = async (id, flow, info) => {
-    const accessToken = await getCookie();
-    if (accessToken !== "") {
-      const label = flow.label;
-      const nodes = flow.nodes;
+    const accessToken = getCookie("nodeRedAccessToken");
+    if (accessToken) {
+      const { label, nodes } = flow;
       try {
-        const response = await statusApi.put(
-          `http://node-red-status:1880/flow/${id}`,
-          {
-            id: id,
-            label: label,
-            nodes: nodes,
-            configs: [],
-            info: info,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
+        const response = await nodeRedClient.put(`/flow/${id}`, {
+          id,
+          label,
+          nodes,
+          configs: [],
+          info,
+        });
         getMashups();
-        const mashupId = response.data.id;
-        return mashupId ? mashupId : "";
+        return response.data.id || "";
       } catch (error) {
         console.error(error);
       }
@@ -422,18 +313,12 @@ export const useNode = () => {
   };
 
   const getFlowResponse = async (endpoint, parameters) => {
-    const accessToken = await getCookie();
-    if (accessToken !== "") {
+    const accessToken = getCookie("nodeRedAccessToken");
+    if (accessToken) {
       try {
-        const response = await statusApi.get(
-          `http://node-red-status:1880/${endpoint}`,
-          parameters,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
+        const response = await nodeRedClient.get(`/${endpoint}`, {
+          params: parameters,
+        });
         return response.data;
       } catch (error) {
         console.error(error);
@@ -445,11 +330,11 @@ export const useNode = () => {
     try {
       const USER_STATUS = process.env.REACT_APP_USER_STATUS;
       const PASS_STATUS = process.env.REACT_APP_PASS_STATUS;
-
       const basicAuth = btoa(`${USER_STATUS}:${PASS_STATUS}`);
-      const headers = {
-        'Authorization': `Basic ${basicAuth}`,
-        'Content-Type': 'application/json',
+
+      const customHeaders = {
+        Authorization: `Basic ${basicAuth}`,
+        "Content-Type": "application/json",
       };
 
       const body = JSON.stringify(
@@ -459,8 +344,11 @@ export const useNode = () => {
         }, {})
       );
 
-      const resp = await statusApi.post(mashupUrl, body, { headers, timeout: 10000 });  
-      return resp.data;
+      const response = await nodeRedClient.post(mashupUrl, body, {
+        headers: customHeaders,
+        timeout: 10000,
+      });
+      return response.data;
     } catch (error) {
       console.error("Error making mashup request:", error);
       return null;

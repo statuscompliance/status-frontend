@@ -281,7 +281,7 @@ export default function Chat() {
           {animated && isNodeRedDeployed ? (
             <div className={`chatEditor ${animated ? "visible" : ""}`}>
               <iframe
-                src={`http://node-red-status:1880${endpoint}`}
+                src={`${process.env.REACT_APP_NODE_RED_URL || 'http://localhost:1880'}${endpoint}`}
                 title="Editor"
                 className="editorIframe"
               ></iframe>

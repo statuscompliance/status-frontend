@@ -204,9 +204,10 @@ const ControlForm = () => {
       }
 
       if (control.mashup_id) {
-        const mashupUrl = `http://node-red-status:1880/api/${
-          getMashupById(flows, control.mashup_id).url.match(/\/api\/(.+)/)[1]
-        }`;
+        const baseUrl = process.env.REACT_APP_NODE_RED_URL || 'http://localhost:1880';
+        const mashupPath = getMashupById(flows, control.mashup_id).url.match(/\/api\/(.+)/)[1];
+        const mashupUrl = `${baseUrl}/api/${mashupPath}`;
+
         const mashupResponse = await sendMashupRequest(mashupUrl, inputs);
         if (!mashupResponse) {
           throw new Error("Mashup request failed.");

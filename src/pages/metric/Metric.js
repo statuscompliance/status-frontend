@@ -34,7 +34,7 @@ export default function Metric() {
       const metrics = await getControlPanels(controlId);
       setMetrics(metrics);
     } catch (error) {
-      if (error.response && error.response.status === 404) {
+      if (error.response?.status === 404) {
         setMetrics([]);
       } else {
         console.error("Error fetching data:", error);
