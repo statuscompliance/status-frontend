@@ -46,7 +46,7 @@
     height: 85%;
     width: 42%;
     justify-content: center;
-    border: 2px solid rgb(185, 178, 178);
+    border: 2px solid rgb(185 178 178);
     border-radius: 10px;
     background-color: #f7f7f7;
 }
@@ -73,7 +73,7 @@
 .textArea {
     width: 100%;
     height: 100%;
-    border: 2px solid rgb(185, 178, 178);
+    border: 2px solid rgb(185 178 178);
     border-radius: 10px;
     background-color: white;
     padding: 10px;
@@ -84,7 +84,7 @@
     margin-bottom: 3%;
     width: 30%;
     height: auto;
-    border: 2px solid rgb(185, 178, 178);
+    border: 2px solid rgb(185 178 178);
     border-radius: 10px;
     background-color: #f7f7f7;
 } 
@@ -98,7 +98,7 @@
     flex-direction: column;
     height: 100%;
     justify-content: center;
-    border: 2px solid rgb(185, 178, 178);
+    border: 2px solid rgb(185 178 178);
     border-radius: 10px;
     background-color: #f7f7f7;
     align-items: flex-start;
@@ -204,7 +204,7 @@ input:checked + .slider::before {
     flex-direction: column;
     align-items: flex-start;
     height: 100%;
-    border: 2px solid rgb(185, 178, 178);
+    border: 2px solid rgb(185 178 178);
     border-radius: 10px;
     font-size: 15px;
     background-color: #f7f7f7;
@@ -291,7 +291,7 @@ input:checked + .slider::before {
     right: 5%;
     width: 18%;
     height: 40px;
-    border: 2px solid rgb(185, 178, 178);
+    border: 2px solid rgb(185 178 178);
     border-radius: 10px;
     background-color: #2bb6b6;
     filter: invert(1);
@@ -308,7 +308,7 @@ input:checked + .slider::before {
     right: 10%;
     width: 25%;
     height: 40px;
-    border: 2px solid rgb(185, 178, 178);
+    border: 2px solid rgb(185 178 178);
     border-radius: 10px;
     background-color: #f7f7f7;
 }
@@ -340,7 +340,7 @@ input:checked + .slider::before {
 
 .limitText{
     font-size: 21px;
-    border: 2px solid rgb(185, 178, 178);
+    border: 2px solid rgb(185 178 178);
     border-radius: 10px;
     height: 60px;
     width: 8vh;
@@ -355,7 +355,7 @@ input:checked + .slider::before {
     padding-left: 10px;
     height: 60px;
     font-size: 20px;
-    border: 2px solid rgb(185, 178, 178);
+    border: 2px solid rgb(185 178 178);
     border-radius: 10px;
     background-color: #f7f7f7;
 }
@@ -363,7 +363,7 @@ input:checked + .slider::before {
 .limitButton{
     width: 13vh;
     height: 60px;
-    border: 2px solid rgb(185, 178, 178);
+    border: 2px solid rgb(185 178 178);
     border-radius: 10px;
     background-color: #f7f7f7;
 }
@@ -376,7 +376,7 @@ input:checked + .slider::before {
 .createButton{
     width: 20vh;
     height: 60px;
-    border: 2px solid rgb(185, 178, 178);
+    border: 2px solid rgb(185 178 178);
     border-radius: 10px;
     background-color: #f7f7f7;
 }

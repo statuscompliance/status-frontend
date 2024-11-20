@@ -92,7 +92,7 @@
     width: 180px;
     height: 55px;
     border-radius: 40px;
-    background-color: rgba(187, 123, 136, 0.633);
+    background-color: rgba(187 123 136 / 0.633);
 }
 
 .chatImg {
