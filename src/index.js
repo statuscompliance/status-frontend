@@ -7,8 +7,12 @@ import "./static/css/index.css";
 import logoSvg from "./static/images/logo.svg";
 import githubLogo from "./static/images/githubLogo.svg";
 import Catalog from "./pages/catalog/Catalog";
+import CatalogForm from "./pages/catalog/CatalogForm";
+import Control from "./pages/catalog/Control";
+import ControlForm from "./pages/catalog/ControlForm";
+import Metric from "./pages/metric/Metric";
+import MetricForm from "./pages/metric/MetricForm";
 import Mashup from "./pages/mashup/Mashup";
-import NewCatalog from "./pages/catalog/NewCatalog";
 import Profile from "./pages/profile/Profile";
 import Login from "./pages/auth/Login";
 import Editor from "./pages/node-red/Editor";
@@ -16,12 +20,12 @@ import Chat from "./pages/chat/Chat";
 import Home from "./pages/Home";
 import Admin from "./pages/admin/Admin";
 import { store } from "./app/store";
-import { statusApi } from "./api/statusApi";
 import { useCookie } from "./hooks/useCookie";
 import { useAuth } from "./hooks/useAuth";
 import { useAdmin } from "./hooks/useAdmin";
 import { Modal } from "react-bootstrap";
 import { Context } from "./hooks/useAdmin";
+import statusBackendClient from './api/statusBackendClient';
 
 const App = () => {
   const [showModal, setShowModal] = useState(false);
@@ -52,18 +56,16 @@ const App = () => {
     }
   }, [existsCookie, getGPTConfiguration]);
 
-  const handleLogout = () => {
-    statusApi
-      .get("http://localhost:3001/api/user/signOut")
-      .then(() => {
-        document.cookie = `accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
-        document.cookie = `refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
-        document.cookie = `nodeRedAccessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
-        window.location.reload();
-      })
-      .catch((error) => {
-        console.error(error.message);
-      });
+  const handleLogout = async () => {
+    try {
+      await statusBackendClient.get('/api/user/signOut');
+      document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+      document.cookie = 'refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+      document.cookie = 'nodeRedAccessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+      window.location.reload();
+    } catch (error) {
+      console.error('Error during logout:', error.message);
+    }
   };
 
   const openLogoutModal = () => {
@@ -81,12 +83,10 @@ const App = () => {
 
   async function getGhToken(codeParam) {
     try {
-      const response = await statusApi.get(
-        `http://localhost:3001/api/ghAccessToken?code=${codeParam}`
-      );
-      const data = response.data;
-      if (data.access_token) {
-        localStorage.setItem("ghToken", data.access_token);
+      const response = await statusBackendClient.get(`/api/ghAccessToken?code=${codeParam}`);
+      const { access_token } = response.data;
+      if (access_token) {
+        localStorage.setItem("ghToken", access_token);
         window.location.href = "/profile";
       }
     } catch (error) {
@@ -227,8 +227,15 @@ const App = () => {
           <Routes>
             <Route exact element={<Home />} path="/" />
             <Route element={<Catalog />} path="/catalogs" />
+            <Route path="/catalog/:catalogId/controls" element={<Control />} />
+            <Route path="/catalog/:catalogId/controls/:controlId/metrics" element={<Metric />} />
             <Route element={<Mashup />} path="/mashups" />
-            <Route element={<NewCatalog />} path="/new_catalog" />
+            <Route element={<CatalogForm />} path="/catalog/new" />
+            <Route element={<CatalogForm />} path="/catalog/:catalogId/edit" />
+            <Route element={<ControlForm />} path="/catalog/:catalogId/new_control" />
+            <Route element={<ControlForm />} path="/catalog/:catalogId/edit_control/:controlId" />
+            <Route element={<MetricForm />} path="/catalog/:catalogId/control/:controlId/new_metric" />
+            <Route element={<MetricForm />} path="/catalog/:catalogId/control/:controlId/edit_metric/:metricId" />
             <Route element={<Profile />} path="/profile" />
             <Route element={<Login />} path="/login" />
             <Route element={<Editor />} path="/editor" />
