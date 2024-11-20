@@ -74,6 +74,16 @@ export default function Catalog() {
     }
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
   const header = (
     <div className="filter-header">
       <span className="p-input-icon-left">
@@ -106,6 +116,10 @@ export default function Catalog() {
     );
   };
 
+  const dateTemplate = (rowData, columnField) => {
+    return <span>{formatDate(rowData[columnField])}</span>;
+  };
+
   return (
     <div className="body">
       <div className="datatable-header">{header}</div>
@@ -128,12 +142,14 @@ export default function Catalog() {
             className="column"
             field="startDate"
             header="Start Date"
+            body={(rowData) => dateTemplate(rowData, "startDate")}
             style={{ width: "25%" }}>
           </Column>
           <Column
             className="column"
             field="endDate"
             header="End Date"
+            body={(rowData) => dateTemplate(rowData, "endDate")}
             style={{ width: "25%" }}>
           </Column>
           <Column

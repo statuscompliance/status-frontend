@@ -124,6 +124,16 @@ export default function Control() {
     }
   };
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-US", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
   return (
     <div className="body">
       {catalogDetails && (
@@ -136,11 +146,11 @@ export default function Control() {
             </div>
             <div className="info-item">
               <span className="info-label">Start Date:</span>
-              <span className="info-value">{catalogDetails.startDate}</span>
+              <span className="info-value">{formatDate(catalogDetails.startDate)}</span>
             </div>
             <div className="info-item">
               <span className="info-label">End Date:</span>
-              <span className="info-value">{catalogDetails.endDate}</span>
+              <span className="info-value">{formatDate(catalogDetails.endDate)}</span>
             </div>
           </div>
 
