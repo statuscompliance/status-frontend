@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Link, Routes, Route } from "react-router-dom";
-import { Provider } from "react-redux";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./static/css/index.css";
 import logoSvg from "./static/images/logo.svg";
@@ -19,7 +18,6 @@ import Editor from "./pages/node-red/Editor";
 import Chat from "./pages/chat/Chat";
 import Home from "./pages/Home";
 import Admin from "./pages/admin/Admin";
-import { store } from "./app/store";
 import { useCookie } from "./hooks/useCookie";
 import { useAuth } from "./hooks/useAuth";
 import { useAdmin } from "./hooks/useAdmin";
@@ -272,7 +270,5 @@ const container = document.getElementById("root");
 const root = createRoot(container);
 
 root.render(
-  <Provider store={store}>
-    <App />
-  </Provider>
+  <App />
 );
