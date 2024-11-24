@@ -23,7 +23,7 @@ import { useAuth } from "./hooks/useAuth";
 import { useAdmin } from "./hooks/useAdmin";
 import { Modal } from "react-bootstrap";
 import { Context } from "./hooks/useAdmin";
-import statusBackendClient from './api/statusBackendClient';
+import statusBackendClient from "./api/statusBackendClient";
 
 const App = () => {
   const [showModal, setShowModal] = useState(false);
@@ -56,13 +56,14 @@ const App = () => {
 
   const handleLogout = async () => {
     try {
-      await statusBackendClient.get('/api/user/signOut');
-      document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
-      document.cookie = 'refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
-      document.cookie = 'nodeRedAccessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;';
+      await statusBackendClient.get("/api/user/signOut");
+      document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+      document.cookie = "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+      document.cookie =
+        "nodeRedAccessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
       window.location.reload();
     } catch (error) {
-      console.error('Error during logout:', error.message);
+      console.error("Error during logout:", error.message);
     }
   };
 
@@ -81,7 +82,9 @@ const App = () => {
 
   async function getGhToken(codeParam) {
     try {
-      const response = await statusBackendClient.get(`/api/ghAccessToken?code=${codeParam}`);
+      const response = await statusBackendClient.get(
+        `/api/ghAccessToken?code=${codeParam}`
+      );
       const { access_token } = response.data;
       if (access_token) {
         localStorage.setItem("ghToken", access_token);
@@ -114,10 +117,10 @@ const App = () => {
           <div className="timeout">
             <Modal onHide={() => setShowModal(false)} show={showModal}>
               <Modal.Header closeButton>
-                <Modal.Title>¿Sigues ahí?</Modal.Title>
+                <Modal.Title>Still there?</Modal.Title>
               </Modal.Header>
               <Modal.Body>
-                Tu sesión está a punto de expirar. Cuenta atrás:{" "}
+                Your session is about to expire. Countdown:{" "}
                 <CountdownTimer onTimeout={handleLogout} />
               </Modal.Body>
               <Modal.Footer>
@@ -129,14 +132,34 @@ const App = () => {
         )}
         {isLoggedIn && showLogoutModal ? (
           <div className="logout">
-            <Modal onHide={closeLogoutModal} show={showLogoutModal}>
+            <Modal onHide={closeLogoutModal} show={showLogoutModal} centered>
               <Modal.Header closeButton>
-                <Modal.Title>Confirmación</Modal.Title>
+                <Modal.Title className="text-center">Confirmation</Modal.Title>
               </Modal.Header>
-              <Modal.Body>¿Estás seguro que deseas cerrar sesión?</Modal.Body>
-              <Modal.Footer>
-                <button onClick={closeLogoutModal}>Cancelar</button>
-                <button onClick={handleLogout}>Cerrar sesión</button>
+              <Modal.Body className="text-center">
+                <p>Are you sure you want to log out?</p>
+              </Modal.Body>
+              <Modal.Footer className="d-flex justify-content-center">
+                <button
+                  onClick={handleLogout}
+                  className="btn btn-danger px-4 py-2"
+                  style={{
+                    fontWeight: "bold",
+                    backgroundColor: "#bf0a2e",
+                    borderColor: "#bf0a2e",
+                    transition: "background-color 0.3s, transform 0.3s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = "#a10825";
+                    e.target.style.transform = "scale(1.05)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = "#bf0a2e";
+                    e.target.style.transform = "scale(1)";
+                  }}
+                >
+                  Log Out
+                </button>
               </Modal.Footer>
             </Modal>
           </div>
@@ -226,14 +249,29 @@ const App = () => {
             <Route exact element={<Home />} path="/" />
             <Route element={<Catalog />} path="/catalogs" />
             <Route path="/catalog/:catalogId/controls" element={<Control />} />
-            <Route path="/catalog/:catalogId/controls/:controlId/metrics" element={<Metric />} />
+            <Route
+              path="/catalog/:catalogId/controls/:controlId/metrics"
+              element={<Metric />}
+            />
             <Route element={<Mashup />} path="/mashups" />
             <Route element={<CatalogForm />} path="/catalog/new" />
             <Route element={<CatalogForm />} path="/catalog/:catalogId/edit" />
-            <Route element={<ControlForm />} path="/catalog/:catalogId/new_control" />
-            <Route element={<ControlForm />} path="/catalog/:catalogId/edit_control/:controlId" />
-            <Route element={<MetricForm />} path="/catalog/:catalogId/control/:controlId/new_metric" />
-            <Route element={<MetricForm />} path="/catalog/:catalogId/control/:controlId/edit_metric/:metricId" />
+            <Route
+              element={<ControlForm />}
+              path="/catalog/:catalogId/new_control"
+            />
+            <Route
+              element={<ControlForm />}
+              path="/catalog/:catalogId/edit_control/:controlId"
+            />
+            <Route
+              element={<MetricForm />}
+              path="/catalog/:catalogId/control/:controlId/new_metric"
+            />
+            <Route
+              element={<MetricForm />}
+              path="/catalog/:catalogId/control/:controlId/edit_metric/:metricId"
+            />
             <Route element={<Profile />} path="/profile" />
             <Route element={<Login />} path="/login" />
             <Route element={<Editor />} path="/editor" />
@@ -269,6 +307,4 @@ const CountdownTimer = ({ onTimeout }) => {
 const container = document.getElementById("root");
 const root = createRoot(container);
 
-root.render(
-  <App />
-);
+root.render(<App />);
