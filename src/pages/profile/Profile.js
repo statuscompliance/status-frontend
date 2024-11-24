@@ -1,8 +1,11 @@
+import { useEffect } from "react";
 import { useTokens } from "../../hooks/useTokens";
 import githubLogoBlack from "../../static/images/github-logo.svg";
 import trelloLogo from "../../static/images/trello-logo.svg";
 import "../../static/css/profile.css";
 import { Modal } from "react-bootstrap";
+import { useNavigate } from "react-router-dom"
+import { useAuth } from "../../hooks/useAuth";
 
 const clientId = "72548f03fe112aedfd33";
 
@@ -16,6 +19,18 @@ const Profile = () => {
     closeTrelloModal,
     handleTrelloTokenSubmit,
   } = useTokens();
+  const { getAuthority } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchAuthority = async () => {
+      const fetchedAuthority = await getAuthority();
+      if (fetchedAuthority !== "ADMIN") {
+        navigate("/login");
+      }
+    };
+    fetchAuthority();
+  }, [getAuthority, navigate]);
 
   const loginWithGithub = () => {
     if (isLoggedInGH) {

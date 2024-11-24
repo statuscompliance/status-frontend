@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useGrafana } from "./useGrafana";
 import statusBackendClient from '../api/statusBackendClient';
+import { useAuth } from './useAuth';
 
 export const useCatalogs = () => {
   const [catalogs, setCatalogs] = useState([]);
@@ -8,10 +9,17 @@ export const useCatalogs = () => {
   const [catalogStartDate, setCatalogStartDate] = useState("");
   const [catalogEndDate, setCatalogEndDate] = useState("");
   const { createDashboard } = useGrafana();
+  const { getAuthority } = useAuth();
 
   useEffect(() => {
-    getCatalogsFromTheDatabase();
-  }, []);
+    const initializeCatalogs = async () => {
+      const userAuthority = await getAuthority();
+      if (userAuthority === "ADMIN") {
+        await getCatalogsFromTheDatabase();
+      }
+    };
+    initializeCatalogs();
+  }, [getAuthority]);
 
   const getCatalogsFromTheDatabase = async () => {
     const resp = await statusBackendClient.get('/api/catalogs');

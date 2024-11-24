@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../static/css/catalog.css";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -11,15 +11,26 @@ import { useGrafana } from "../../hooks/useGrafana";
 import info from "../../static/images/info.svg";
 import edit from "../../static/images/edit.svg";
 import deleteSvg from "../../static/images/delete.svg";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Catalog() {
   const [globalFilter, setGlobalFilter] = useState("");
-  const [catalogToDelete, setCatalogToDelete] = useState(null);
   const { catalogs, getCatalogControlsInDB, deleteCatalogByIdFromTheDatabase } = useCatalogs();
   const { deleteControlByIdInDb } = useControls();
   const { getInputControlsByControlIdFromTheDB, deleteInputControlsFromTheDB } = useInputControls();
   const { deleteDashboardById } = useGrafana();
+  const { getAuthority } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchAuthority = async () => {
+      const fetchedAuthority = await getAuthority();
+      if (fetchedAuthority !== "ADMIN") {
+        navigate("/login");
+      }
+    };
+    fetchAuthority();
+  }, [getAuthority, navigate]);
 
   const onGlobalFilterChange = (e) => {
     setGlobalFilter(e.target.value);
@@ -41,8 +52,6 @@ export default function Catalog() {
     const confirmDelete = window.confirm(`Are you sure you want to delete catalog "${rowData.name}"?`);
 
     if (confirmDelete) {
-      setCatalogToDelete(rowData.id);
-
       try {
         const controls = await getCatalogControlsInDB(rowData.id);
         if (!controls) throw new Error("Error when obtaining catalog controls");
@@ -68,8 +77,6 @@ export default function Catalog() {
         window.location.reload();
       } catch (error) {
         console.error("Error when deleting the catalog and its dependencies:", error);
-      } finally {
-        setCatalogToDelete(null);
       }
     }
   };

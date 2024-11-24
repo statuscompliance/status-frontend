@@ -10,6 +10,7 @@ import { useControls } from "../../hooks/useControls";
 import { useGrafana } from "../../hooks/useGrafana";
 import edit from "../../static/images/edit.svg";
 import deleteSvg from "../../static/images/delete.svg";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Metric() {
   const { catalogId, controlId } = useParams();
@@ -21,6 +22,17 @@ export default function Metric() {
   const [globalFilter, setGlobalFilter] = useState("");
   const navigate = useNavigate();
   const dashboardIdRef = useRef(null);
+  const { getAuthority } = useAuth();
+
+  useEffect(() => {
+    const fetchAuthority = async () => {
+      const fetchedAuthority = await getAuthority();
+      if (fetchedAuthority !== "ADMIN") {
+        navigate("/login");
+      }
+    };
+    fetchAuthority();
+  }, [getAuthority, navigate]);
 
   const fetchData = useCallback(async () => {
     try {

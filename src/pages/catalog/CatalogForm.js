@@ -3,6 +3,7 @@ import { Form, Card, Row, Col, Button, Alert } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCatalogs } from "../../hooks/useCatalogs";
 import { getCookie } from "../../hooks/useCookie";
+import { useAuth } from "../../hooks/useAuth";
 
 function CatalogForm() {
   const [catalogName, setCatalogName] = useState("");
@@ -15,6 +16,18 @@ function CatalogForm() {
   const accessToken = getCookie("accessToken");
   const { getCatalogByIdFromTheDB, createCatalogInDB, updateCatalogInDB } =
     useCatalogs();
+  const { getAuthority } = useAuth();
+
+  useEffect(() => {
+    const fetchAuthority = async () => {
+      const fetchedAuthority = await getAuthority();
+      if (fetchedAuthority !== "ADMIN") {
+        navigate("/login");
+      }
+    };
+  
+    fetchAuthority();
+  }, [getAuthority, navigate]);
 
   useEffect(() => {
     if (isEditMode) {

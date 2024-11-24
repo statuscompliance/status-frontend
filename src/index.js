@@ -189,21 +189,27 @@ const App = () => {
                   </Link>
                 </li>
               ) : null}
-              <li className="nav-item">
-                <Link className="nav-link pt-serif-regular" to="/catalogs">
-                  Catalogs
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link pt-serif-regular" to="/mashups">
-                  Mashups
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link pt-serif-regular" to="/editor">
-                  Node-RED
-                </Link>
-              </li>
+              {authority === "ADMIN" ? (
+                <li className="nav-item">
+                  <Link className="nav-link pt-serif-regular" to="/catalogs">
+                    Catalogs
+                  </Link>
+                </li>
+              ) : null}
+              {authority === "ADMIN" ? (
+                <li className="nav-item">
+                  <Link className="nav-link pt-serif-regular" to="/mashups">
+                    Mashups
+                  </Link>
+                </li>
+              ) : null}
+              {authority === "ADMIN" ? (
+                <li className="nav-item">
+                  <Link className="nav-link pt-serif-regular" to="/editor">
+                    Node-RED
+                  </Link>
+                </li>
+              ) : null}
               {thread && assistant && (
                 <li className="nav-item">
                   <Link className="nav-link pt-serif-regular" to="/chat">
@@ -211,11 +217,13 @@ const App = () => {
                   </Link>
                 </li>
               )}
-              <li className="nav-item">
-                <Link className="nav-link pt-serif-regular" to="/profile">
-                  Profile
-                </Link>
-              </li>
+              {authority === "ADMIN" ? (
+                <li className="nav-item">
+                  <Link className="nav-link pt-serif-regular" to="/profile">
+                    Profile
+                  </Link>
+                </li>
+              ) : null}
               <li className="nav-item">
                 {existsCookie ? (
                   <p

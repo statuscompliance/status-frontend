@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import statusBackendClient from '../api/statusBackendClient';
 
 export const useAuth = () => {
@@ -72,17 +72,22 @@ export const useAuth = () => {
     }
   };
 
-  const getAuthority = async () => {
+  const getAuthority = useCallback(async () => {
     const accessToken = getCookie();
     if (accessToken) {
       try {
         const response = await statusBackendClient.get('/api/user/auth/');
         setAuthority(response.data.authority);
+        return response.data.authority;
       } catch (error) {
         console.error("Error fetching user authority:", error);
+        setAuthority('');
+        return '';
       }
     }
-  };
+    setAuthority('');
+    return '';
+  }, []);
 
   return {
     username,

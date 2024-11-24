@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "../../static/css/mashup.css";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -15,6 +15,8 @@ import { useOpenAI } from "../../hooks/useOpenAI";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Context } from "../../hooks/useAdmin";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Mashup() {
   const [showModal, setShowModal] = useState(false);
@@ -41,6 +43,19 @@ export default function Mashup() {
   const interval = 1000;
 
   const [globalFilter, setGlobalFilter] = useState("");
+
+  const { getAuthority } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchAuthority = async () => {
+      const fetchedAuthority = await getAuthority();
+      if (fetchedAuthority !== "ADMIN") {
+        navigate("/login");
+      }
+    };
+    fetchAuthority();
+  }, [getAuthority, navigate]);
 
   const onGlobalFilterChange = (event) => {
     setGlobalFilter(event.target.value);

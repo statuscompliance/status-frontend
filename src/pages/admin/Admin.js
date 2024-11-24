@@ -8,6 +8,7 @@ import DeleteModal from "../../components/DeleteModal";
 import deleteSvg from "../../static/images/delete.svg";
 import { useOpenAI } from "../../hooks/useOpenAI";
 import { Context } from "../../hooks/useAdmin";
+import { useNavigate } from "react-router-dom";
 
 export default function Admin() {
   const existsCookie = useCookie("accessToken");
@@ -39,6 +40,17 @@ export default function Admin() {
   const [editLimit, setEditLimit] = useState(false);
   const [limitReached, setLimitReached] = useState(false);
   const [limitError, setLimitError] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchAuthority = async () => {
+      const fetchedAuthority = await getAuthority();
+      if (fetchedAuthority !== "ADMIN") {
+        navigate("/login");
+      }
+    };
+    fetchAuthority();
+  }, [getAuthority, navigate]);
 
   useEffect(() => {
     setIsLoggedIn(existsCookie);

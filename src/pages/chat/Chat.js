@@ -11,6 +11,8 @@ import deleteSvg from "../../static/images/delete.svg";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import DeleteModal from "../../components/DeleteModal";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Chat() {
   const [threadMessages, setThreadMessages] = useState([]);
@@ -37,6 +39,18 @@ export default function Chat() {
   const [threadToModify, setThreadToModify] = useState(null);
   const [threadName, setThreadName] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { getAuthority } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchAuthority = async () => {
+      const fetchedAuthority = await getAuthority();
+      if (fetchedAuthority !== "ADMIN") {
+        navigate("/login");
+      }
+    };
+    fetchAuthority();
+  }, [getAuthority, navigate]);
 
   const sendNewName = async () => {
     if (threadName !== "") {

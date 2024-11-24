@@ -1,22 +1,27 @@
 import { useState, useEffect } from "react";
 import nodeRedClient from "../api/nodeRedClient";
+import { useAuth } from "../hooks/useAuth";
 
 export const useNode = () => {
   const [isNodeRedDeployed, setIsNodeRedDeployed] = useState(false);
   const [mashups, setMashups] = useState([]);
   const [nodeRedToken, setNodeRedToken] = useState(false);
+  const { getAuthority } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
-      const active = await checkStatus();
-      if (active) {
-        setIsNodeRedDeployed(true);
-        getMashups();
+      const fetchedAuthority = await getAuthority();
+      if (fetchedAuthority === "ADMIN") {
+        const active = await checkStatus();
+        if (active) {
+          setIsNodeRedDeployed(true);
+          getMashups();
+        }
       }
     };
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [getAuthority]);
 
   const checkNodeRedDeployment = async () => {
     const nodeRed = await checkStatus();
