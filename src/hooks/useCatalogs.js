@@ -44,12 +44,6 @@ export const useCatalogs = () => {
       console.error('Error creating catalog:', error);
       throw error;
     }
-  };  
-
-  const updateCatalog = (index, id, value) => {
-    const updatedCatalogs = [...catalogs];
-    updatedCatalogs[index].inputValues[id] = value;
-    setCatalogs(updatedCatalogs);
   };
 
   const updateCatalogInDB = async (id, catalogName, startDate, endDate) => {
@@ -83,16 +77,11 @@ export const useCatalogs = () => {
     setCatalogEndDate(e.target.value);
   };
 
-  const removeCatalog = (index) => {
-    setCatalogs(catalogs.filter((_, i) => i !== index));
-  };
-
   return {
     catalogs,
     getCatalogByIdFromTheDB,
     createCatalogInDB,
     updateCatalogInDB,
-    updateCatalog,
     catalogName,
     setCatalogName,
     catalogStartDate,
@@ -102,7 +91,6 @@ export const useCatalogs = () => {
     handleNameChange,
     handleStartDateChange,
     handleEndDateChange,
-    removeCatalog,
     getCatalogControlsInDB,
     deleteCatalogByIdFromTheDatabase,
   };
