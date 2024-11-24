@@ -36,13 +36,8 @@ export default function Metric() {
 
   const fetchData = useCallback(async () => {
     try {
-      const [control, catalogData] = await Promise.all([
-        getControlByIdFromDB(controlId),
-        getCatalogByIdFromTheDB(catalogId)
-      ]);
-
+      const control = await getControlByIdFromDB(controlId);
       setControlDetails(control);
-
       const metrics = await getControlPanels(controlId);
       setMetrics(metrics);
     } catch (error) {

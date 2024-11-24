@@ -158,7 +158,7 @@ export const useNode = () => {
       const component = flows.data.find((comp) => comp.id === componentId);
 
       if (component && component.params) {
-        Object.keys(component.params).forEach((param, index) => {
+        Object.keys(component.params).forEach((param) => {
           parameters.push({
             id: id++,
             name: param,
@@ -168,7 +168,7 @@ export const useNode = () => {
       }
 
       if (component && component.wires && component.wires.length > 0) {
-        component.wires.forEach((wireGroup, wireIndex) => {
+        component.wires.forEach((wireGroup) => {
           wireGroup.forEach((nextComponentId) => {
             traverseComponents(nextComponentId);
           });

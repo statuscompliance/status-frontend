@@ -4,7 +4,6 @@ import statusBackendClient from '../api/statusBackendClient';
 export const useControls = () => {
   const [controls, setControls] = useState([]);
   const [inputs, setInputs] = useState([]);
-  const [lastItemRemoved, setLastItemRemoved] = useState(0);
 
   const getControlByIdFromDB = async (id) => {
     const response = await statusBackendClient.get(`/api/controls/${id}`);
@@ -116,7 +115,6 @@ export const useControls = () => {
     updateControlInDB,
     deleteControlByIdInDb,
     deleteInputControlsByControlIdInDb,
-    lastItemRemoved,
     createControlInputInDB,
     getControlPanels,
     createControlPanel,
