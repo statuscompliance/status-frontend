@@ -124,6 +124,10 @@ export default function Catalog() {
   };
 
   const dateTemplate = (rowData, columnField) => {
+    if (!Object.prototype.hasOwnProperty.call(rowData, columnField)) {
+      console.error(`Invalid columnField: ${columnField}`);
+      return <span>Invalid data</span>;
+    }
     return <span>{formatDate(rowData[columnField])}</span>;
   };
 
