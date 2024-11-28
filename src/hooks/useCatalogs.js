@@ -73,18 +73,6 @@ export const useCatalogs = () => {
     return response.data;
   };
 
-  const handleNameChange = (e) => {
-    setCatalogName(e.target.value);
-  };
-
-  const handleStartDateChange = (e) => {
-    setCatalogStartDate(e.target.value);
-  };
-
-  const handleEndDateChange = (e) => {
-    setCatalogEndDate(e.target.value);
-  };
-
   return {
     catalogs,
     getCatalogByIdFromTheDB,
@@ -96,9 +84,6 @@ export const useCatalogs = () => {
     setCatalogStartDate,
     catalogEndDate,
     setCatalogEndDate,
-    handleNameChange,
-    handleStartDateChange,
-    handleEndDateChange,
     getCatalogControlsInDB,
     deleteCatalogByIdFromTheDatabase,
   };
