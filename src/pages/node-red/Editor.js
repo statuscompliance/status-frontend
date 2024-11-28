@@ -47,7 +47,7 @@ export default function Editor() {
         <div className="node-red-off">
           <iframe
             className="node-red-editor"
-            src="http://localhost:1880"
+            src={process.env.REACT_APP_NODE_RED_URL || 'http://localhost:1880'}
             title="Node-RED"
           ></iframe>
           <button
