@@ -30,17 +30,11 @@ const MetricForm = () => {
     whereLogic: "AND",
   });
   const [dashboardUid, setDashboardUid] = useState("");
-  const { getAuthority } = useAuth();
+  const { checkAdminAuthority } = useAuth();
 
   useEffect(() => {
-    const fetchAuthority = async () => {
-      const fetchedAuthority = await getAuthority();
-      if (fetchedAuthority !== "ADMIN") {
-        navigate("/login");
-      }
-    };
-    fetchAuthority();
-  }, [getAuthority, navigate]);
+    checkAdminAuthority();
+  }, [checkAdminAuthority]);
 
   useEffect(() => {
     const loadCatalogAndMetric = async () => {

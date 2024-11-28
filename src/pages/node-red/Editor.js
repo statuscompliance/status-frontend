@@ -3,7 +3,6 @@ import { useNode } from "../../hooks/useNode";
 import "../../static/css/iframe.css";
 import ai from "../../static/images/ai.svg";
 import { Modal } from "react-bootstrap";
-import { useNavigate } from "react-router-dom"
 import { useAuth } from "../../hooks/useAuth";
 
 export default function Editor() {
@@ -17,18 +16,11 @@ export default function Editor() {
   const [loginModal, setLoginModal] = useState(false);
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const { getAuthority } = useAuth();
-  const navigate = useNavigate();
+  const { checkAdminAuthority } = useAuth();
 
   useEffect(() => {
-    const fetchAuthority = async () => {
-      const fetchedAuthority = await getAuthority();
-      if (fetchedAuthority !== "ADMIN") {
-        navigate("/login");
-      }
-    };
-    fetchAuthority();
-  }, [getAuthority, navigate]);
+    checkAdminAuthority();
+  }, [checkAdminAuthority]);
 
   const closeLoginModal = () => {
     setLoginModal(false);

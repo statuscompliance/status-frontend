@@ -159,13 +159,11 @@ export const useNode = () => {
 
       if (component && component.params) {
         Object.keys(component.params).forEach((param) => {
-          if (Object.prototype.hasOwnProperty.call(component.params, param)) {
-            parameters.push({
-              id: id++,
-              name: param,
-              type: component.params[param],
-            });
-          }
+          parameters.push({
+            id: id++,
+            name: param,
+            type: component.params[param],
+          });
         });
       }
 

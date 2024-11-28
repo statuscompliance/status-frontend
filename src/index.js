@@ -112,182 +112,180 @@ const App = () => {
 
   return (
     <Context.Provider value={{ assistant, setAssistant, thread, setThread }}>
-      <BrowserRouter>
-        {showModal && isLoggedIn && (
-          <div className="timeout">
-            <Modal onHide={() => setShowModal(false)} show={showModal}>
-              <Modal.Header closeButton>
-                <Modal.Title>Still there?</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                Your session is about to expire. Countdown:{" "}
-                <CountdownTimer onTimeout={handleLogout} />
-              </Modal.Body>
-              <Modal.Footer>
-                <button onClick={closeLogoutModal}>Cancelar</button>
-                <button onClick={handleRefreshToken}>Sí</button>
-              </Modal.Footer>
-            </Modal>
-          </div>
-        )}
-        {isLoggedIn && showLogoutModal ? (
-          <div className="logout">
-            <Modal onHide={closeLogoutModal} show={showLogoutModal} centered>
-              <Modal.Header closeButton>
-                <Modal.Title className="text-center">Confirmation</Modal.Title>
-              </Modal.Header>
-              <Modal.Body className="text-center">
-                <p>Are you sure you want to log out?</p>
-              </Modal.Body>
-              <Modal.Footer className="d-flex justify-content-center">
-                <button
-                  onClick={handleLogout}
-                  className="btn btn-danger px-4 py-2"
-                  style={{
-                    fontWeight: "bold",
-                    backgroundColor: "#bf0a2e",
-                    borderColor: "#bf0a2e",
-                    transition: "background-color 0.3s, transform 0.3s",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = "#a10825";
-                    e.target.style.transform = "scale(1.05)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = "#bf0a2e";
-                    e.target.style.transform = "scale(1)";
-                  }}
-                >
-                  Log Out
-                </button>
-              </Modal.Footer>
-            </Modal>
-          </div>
-        ) : (
-          <div></div>
-        )}
-        {/* Sidebar */}
-        <div
-          className="sidebar"
-          style={{
-            position: "fixed",
-          }}
+      {showModal && isLoggedIn && (
+        <div className="timeout">
+          <Modal onHide={() => setShowModal(false)} show={showModal}>
+            <Modal.Header closeButton>
+              <Modal.Title>Still there?</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              Your session is about to expire. Countdown:{" "}
+              <CountdownTimer onTimeout={handleLogout} />
+            </Modal.Body>
+            <Modal.Footer>
+              <button onClick={closeLogoutModal}>Cancelar</button>
+              <button onClick={handleRefreshToken}>Sí</button>
+            </Modal.Footer>
+          </Modal>
+        </div>
+      )}
+      {isLoggedIn && showLogoutModal ? (
+        <div className="logout">
+          <Modal onHide={closeLogoutModal} show={showLogoutModal} centered>
+            <Modal.Header closeButton>
+              <Modal.Title className="text-center">Confirmation</Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="text-center">
+              <p>Are you sure you want to log out?</p>
+            </Modal.Body>
+            <Modal.Footer className="d-flex justify-content-center">
+              <button
+                onClick={handleLogout}
+                className="btn btn-danger px-4 py-2"
+                style={{
+                  fontWeight: "bold",
+                  backgroundColor: "#bf0a2e",
+                  borderColor: "#bf0a2e",
+                  transition: "background-color 0.3s, transform 0.3s",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = "#a10825";
+                  e.target.style.transform = "scale(1.05)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = "#bf0a2e";
+                  e.target.style.transform = "scale(1)";
+                }}
+              >
+                Log Out
+              </button>
+            </Modal.Footer>
+          </Modal>
+        </div>
+      ) : (
+        <div></div>
+      )}
+      {/* Sidebar */}
+      <div
+        className="sidebar"
+        style={{
+          position: "fixed",
+        }}
+      >
+        <Link
+          className="navbar-brand navbar-dark pt-serif-bold d-flex align-items-center"
+          to="/"
         >
-          <Link
-            className="navbar-brand navbar-dark pt-serif-bold d-flex align-items-center"
-            to="/"
-          >
-            <img alt="Logo" className="logo-svg" src={logoSvg} />
-            <span className="ml-2">STATUS</span>
-          </Link>
-          <nav className="navbar navbar-dark flex-column">
-            <ul className="navbar-nav align-items-start">
-              {authority === "ADMIN" ? (
-                <li className="nav-item">
-                  <Link className="nav-link pt-serif-regular" to="/admin">
-                    OpenAI administration
-                  </Link>
-                </li>
-              ) : null}
-              {authority === "ADMIN" ? (
-                <li className="nav-item">
-                  <Link className="nav-link pt-serif-regular" to="/catalogs">
-                    Catalogs
-                  </Link>
-                </li>
-              ) : null}
-              {authority === "ADMIN" ? (
-                <li className="nav-item">
-                  <Link className="nav-link pt-serif-regular" to="/mashups">
-                    Mashups
-                  </Link>
-                </li>
-              ) : null}
-              {authority === "ADMIN" ? (
-                <li className="nav-item">
-                  <Link className="nav-link pt-serif-regular" to="/editor">
-                    Node-RED
-                  </Link>
-                </li>
-              ) : null}
-              {thread && assistant && (
-                <li className="nav-item">
-                  <Link className="nav-link pt-serif-regular" to="/chat">
-                    Chat
-                  </Link>
-                </li>
-              )}
-              {authority === "ADMIN" ? (
-                <li className="nav-item">
-                  <Link className="nav-link pt-serif-regular" to="/profile">
-                    Profile
-                  </Link>
-                </li>
-              ) : null}
+          <img alt="Logo" className="logo-svg" src={logoSvg} />
+          <span className="ml-2">STATUS</span>
+        </Link>
+        <nav className="navbar navbar-dark flex-column">
+          <ul className="navbar-nav align-items-start">
+            {authority === "ADMIN" ? (
               <li className="nav-item">
-                {existsCookie ? (
-                  <p
-                    className="nav-link pt-serif-regular"
-                    onClick={openLogoutModal}
-                  >
-                    Log out
-                  </p>
-                ) : (
-                  <Link className="nav-link pt-serif-regular" to="/login">
-                    Log in
-                  </Link>
-                )}
+                <Link className="nav-link pt-serif-regular" to="/admin">
+                  OpenAI administration
+                </Link>
               </li>
-            </ul>
-          </nav>
-          <div className="line"></div>
-          <div className="github-container">
-            <a
-              href="https://github.com/statuscompliance/node-red-status"
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <img alt="github" className="github-svg" src={githubLogo} />
-            </a>
-          </div>
+            ) : null}
+            {authority === "ADMIN" ? (
+              <li className="nav-item">
+                <Link className="nav-link pt-serif-regular" to="/catalogs">
+                  Catalogs
+                </Link>
+              </li>
+            ) : null}
+            {authority === "ADMIN" ? (
+              <li className="nav-item">
+                <Link className="nav-link pt-serif-regular" to="/mashups">
+                  Mashups
+                </Link>
+              </li>
+            ) : null}
+            {authority === "ADMIN" ? (
+              <li className="nav-item">
+                <Link className="nav-link pt-serif-regular" to="/editor">
+                  Node-RED
+                </Link>
+              </li>
+            ) : null}
+            {thread && assistant && (
+              <li className="nav-item">
+                <Link className="nav-link pt-serif-regular" to="/chat">
+                  Chat
+                </Link>
+              </li>
+            )}
+            {authority === "ADMIN" ? (
+              <li className="nav-item">
+                <Link className="nav-link pt-serif-regular" to="/profile">
+                  Profile
+                </Link>
+              </li>
+            ) : null}
+            <li className="nav-item">
+              {existsCookie ? (
+                <p
+                  className="nav-link pt-serif-regular"
+                  onClick={openLogoutModal}
+                >
+                  Log out
+                </p>
+              ) : (
+                <Link className="nav-link pt-serif-regular" to="/login">
+                  Log in
+                </Link>
+              )}
+            </li>
+          </ul>
+        </nav>
+        <div className="line"></div>
+        <div className="github-container">
+          <a
+            href="https://github.com/statuscompliance/node-red-status"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <img alt="github" className="github-svg" src={githubLogo} />
+          </a>
         </div>
-        {/* Routes */}
-        <div className="content">
-          <Routes>
-            <Route exact element={<Home />} path="/" />
-            <Route element={<Catalog />} path="/catalogs" />
-            <Route path="/catalog/:catalogId/controls" element={<Control />} />
-            <Route
-              path="/catalog/:catalogId/controls/:controlId/metrics"
-              element={<Metric />}
-            />
-            <Route element={<Mashup />} path="/mashups" />
-            <Route element={<CatalogForm />} path="/catalog/new" />
-            <Route element={<CatalogForm />} path="/catalog/:catalogId/edit" />
-            <Route
-              element={<ControlForm />}
-              path="/catalog/:catalogId/new_control"
-            />
-            <Route
-              element={<ControlForm />}
-              path="/catalog/:catalogId/edit_control/:controlId"
-            />
-            <Route
-              element={<MetricForm />}
-              path="/catalog/:catalogId/control/:controlId/new_metric"
-            />
-            <Route
-              element={<MetricForm />}
-              path="/catalog/:catalogId/control/:controlId/edit_metric/:metricId"
-            />
-            <Route element={<Profile />} path="/profile" />
-            <Route element={<Login />} path="/login" />
-            <Route element={<Editor />} path="/editor" />
-            <Route element={<Chat />} path="/chat" />
-            <Route element={<Admin />} path="/admin" />
-          </Routes>
-        </div>
-      </BrowserRouter>
+      </div>
+      {/* Routes */}
+      <div className="content">
+        <Routes>
+          <Route exact element={<Home />} path="/" />
+          <Route element={<Catalog />} path="/catalogs" />
+          <Route path="/catalog/:catalogId/controls" element={<Control />} />
+          <Route
+            path="/catalog/:catalogId/controls/:controlId/metrics"
+            element={<Metric />}
+          />
+          <Route element={<Mashup />} path="/mashups" />
+          <Route element={<CatalogForm />} path="/catalog/new" />
+          <Route element={<CatalogForm />} path="/catalog/:catalogId/edit" />
+          <Route
+            element={<ControlForm />}
+            path="/catalog/:catalogId/new_control"
+          />
+          <Route
+            element={<ControlForm />}
+            path="/catalog/:catalogId/edit_control/:controlId"
+          />
+          <Route
+            element={<MetricForm />}
+            path="/catalog/:catalogId/control/:controlId/new_metric"
+          />
+          <Route
+            element={<MetricForm />}
+            path="/catalog/:catalogId/control/:controlId/edit_metric/:metricId"
+          />
+          <Route element={<Profile />} path="/profile" />
+          <Route element={<Login />} path="/login" />
+          <Route element={<Editor />} path="/editor" />
+          <Route element={<Chat />} path="/chat" />
+          <Route element={<Admin />} path="/admin" />
+        </Routes>
+      </div>
     </Context.Provider>
   );
 };
@@ -315,4 +313,8 @@ const CountdownTimer = ({ onTimeout }) => {
 const container = document.getElementById("root");
 const root = createRoot(container);
 
-root.render(<App />);
+root.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
+);

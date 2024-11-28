@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import statusBackendClient from '../api/statusBackendClient';
 
 export const useAuth = () => {
@@ -6,6 +7,7 @@ export const useAuth = () => {
   const [password, setPassword] = useState("");
   const [authority, setAuthority] = useState("");
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   function getCookie() {
     if (
@@ -89,6 +91,13 @@ export const useAuth = () => {
     return '';
   }, []);
 
+  const checkAdminAuthority = useCallback(async () => {
+    const userAuthority = await getAuthority();
+    if (userAuthority !== "ADMIN") {
+      navigate("/login");
+    }
+  }, [getAuthority, navigate]);
+
   return {
     username,
     password,
@@ -99,6 +108,7 @@ export const useAuth = () => {
     getAuthority,
     authority,
     errorMessage,
-    setErrorMessage
+    setErrorMessage,
+    checkAdminAuthority,
   };
 };

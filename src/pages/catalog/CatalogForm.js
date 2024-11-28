@@ -16,18 +16,11 @@ function CatalogForm() {
   const accessToken = getCookie("accessToken");
   const { getCatalogByIdFromTheDB, createCatalogInDB, updateCatalogInDB } =
     useCatalogs();
-  const { getAuthority } = useAuth();
+  const { checkAdminAuthority } = useAuth();
 
   useEffect(() => {
-    const fetchAuthority = async () => {
-      const fetchedAuthority = await getAuthority();
-      if (fetchedAuthority !== "ADMIN") {
-        navigate("/login");
-      }
-    };
-  
-    fetchAuthority();
-  }, [getAuthority, navigate]);
+    checkAdminAuthority();
+  }, [checkAdminAuthority]);
 
   useEffect(() => {
     if (isEditMode) {

@@ -3,16 +3,15 @@ import "../../static/css/control.css";
 import { useParams } from "react-router-dom";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { InputText } from "primereact/inputtext";
 import { useNavigate } from "react-router-dom";
 import { useCatalogs } from "../../hooks/useCatalogs";
 import { useControls } from "../../hooks/useControls";
 import { useInputControls } from "../../hooks/useInputControls";
 import { useGrafana } from "../../hooks/useGrafana";
-import info from "../../static/images/info.svg";
-import edit from "../../static/images/edit.svg";
-import deleteSvg from "../../static/images/delete.svg";
 import { useAuth } from "../../hooks/useAuth";
+import { formatDate } from "../common/dateUtils"
+import FilterHeader from "../common/FilterHeader";
+import ActionsColumn from "../common/ActionsColumn";
 
 export default function Control() {
   const { catalogId } = useParams();
@@ -24,18 +23,12 @@ export default function Control() {
   const { getInputControlsByControlIdFromTheDB, deleteInputControlsFromTheDB } = useInputControls();
   const { getGrafanaUrl } = useGrafana();
   const [globalFilter, setGlobalFilter] = useState("");
-  const { getAuthority } = useAuth();
+  const { checkAdminAuthority } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchAuthority = async () => {
-      const fetchedAuthority = await getAuthority();
-      if (fetchedAuthority !== "ADMIN") {
-        navigate("/login");
-      }
-    };
-    fetchAuthority();
-  }, [getAuthority, navigate]);
+    checkAdminAuthority();
+  }, [checkAdminAuthority]);
 
   const fetchData = useCallback(async () => {
     try {
@@ -96,54 +89,12 @@ export default function Control() {
     }
   };
 
-  const header = (
-    <div className="filter-header">
-      <span className="p-input-icon-left">
-        <i className="pi pi-search" />
-        <InputText
-          type="search"
-          onInput={onGlobalFilterChange}
-          placeholder="Search..."
-        />
-      </span>
-      <button className="create-button" onClick={handleCreate}>
-        +
-      </button>
-    </div>
-  );
-
-  const actionTemplate = (rowData) => {
-    return (
-      <div className="actions">
-        <button className="actionButton" onClick={() => handleView(rowData)}>
-          <img alt="info" className="actionImg" src={info} />
-        </button>
-        <button className="actionButton" onClick={() => handleEdit(rowData)}>
-          <img alt="edit" className="actionImg" src={edit} />
-        </button>
-        <button className="actionButton" onClick={() => handleDelete(rowData)}>
-          <img alt="delete" className="actionImg" src={deleteSvg} />
-        </button>
-      </div>
-    );
-  };
-
   const openGrafanaUrl = () => {
     if (grafanaUrl) {
       window.open(`http://localhost:3100${grafanaUrl}`);
     } else {
       console.error("Grafana URL not available");
     }
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
   };
 
   return (
@@ -177,7 +128,12 @@ export default function Control() {
           )}
         </div>
       )}
-      <div className="datatable-header">{header}</div>
+      <div className="datatable-header">
+        <FilterHeader
+          onGlobalFilterChange={onGlobalFilterChange}
+          handleCreate={handleCreate}
+        />
+      </div>
       <div className="controls">
         <DataTable
           className="dataTable"
@@ -199,7 +155,14 @@ export default function Control() {
           </Column>
           <Column
             className="column"
-            body={actionTemplate}
+            body={(rowData) => (
+              <ActionsColumn
+                rowData={rowData}
+                onView={handleView}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            )}
             header="Actions"
             style={{ width: "20%" }}>
           </Column>

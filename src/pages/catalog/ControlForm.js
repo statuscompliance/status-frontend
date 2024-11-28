@@ -37,18 +37,12 @@ const ControlForm = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const { getAuthority } = useAuth();
+  const { checkAdminAuthority } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchAuthority = async () => {
-      const fetchedAuthority = await getAuthority();
-      if (fetchedAuthority !== "ADMIN") {
-        navigate("/login");
-      }
-    };
-    fetchAuthority();
-  }, [getAuthority, navigate]);
+    checkAdminAuthority();
+  }, [checkAdminAuthority]);
 
   useEffect(() => {
     const fetchCatalogDates = async () => {

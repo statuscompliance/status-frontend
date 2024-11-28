@@ -15,8 +15,8 @@ import { useOpenAI } from "../../hooks/useOpenAI";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Context } from "../../hooks/useAdmin";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import FilterHeader from "../common/FilterHeader";
 
 export default function Mashup() {
   const [showModal, setShowModal] = useState(false);
@@ -41,21 +41,12 @@ export default function Mashup() {
   const [currentMashupName, setCurrentMashupName] = useState("");
   const [showLoader, setShowLoader] = useState(false);
   const interval = 1000;
-
   const [globalFilter, setGlobalFilter] = useState("");
-
-  const { getAuthority } = useAuth();
-  const navigate = useNavigate();
+  const { checkAdminAuthority } = useAuth();
 
   useEffect(() => {
-    const fetchAuthority = async () => {
-      const fetchedAuthority = await getAuthority();
-      if (fetchedAuthority !== "ADMIN") {
-        navigate("/login");
-      }
-    };
-    fetchAuthority();
-  }, [getAuthority, navigate]);
+    checkAdminAuthority();
+  }, [checkAdminAuthority]);
 
   const onGlobalFilterChange = (event) => {
     setGlobalFilter(event.target.value);
@@ -216,22 +207,6 @@ export default function Mashup() {
     setShowModal(true);
   };
 
-  const filterHeader = (
-    <div className="filter-header">
-      <span className="p-input-icon-left">
-        <i className="pi pi-search" />
-        <InputText
-          onInput={onGlobalFilterChange}
-          placeholder="Search..."
-          type="search"
-        />
-      </span>
-      <button className="create-button" onClick={handleCreateButtonClick}>
-        +
-      </button>
-    </div>
-  );
-
   const actionTemplate = (rowData) => {
     return (
       <div className="actions">
@@ -267,7 +242,12 @@ export default function Mashup() {
       {showLoader && <div className="descLoader"></div>}
       {existsCookie && isNodeRedDeployed ? (
         <div className={`mashups ${showLoader ? "blur" : ""}`}>
-          <div className="datatable-header">{filterHeader}</div>
+          <div className="datatable-header">
+            <FilterHeader
+              onGlobalFilterChange={onGlobalFilterChange}
+              handleCreate={handleCreateButtonClick}
+            />
+          </div>
           <DataTable
             className="dataTable"
             globalFilter={globalFilter}
