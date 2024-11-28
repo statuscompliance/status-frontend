@@ -22,6 +22,7 @@ export default function Dashboards() {
   const [searchTerm, setSearchTerm] = useState("");
   const { getFolders, getDashboardsByFolderUid, getDashboardMetrics } =
     useGrafana();
+  const [selectedPanelId, setSelectedPanelId] = useState(null);
 
   useEffect(() => {
     const fetchFolders = async () => {
@@ -86,13 +87,18 @@ export default function Dashboards() {
   };
 
   const handlePanelClick = (panelId) => {
+    setSelectedPanelId(panelId);
     setIframeUrl(`${selectedDashboardUrl}?kiosk=1&viewPanel=${panelId}`);
   };
 
   useEffect(() => {
     if (selectedDashboardPanels.length > 0) {
       const firstPanelId = selectedDashboardPanels[0].id;
+      setSelectedPanelId(firstPanelId);
       setIframeUrl(`${selectedDashboardUrl}?kiosk=1&viewPanel=${firstPanelId}`);
+    } else {
+      setSelectedPanelId(null);
+      setIframeUrl("");
     }
   }, [selectedDashboardPanels, selectedDashboardUrl]);
 
@@ -131,7 +137,7 @@ export default function Dashboards() {
               <input
                 type="text"
                 className="form-control search-input"
-                placeholder="Search dashboards..."
+                placeholder="Search catalogs..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -170,7 +176,7 @@ export default function Dashboards() {
                   </li>
                 ))
               ) : (
-                <p className="text-muted">No dashboards found</p>
+                <p className="text-muted">No catalogs found</p>
               )}
             </ul>
           ) : (
@@ -213,7 +219,7 @@ export default function Dashboards() {
                       {loading[folder.uid] ? (
                         <div className="text-center">
                           <Loader className="animate-spin" size={24} />
-                          <p>Loading dashboards...</p>
+                          <p>Loading catalogs...</p>
                         </div>
                       ) : dashboards[folder.uid] ? (
                         dashboards[folder.uid].length > 0 ? (
@@ -244,7 +250,7 @@ export default function Dashboards() {
                           </ul>
                         ) : (
                           <p className="text-muted">
-                            No dashboards found in this folder.
+                            No catalogs found in this department.
                           </p>
                         )
                       ) : null}
@@ -278,13 +284,14 @@ export default function Dashboards() {
         <div className="col-md-8">
           <div className="iframe-container">
             <div className="iframe-header">
-              <h3 className="iframe-title">Dashboard Preview</h3>
+              <h3 className="iframe-title">Catalog Preview</h3>
             </div>
             {selectedDashboardPanels.length > 0 ? (
               <div className="p-3">
-                <h4>Dashboard Panels</h4>
+                <h4>Catalog Metrics</h4>
                 <select
                   className="form-select mb-3"
+                  value={selectedPanelId || ""}
                   onChange={(e) => handlePanelClick(e.target.value)}
                 >
                   {selectedDashboardPanels.map((panel) => (
@@ -299,7 +306,7 @@ export default function Dashboards() {
                 className="d-flex align-items-center justify-content-center bg-light fade-in"
                 style={{ height: "600px" }}
               >
-                <p className="text-muted">No panels found for this dashboard</p>
+                <p className="text-muted">No metrics found for this catalog</p>
               </div>
             ) : (
               <div
@@ -307,7 +314,7 @@ export default function Dashboards() {
                 style={{ height: "600px" }}
               >
                 <p className="text-muted">
-                  Select a dashboard to preview its panels
+                  Select a catalog to preview its metrics
                 </p>
               </div>
             )}
