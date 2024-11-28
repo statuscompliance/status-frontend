@@ -4,24 +4,6 @@ import statusBackendClient from '../api/statusBackendClient';
 export const useControls = () => {
   const [controls, setControls] = useState([]);
   const [inputs, setInputs] = useState([]);
-  const [lastItemRemoved, setLastItemRemoved] = useState(0);
-
-  const addEmptyControl = () => {
-    setControls([
-      ...controls,
-      {
-        name: "",
-        description: "",
-        period: "",
-        startDate: "",
-        endDate: "",
-        mashup_id: "",
-        catalog_id: "",
-        inputs: [],
-        inputValues: {},
-      },
-    ]);
-  };
 
   const getControlByIdFromDB = async (id) => {
     const response = await statusBackendClient.get(`/api/controls/${id}`);
@@ -54,12 +36,6 @@ export const useControls = () => {
     return response.data;
   };
 
-  const updateControl = (index, field, value) => {
-    const updatedControls = [...controls];
-    updatedControls[index][field] = value;
-    setControls(updatedControls);
-  };
-
   const updateControlInDB = async (
     id,
     name,
@@ -80,15 +56,6 @@ export const useControls = () => {
       catalog_id,
     });
     return response.data;
-  };
-
-  const removeControl = (index) => {
-    const isLastItem = index === controls.length - 1;
-    setControls(controls.filter((_, i) => i !== index));
-
-    if (isLastItem && controls.length > 0) {
-      setLastItemRemoved((prev) => prev + 1);
-    }
   };
 
   const createControlInputInDB = async (control_id, input_id, value) => {
@@ -117,12 +84,6 @@ export const useControls = () => {
     return response.data;
   };
 
-  const updateControlInputs = (controlIndex, inputId, inputValue) => {
-    const updatedControls = [...controls];
-    updatedControls[controlIndex].inputValues[inputId] = inputValue;
-    setControls(updatedControls);
-  };
-
   const getControlPanels = async (controlId) => {
     try {
       const response = await statusBackendClient.get(`/api/controls/${controlId}/panels`);
@@ -149,17 +110,12 @@ export const useControls = () => {
     setControls,
     getControlByIdFromDB,
     getInputControlsByControlIdFromDB,
-    addEmptyControl,
     createControlInDB,
     updateControlInputInDb,
-    updateControl,
     updateControlInDB,
-    removeControl,
     deleteControlByIdInDb,
     deleteInputControlsByControlIdInDb,
-    lastItemRemoved,
     createControlInputInDB,
-    updateControlInputs,
     getControlPanels,
     createControlPanel,
     inputs,

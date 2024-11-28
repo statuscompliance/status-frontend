@@ -3,13 +3,13 @@ import "../../static/css/metric.css";
 import { useParams } from "react-router-dom";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { InputText } from "primereact/inputtext";
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 import { useCatalogs } from "../../hooks/useCatalogs";
 import { useControls } from "../../hooks/useControls";
 import { useGrafana } from "../../hooks/useGrafana";
-import edit from "../../static/images/edit.svg";
-import deleteSvg from "../../static/images/delete.svg";
+import { useAuth } from "../../hooks/useAuth";
+import FilterHeader from "../common/FilterHeader";
+import ActionsColumn from "../common/ActionsColumn";
 
 export default function Metric() {
   const { catalogId, controlId } = useParams();
@@ -21,16 +21,16 @@ export default function Metric() {
   const [globalFilter, setGlobalFilter] = useState("");
   const navigate = useNavigate();
   const dashboardIdRef = useRef(null);
+  const { checkAdminAuthority } = useAuth();
+
+  useEffect(() => {
+    checkAdminAuthority();
+  }, [checkAdminAuthority]);
 
   const fetchData = useCallback(async () => {
     try {
-      const [control, catalogData] = await Promise.all([
-        getControlByIdFromDB(controlId),
-        getCatalogByIdFromTheDB(catalogId)
-      ]);
-
+      const control = await getControlByIdFromDB(controlId);
       setControlDetails(control);
-
       const metrics = await getControlPanels(controlId);
       setMetrics(metrics);
     } catch (error) {
@@ -40,7 +40,13 @@ export default function Metric() {
         console.error("Error fetching data:", error);
       }
     }
-  }, [controlId, catalogId, getControlByIdFromDB, getCatalogByIdFromTheDB, getDashboardMetrics]);
+  }, [
+    controlId,
+    catalogId,
+    getControlByIdFromDB,
+    getCatalogByIdFromTheDB,
+    getDashboardMetrics,
+  ]);
 
   useEffect(() => {
     fetchData();
@@ -54,50 +60,36 @@ export default function Metric() {
     navigate(`/catalog/${catalogId}/control/${controlId}/new_metric`);
   };
 
-  const handleEdit = useCallback((rowData) => {
-    navigate(`/catalog/${catalogId}/control/${controlId}/edit_metric/${rowData.id}`);
-  }, [navigate, catalogId, controlId]);
-
-  const handleDelete = useCallback(async (rowData) => {
-    const confirmDelete = window.confirm(`Are you sure you want to delete metric "${rowData.title}"?`);
-
-    if (confirmDelete) {
-      try {
-        await deleteMetric(dashboardIdRef.current, rowData.id);
-        console.log("Metric successfully deleted.");
-        window.location.reload();
-      } catch (error) {
-        console.error("Error when deleting the metric and its dependencies:", error);
-      }
-    }
-  }, [metrics]);
-
-  const header = (
-    <div className="filter-header">
-      <span className="p-input-icon-left">
-        <i className="pi pi-search" />
-        <InputText
-          type="search"
-          onInput={onGlobalFilterChange}
-          placeholder="Search..."
-        />
-      </span>
-      <button className="create-button" onClick={handleCreate}>
-        +
-      </button>
-    </div>
+  const handleEdit = useCallback(
+    (rowData) => {
+      navigate(
+        `/catalog/${catalogId}/control/${controlId}/edit_metric/${rowData.id}`
+      );
+    },
+    [navigate, catalogId, controlId]
   );
 
-  const actionTemplate = useCallback((rowData) => (
-    <div className="actions">
-      <button className="actionButton" onClick={() => handleEdit(rowData)}>
-        <img alt="edit" className="actionImg" src={edit} />
-      </button>
-      <button className="actionButton" onClick={() => handleDelete(rowData)}>
-        <img alt="delete" className="actionImg" src={deleteSvg} />
-      </button>
-    </div>
-  ), [handleEdit, handleDelete]);
+  const handleDelete = useCallback(
+    async (rowData) => {
+      const confirmDelete = window.confirm(
+        `Are you sure you want to delete metric "${rowData.title}"?`
+      );
+
+      if (confirmDelete) {
+        try {
+          await deleteMetric(dashboardIdRef.current, rowData.id);
+          console.log("Metric successfully deleted.");
+          window.location.reload();
+        } catch (error) {
+          console.error(
+            "Error when deleting the metric and its dependencies:",
+            error
+          );
+        }
+      }
+    },
+    [metrics]
+  );
 
   return (
     <div className="body">
@@ -120,7 +112,12 @@ export default function Metric() {
           </div>
         </div>
       )}
-      <div className="datatable-header">{header}</div>
+      <div className="datatable-header">
+        <FilterHeader
+          onGlobalFilterChange={onGlobalFilterChange}
+          handleCreate={handleCreate}
+        />
+      </div>
       <div className="metrics">
         <DataTable
           className="dataTable"
@@ -133,7 +130,18 @@ export default function Metric() {
         >
           <Column field="title" header="Name" style={{ width: "20%" }} />
           <Column field="sqlQuery" header="Query" style={{ width: "60%" }} />
-          <Column body={actionTemplate} header="Actions" style={{ width: "20%" }} />
+          <Column
+            body={(rowData) => (
+              <ActionsColumn
+                rowData={rowData}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                showView={() => false}
+              />
+            )}
+            header="Actions"
+            style={{ width: "20%" }}
+          />
         </DataTable>
       </div>
     </div>

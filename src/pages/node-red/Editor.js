@@ -3,6 +3,7 @@ import { useNode } from "../../hooks/useNode";
 import "../../static/css/iframe.css";
 import ai from "../../static/images/ai.svg";
 import { Modal } from "react-bootstrap";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Editor() {
   const {
@@ -15,6 +16,11 @@ export default function Editor() {
   const [loginModal, setLoginModal] = useState(false);
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const { checkAdminAuthority } = useAuth();
+
+  useEffect(() => {
+    checkAdminAuthority();
+  }, [checkAdminAuthority]);
 
   const closeLoginModal = () => {
     setLoginModal(false);

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useGrafana } from "./useGrafana";
 import statusBackendClient from '../api/statusBackendClient';
+import { useAuth } from './useAuth';
 
 export const useCatalogs = () => {
   const [catalogs, setCatalogs] = useState([]);
@@ -8,10 +9,17 @@ export const useCatalogs = () => {
   const [catalogStartDate, setCatalogStartDate] = useState("");
   const [catalogEndDate, setCatalogEndDate] = useState("");
   const { createDashboard } = useGrafana();
+  const { getAuthority } = useAuth();
 
   useEffect(() => {
-    getCatalogsFromTheDatabase();
-  }, []);
+    const initializeCatalogs = async () => {
+      const userAuthority = await getAuthority();
+      if (userAuthority === "ADMIN") {
+        await getCatalogsFromTheDatabase();
+      }
+    };
+    initializeCatalogs();
+  }, [getAuthority]);
 
   const getCatalogsFromTheDatabase = async () => {
     const resp = await statusBackendClient.get('/api/catalogs');
@@ -44,12 +52,6 @@ export const useCatalogs = () => {
       console.error('Error creating catalog:', error);
       throw error;
     }
-  };  
-
-  const updateCatalog = (index, id, value) => {
-    const updatedCatalogs = [...catalogs];
-    updatedCatalogs[index].inputValues[id] = value;
-    setCatalogs(updatedCatalogs);
   };
 
   const updateCatalogInDB = async (id, catalogName, startDate, endDate) => {
@@ -71,38 +73,17 @@ export const useCatalogs = () => {
     return response.data;
   };
 
-  const handleNameChange = (e) => {
-    setCatalogName(e.target.value);
-  };
-
-  const handleStartDateChange = (e) => {
-    setCatalogStartDate(e.target.value);
-  };
-
-  const handleEndDateChange = (e) => {
-    setCatalogEndDate(e.target.value);
-  };
-
-  const removeCatalog = (index) => {
-    setCatalogs(catalogs.filter((_, i) => i !== index));
-  };
-
   return {
     catalogs,
     getCatalogByIdFromTheDB,
     createCatalogInDB,
     updateCatalogInDB,
-    updateCatalog,
     catalogName,
     setCatalogName,
     catalogStartDate,
     setCatalogStartDate,
     catalogEndDate,
     setCatalogEndDate,
-    handleNameChange,
-    handleStartDateChange,
-    handleEndDateChange,
-    removeCatalog,
     getCatalogControlsInDB,
     deleteCatalogByIdFromTheDatabase,
   };

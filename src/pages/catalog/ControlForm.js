@@ -6,6 +6,7 @@ import { useNode } from "../../hooks/useNode";
 import { useControls } from "../../hooks/useControls";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCatalogs } from "../../hooks/useCatalogs";
+import { useAuth } from "../../hooks/useAuth";
 
 const ControlForm = () => {
   const { controlId, catalogId } = useParams();
@@ -36,7 +37,12 @@ const ControlForm = () => {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const { checkAdminAuthority } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    checkAdminAuthority();
+  }, [checkAdminAuthority]);
 
   useEffect(() => {
     const fetchCatalogDates = async () => {

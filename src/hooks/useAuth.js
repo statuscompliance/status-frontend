@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import statusBackendClient from '../api/statusBackendClient';
 
 export const useAuth = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [authority, setAuthority] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate();
 
   function getCookie() {
     if (
@@ -47,13 +50,12 @@ export const useAuth = () => {
   
       window.location.href = window.location.origin;
     } catch (error) {
-      const errorMessage = document.getElementById("error-message");
       if (error.response?.status === 404) {
-        errorMessage.innerText = "El usuario introducido no está registrado en el sistema";
+        setErrorMessage('The user is not registered in the system');
       } else if (error.response?.status === 401) {
-        errorMessage.innerText = "La contraseña introducida no es correcta";
+        setErrorMessage('The password is not correct');
       } else {
-        errorMessage.innerText = "Error al iniciar sesión. Por favor, inténtelo de nuevo o contacte con el administrador del sistema";
+        setErrorMessage('Error logging in. Please try again or contact your system administrator.');
       }
     }
   };
@@ -72,17 +74,29 @@ export const useAuth = () => {
     }
   };
 
-  const getAuthority = async () => {
+  const getAuthority = useCallback(async () => {
     const accessToken = getCookie();
     if (accessToken) {
       try {
         const response = await statusBackendClient.get('/api/user/auth/');
         setAuthority(response.data.authority);
+        return response.data.authority;
       } catch (error) {
         console.error("Error fetching user authority:", error);
+        setAuthority('');
+        return '';
       }
     }
-  };
+    setAuthority('');
+    return '';
+  }, []);
+
+  const checkAdminAuthority = useCallback(async () => {
+    const userAuthority = await getAuthority();
+    if (userAuthority !== "ADMIN") {
+      navigate("/login");
+    }
+  }, [getAuthority, navigate]);
 
   return {
     username,
@@ -93,5 +107,8 @@ export const useAuth = () => {
     handleRefresh,
     getAuthority,
     authority,
+    errorMessage,
+    setErrorMessage,
+    checkAdminAuthority,
   };
 };

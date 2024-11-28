@@ -2,50 +2,60 @@ import React, { useState, useEffect } from "react";
 import { Form, Card, Row, Col, Button, Alert } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCatalogs } from "../../hooks/useCatalogs";
-import { getCookie } from "../../hooks/useCookie";
+import { useAuth } from "../../hooks/useAuth";
 
 function CatalogForm() {
-  const [catalogName, setCatalogName] = useState("");
-  const [catalogStartDate, setCatalogStartDate] = useState("");
-  const [catalogEndDate, setCatalogEndDate] = useState("");
+  const [catalog, setCatalog] = useState({
+    name: "",
+    startDate: "",
+    endDate: "",
+  });
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { catalogId } = useParams();
   const isEditMode = Boolean(catalogId);
-  const accessToken = getCookie("accessToken");
   const { getCatalogByIdFromTheDB, createCatalogInDB, updateCatalogInDB } =
     useCatalogs();
+  const { checkAdminAuthority } = useAuth();
+
+  useEffect(() => {
+    checkAdminAuthority();
+  }, [checkAdminAuthority]);
 
   useEffect(() => {
     if (isEditMode) {
       const loadCatalog = async () => {
         try {
-          const catalog = await getCatalogByIdFromTheDB(catalogId);
-          setCatalogName(catalog.name);
-          setCatalogStartDate(
-            catalog.startDate
-              ? new Date(catalog.startDate).toISOString().split("T")[0]
-              : ""
-          );
-          setCatalogEndDate(
-            catalog.endDate
-              ? new Date(catalog.endDate).toISOString().split("T")[0]
-              : ""
-          );
+          const catalogData = await getCatalogByIdFromTheDB(catalogId);
+          setCatalog({
+            name: catalogData.name,
+            startDate: catalogData.startDate
+              ? new Date(catalogData.startDate).toISOString().split("T")[0]
+              : "",
+            endDate: catalogData.endDate
+              ? new Date(catalogData.endDate).toISOString().split("T")[0]
+              : "",
+          });
         } catch (error) {
           console.error("Error loading the catalog:", error);
+          setError("Unable to load catalog data. Please try again later.");
         }
       };
       loadCatalog();
     }
-  }, [catalogId, isEditMode, accessToken]);
+  }, [catalogId, isEditMode]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setCatalog((prevCatalog) => ({ ...prevCatalog, [name]: value }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    if (new Date(catalogEndDate) < new Date(catalogStartDate)) {
-      setError("The end date cannot be earlier than the start date");
+    if (new Date(catalog.endDate) < new Date(catalog.startDate)) {
+      setError("The end date cannot be earlier than the start date.");
       return;
     }
 
@@ -53,29 +63,22 @@ function CatalogForm() {
       if (isEditMode) {
         await updateCatalogInDB(
           catalogId,
-          catalogName,
-          catalogStartDate,
-          catalogEndDate
+          catalog.name,
+          catalog.startDate,
+          catalog.endDate
         );
       } else {
-        await createCatalogInDB(catalogName, catalogStartDate, catalogEndDate);
+        await createCatalogInDB(
+          catalog.name,
+          catalog.startDate,
+          catalog.endDate
+        );
       }
       navigate("/catalogs");
     } catch (error) {
       console.error("Error saving the catalog:", error);
+      setError("An error occurred while saving the catalog. Please try again later.");
     }
-  };
-
-  const handleNameChange = (e) => {
-    setCatalogName(e.target.value);
-  };
-
-  const handleStartDateChange = (e) => {
-    setCatalogStartDate(e.target.value);
-  };
-
-  const handleEndDateChange = (e) => {
-    setCatalogEndDate(e.target.value);
   };
 
   return (
@@ -104,11 +107,12 @@ function CatalogForm() {
                     <Form.Group controlId="catalogName">
                       <Form.Label className="fw-bold">Catalog name:</Form.Label>
                       <Form.Control
+                        name="name"
                         maxLength={100}
-                        onChange={handleNameChange}
+                        onChange={handleInputChange}
                         required
                         type="text"
-                        value={catalogName}
+                        value={catalog.name}
                         className="form-control-lg"
                       />
                     </Form.Group>
@@ -119,9 +123,10 @@ function CatalogForm() {
                     <Form.Group controlId="catalogStartDate">
                       <Form.Label className="fw-bold">Start date:</Form.Label>
                       <Form.Control
+                        name="startDate"
                         type="date"
-                        value={catalogStartDate}
-                        onChange={handleStartDateChange}
+                        value={catalog.startDate}
+                        onChange={handleInputChange}
                         required
                         className="form-control-lg"
                       />
@@ -131,9 +136,10 @@ function CatalogForm() {
                     <Form.Group controlId="catalogEndDate">
                       <Form.Label className="fw-bold">End date:</Form.Label>
                       <Form.Control
+                        name="endDate"
                         type="date"
-                        value={catalogEndDate}
-                        onChange={handleEndDateChange}
+                        value={catalog.endDate}
+                        onChange={handleInputChange}
                         required
                         className="form-control-lg"
                       />

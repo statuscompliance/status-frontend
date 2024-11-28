@@ -15,7 +15,7 @@
   width: 78%;
   height: 85%;
   max-height: 100%;
-  background: rgb(242, 242, 242); 
+  background: rgb(242 242 242); 
   border-radius: 6px;
   box-shadow: 0 2px 6px #171a1f, 0 0 2px #171a1f;
 }
@@ -36,7 +36,7 @@
   width: 90%; 
   height: 100%;
   max-height: 100%;
-  background: rgb(242, 242, 242); 
+  background: rgb(242 242 242); 
 }
 
 .historyContainer{
@@ -46,7 +46,7 @@
   align-self: flex-start;
   height: 100%;
   width: 30%;
-  background: rgb(242, 242, 242);
+  background: rgb(242 242 242);
 }
 
 .chat2 {
@@ -58,7 +58,7 @@
   width: 65%;
   height: 85%;
   max-height: 100%;
-  background: rgb(242, 242, 242); 
+  background: rgb(242 242 242); 
   border-radius: 6px;
   box-shadow: 0 2px 6px #171a1f, 0 0 2px #171a1f; 
 }
@@ -93,7 +93,7 @@
   padding-right: calc(12px + 35px + 10px); 
   border: 2px solid #c2c0c0;
   font-size: 19px;
-  font-family: 'Satoshi', sans-serif;
+  font-family: Satoshi, sans-serif;
   font-weight: 300;
   font-style: normal;
   margin-right: 10px;
@@ -134,7 +134,7 @@
   display: flex;
   padding-bottom: 10px;
   font-size: 19px;
-  font-family: 'Satoshi', sans-serif;
+  font-family: Satoshi, sans-serif;
   font-weight: 700;
   font-style: normal;
 }
@@ -147,7 +147,7 @@
   margin: 10px 20px;
   padding: 10px;
   font-size: 16px;
-  font-family: "Satoshi", sans-serif;
+  font-family: Satoshi, sans-serif;
   font-weight: 300;
   font-style: normal;
   background: #fcfcfc;
@@ -166,7 +166,7 @@
   margin-bottom: 10px;
   padding: 10px;
   font-size: 18px;
-  font-family: 'Satoshi', sans-serif;
+  font-family: Satoshi, sans-serif;
   font-weight: 600;
   font-style: normal;
   background: #f8b6b6;
@@ -180,7 +180,7 @@
   display: flex;
   font-size: 19px;
   padding-bottom: 10px;
-  font-family: 'Satoshi', sans-serif;
+  font-family: Satoshi, sans-serif;
   font-weight: 700;
   font-style: normal;
 }
@@ -196,7 +196,7 @@
   margin-bottom: 10px;
   padding: 10px;
   font-size: 16px;
-  font-family: 'Satoshi', sans-serif;
+  font-family: Satoshi, sans-serif;
   font-weight: 300;
   font-style: normal;
   background: #f2f2f2;
@@ -209,7 +209,7 @@
   display: flex;
   justify-content: center;
   font-size: 23px;
-  font-family: 'Satoshi', sans-serif;
+  font-family: Satoshi, sans-serif;
   font-weight: 700;
   font-style: normal;
   top: 45%;
@@ -223,7 +223,7 @@
   height: 100%;
   font-size: 19px;
   margin: 10%;
-  font-family: 'Satoshi', sans-serif;
+  font-family: Satoshi, sans-serif;
   font-weight: 300;
   font-style: normal;
 }
@@ -232,7 +232,7 @@
   position: relative;
   display: flex;
   word-wrap: break-word;
-  font-family: 'Satoshi', sans-serif;
+  font-family: Satoshi, sans-serif;
   font-weight: 700;
   font-style: normal;
   font-size: 22px;
@@ -243,7 +243,7 @@
   display: flex;
   justify-content: center;
   font-size: 23px;
-  font-family: 'Satoshi', sans-serif;
+  font-family: Satoshi, sans-serif;
   font-weight: 700;
   font-style: normal;
   margin:20%;
@@ -274,7 +274,7 @@
   width: 100%;
   border: none;
   background: none;
-  font-family: 'Satoshi', sans-serif;
+  font-family: Satoshi, sans-serif;
   font-weight: 200;
   font-style: normal;
   padding-left: 3px;
@@ -326,7 +326,7 @@
   height: 8px;
   width: 40%;
   font-weight: bold;
-  font-family: 'Satoshi', sans-serif;
+  font-family: Satoshi, sans-serif;
   font-size: 30px;
   padding-bottom: 8px;
   background: linear-gradient(currentColor 0 0) 0 100%/0% 3px no-repeat;
@@ -369,7 +369,7 @@
   align-items: center;
   width: 10%;
   height: 100%;
-  background: rgb(242, 242, 242); 
+  background: rgb(242 242 242); 
   border-radius: 6px;
   box-shadow: 0 2px 6px #171a1f, 0 0 2px #171a1f;
 }
@@ -382,7 +382,7 @@
   bottom: 5%;
   height: 60px;
   width: 120px;
-  background: rgb(242, 242, 242); 
+  background: rgb(242 242 242); 
   border-radius: 6px;
   box-shadow: 0 2px 6px #171a1f, 0 0 2px #171a1f;
 }

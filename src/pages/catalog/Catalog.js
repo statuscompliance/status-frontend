@@ -1,25 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../static/css/catalog.css";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { InputText } from "primereact/inputtext";
 import { useNavigate } from "react-router-dom";
 import { useCatalogs } from "../../hooks/useCatalogs";
 import { useControls } from "../../hooks/useControls";
 import { useInputControls } from "../../hooks/useInputControls";
 import { useGrafana } from "../../hooks/useGrafana";
-import info from "../../static/images/info.svg";
-import edit from "../../static/images/edit.svg";
-import deleteSvg from "../../static/images/delete.svg";
+import { useAuth } from "../../hooks/useAuth";
+import { formatDate } from "../common/dateUtils"
+import FilterHeader from "../common/FilterHeader";
+import ActionsColumn from "../common/ActionsColumn";
 
 export default function Catalog() {
   const [globalFilter, setGlobalFilter] = useState("");
-  const [catalogToDelete, setCatalogToDelete] = useState(null);
   const { catalogs, getCatalogControlsInDB, deleteCatalogByIdFromTheDatabase } = useCatalogs();
   const { deleteControlByIdInDb } = useControls();
   const { getInputControlsByControlIdFromTheDB, deleteInputControlsFromTheDB } = useInputControls();
   const { deleteDashboardById } = useGrafana();
+  const { checkAdminAuthority } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    checkAdminAuthority();
+  }, [checkAdminAuthority]);
 
   const onGlobalFilterChange = (e) => {
     setGlobalFilter(e.target.value);
@@ -41,8 +45,6 @@ export default function Catalog() {
     const confirmDelete = window.confirm(`Are you sure you want to delete catalog "${rowData.name}"?`);
 
     if (confirmDelete) {
-      setCatalogToDelete(rowData.id);
-
       try {
         const controls = await getCatalogControlsInDB(rowData.id);
         if (!controls) throw new Error("Error when obtaining catalog controls");
@@ -68,47 +70,26 @@ export default function Catalog() {
         window.location.reload();
       } catch (error) {
         console.error("Error when deleting the catalog and its dependencies:", error);
-      } finally {
-        setCatalogToDelete(null);
       }
     }
   };
 
-  const header = (
-    <div className="filter-header">
-      <span className="p-input-icon-left">
-        <i className="pi pi-search" />
-        <InputText
-          type="search"
-          onInput={onGlobalFilterChange}
-          placeholder="Search..."
-        />
-      </span>
-      <button className="create-button" onClick={handleCreate}>
-        +
-      </button>
-    </div>
-  );
-
-  const actionTemplate = (rowData) => {
-    return (
-      <div className="actions">
-        <button className="actionButton" onClick={() => handleView(rowData)}>
-          <img alt="info" className="actionImg" src={info} />
-        </button>
-        <button className="actionButton" onClick={() => handleEdit(rowData)}>
-          <img alt="edit" className="actionImg" src={edit} />
-        </button>
-        <button className="actionButton" onClick={() => handleDelete(rowData)}>
-          <img alt="delete" className="actionImg" src={deleteSvg} />
-        </button>
-      </div>
-    );
+  const dateTemplate = (rowData, columnField) => {
+    if (!Object.prototype.hasOwnProperty.call(rowData, columnField)) {
+      console.error(`Invalid columnField: ${columnField}`);
+      return <span>Invalid data</span>;
+    }
+    return <span>{formatDate(rowData[columnField])}</span>;
   };
 
   return (
     <div className="body">
-      <div className="datatable-header">{header}</div>
+      <div className="datatable-header">
+        <FilterHeader
+          onGlobalFilterChange={onGlobalFilterChange}
+          handleCreate={handleCreate}
+        />
+      </div>
       <div className="catalog">
         <DataTable
           className="dataTable"
@@ -128,17 +109,26 @@ export default function Catalog() {
             className="column"
             field="startDate"
             header="Start Date"
+            body={(rowData) => dateTemplate(rowData, "startDate")}
             style={{ width: "25%" }}>
           </Column>
           <Column
             className="column"
             field="endDate"
             header="End Date"
+            body={(rowData) => dateTemplate(rowData, "endDate")}
             style={{ width: "25%" }}>
           </Column>
           <Column
             className="column"
-            body={actionTemplate}
+            body={(rowData) => (
+              <ActionsColumn
+                rowData={rowData}
+                onView={handleView}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            )}
             header="Actions"
             style={{ width: "20%" }}>
           </Column>

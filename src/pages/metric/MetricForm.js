@@ -4,6 +4,7 @@ import { useCatalogs } from "../../hooks/useCatalogs";
 import { useControls } from "../../hooks/useControls";
 import { useGrafana } from "../../hooks/useGrafana";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
 
 const MetricForm = () => {
   const { catalogId, controlId, metricId } = useParams();
@@ -11,7 +12,6 @@ const MetricForm = () => {
   const navigate = useNavigate();
   const { getCatalogByIdFromTheDB } = useCatalogs();
   const { createControlPanel } = useControls();
-
   const {
     createMetric,
     updateMetric,
@@ -30,6 +30,11 @@ const MetricForm = () => {
     whereLogic: "AND",
   });
   const [dashboardUid, setDashboardUid] = useState("");
+  const { checkAdminAuthority } = useAuth();
+
+  useEffect(() => {
+    checkAdminAuthority();
+  }, [checkAdminAuthority]);
 
   useEffect(() => {
     const loadCatalogAndMetric = async () => {

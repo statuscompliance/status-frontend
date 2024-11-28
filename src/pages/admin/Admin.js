@@ -11,7 +11,7 @@ import { Context } from "../../hooks/useAdmin";
 
 export default function Admin() {
   const existsCookie = useCookie("accessToken");
-  const { getAuthority, authority } = useAuth();
+  const { getAuthority, authority, checkAdminAuthority } = useAuth();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [updateModal, setUpdateModal] = useState(false);
   const { assistant, setAssistant, thread, setThread } = useContext(Context);
@@ -39,6 +39,10 @@ export default function Admin() {
   const [editLimit, setEditLimit] = useState(false);
   const [limitReached, setLimitReached] = useState(false);
   const [limitError, setLimitError] = useState(false);
+
+  useEffect(() => {
+    checkAdminAuthority();
+  }, [checkAdminAuthority]);
 
   useEffect(() => {
     setIsLoggedIn(existsCookie);
