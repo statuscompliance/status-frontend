@@ -3,6 +3,16 @@ import statusBackendClient from "../api/statusBackendClient";
 
 export const useGrafana = () => {
   const [metrics, setMetrics] = useState([]);
+  
+  const getFolders = async () => {
+    const response = await statusBackendClient.get(`/api/grafana/folder`);
+    return response.data;
+  }
+  
+  const getDashboardsByFolderUid = async (folderUid = '{uid}') => {
+    const response = await statusBackendClient.get(`/api/grafana/folder/${folderUid}/dashboard`);
+    return response.data;
+  };
 
   const getGrafanaUrl = async (dashboardUid) => {
     const response = await statusBackendClient.get(`/api/grafana/dashboard/${dashboardUid}`);
@@ -119,6 +129,8 @@ export const useGrafana = () => {
   return {
     metrics,
     setMetrics,
+    getFolders,
+    getDashboardsByFolderUid,
     getGrafanaUrl,
     createDashboard,
     deleteDashboardById,

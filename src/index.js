@@ -13,6 +13,7 @@ import ControlForm from "./pages/catalog/ControlForm";
 import Metric from "./pages/metric/Metric";
 import MetricForm from "./pages/metric/MetricForm";
 import Mashup from "./pages/mashup/Mashup";
+import Dashboards from "./pages/dashboard/Dashboards";
 import Profile from "./pages/profile/Profile";
 import Login from "./pages/auth/Login";
 import Editor from "./pages/node-red/Editor";
@@ -179,6 +180,11 @@ const App = () => {
                 </Link>
               </li>
               <li className="nav-item">
+                <Link className="nav-link pt-serif-regular" to="/dashboards">
+                  Dashboards
+                </Link>
+              </li>
+              <li className="nav-item">
                 <Link className="nav-link pt-serif-regular" to="/editor">
                   Node-RED
                 </Link>
@@ -236,6 +242,7 @@ const App = () => {
             <Route element={<ControlForm />} path="/catalog/:catalogId/edit_control/:controlId" />
             <Route element={<MetricForm />} path="/catalog/:catalogId/control/:controlId/new_metric" />
             <Route element={<MetricForm />} path="/catalog/:catalogId/control/:controlId/edit_metric/:metricId" />
+            <Route element={<Dashboards />} path="/dashboards" />
             <Route element={<Profile />} path="/profile" />
             <Route element={<Login />} path="/login" />
             <Route element={<Editor />} path="/editor" />
